@@ -1,17 +1,17 @@
-#HypeChat API Rest
+# HypeChat API Rest
 
-##Requirenments
+## Requirenments
 - node
 - docker
 - pgsql
 
-##Set Up Environment
-`npm install --save-dev nodemon`
-`npm install express`
+## Set Up Environment
+* `npm install --save-dev nodemon` 
+* `npm install express`
 
-##Run
-`docker-compose build`
-`docker-compose up`
+## Run
+* `docker-compose build`
+* `docker-compose up`
 
-##Contributors
+## Contributors
 - Jorge Cabrera
