@@ -1,0 +1,26 @@
+{
+  "name": "hypechat",
+  "version": "1.0.0",
+  "description": "##Requirenments - node - docker - pgsql",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "nodemon": "^1.18.10",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jorgejcabrera/HypeChat.git"
+  },
+  "author": "jorge cabrera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jorgejcabrera/HypeChat/issues"
+  },
+  "homepage": "https://github.com/jorgejcabrera/HypeChat#readme"
+}
