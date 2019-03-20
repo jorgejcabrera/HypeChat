@@ -9,8 +9,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // db connection
-// const pg = require('pg');
-// pg.connect('postgres://postgres:hypechat@hypechat:5432/hypechat');
+ const pg = require('pg');
+ const config = {
+  host: 'postgres',
+  user: 'hypechat',
+  database: 'hypechat',
+  password: 'hypechat',
+  port: 5432
+};
+const pool = new pg.Pool(config);
+pool.connect(function (err, client, done) {
+  if (err) {
+      console.log("Can not connect to the DB" + err);
+      throw err;
+  }
+  console.log("DB connection was succesfull.");
+})
 
 // routes
 var userRoutes = require('./api/routes/UserRoutes');
