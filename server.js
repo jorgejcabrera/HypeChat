@@ -1,4 +1,4 @@
-// express configuration
+// Express configuration
 var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000,
@@ -8,7 +8,7 @@ var express = require('express'),
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// db connection
+// Data Source
  const pg = require('pg');
  const config = {
   host: 'postgres',
@@ -25,6 +25,12 @@ pool.connect(function (err, client, done) {
   }
   console.log("DB connection was succesfull.");
 })
+
+// TODO put all this ddl into another file. 
+pool.query("CREATE TABLE users(id SERIAL PRIMARY KEY, firstname VARCHAR(40) NOT NULL, lastName VARCHAR(40) NOT NULL)", (err, res) => {
+console.log(err, res);
+pool.end();
+});
 
 // routes
 var userRoutes = require('./api/routes/UserRoutes');
