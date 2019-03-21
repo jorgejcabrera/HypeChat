@@ -1,8 +1,6 @@
-'use strict';
+var users = require('../controllers/user-controller');
 
 module.exports = function(app) {
-    var users = require('../controllers/UserController');
-
     app.route('/users')
         .post(users.create);
         

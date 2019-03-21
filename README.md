@@ -1,17 +1,10 @@
 # HypeChat API Rest
 
-## Requirenments
-- node
-- docker
-- pgsql
-
-## Set Up Environment
-* `npm install --save-dev nodemon` 
-* `npm install express`
-
 ## Run
-* `docker-compose build`
 * `docker-compose up`
+
+The API will listen on `localhost:3000`, and reload on any changes to the source.
 
 ## Contributors
 - Jorge Cabrera
+- Rodrigo Zapico

@@ -1,19 +1,6 @@
 {
   "name": "hypechat",
   "version": "1.0.0",
-  "description": "##Requirenments - node - docker - pgsql",
-  "main": "server.js",
-  "dependencies": {
-    "express": "^4.16.4",
-    "nodemon": "^1.18.10",
-    "pg": "^6.2.0",
-    "request": "^2.88.0"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jorgejcabrera/HypeChat.git"
@@ -23,5 +10,23 @@
   "bugs": {
     "url": "https://github.com/jorgejcabrera/HypeChat/issues"
   },
-  "homepage": "https://github.com/jorgejcabrera/HypeChat#readme"
+  "homepage": "https://github.com/jorgejcabrera/HypeChat#readme",
+  "scripts": {
+    "start": "node ./api/bin/www",
+    "development": "npm install && nodemon -L ./api/bin/www",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "debug": "~2.6.9",
+    "express": "^4.16.4",
+    "pg": "^6.2.0",
+    "request": "^2.88.0",
+    "morgan": "~1.9.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "mocha": "^6.0.2",
+    "nodemon": "^1.18.10"
+  }
 }
