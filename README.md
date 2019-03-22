@@ -4,15 +4,16 @@
 
 ## Run
 * `docker-compose up`
+* `docker-compose exec app npm run db:migrate`
 
 The API will listen on `localhost:3000`, and reload on any changes to the source.
 
-## Changes to de DB schema
+## Changes to the DB schema
 The API uses Sequelize to connect to its PostgreSQL DB, and changes are handled using Sequelize-CLI. When making changes to the DB schema, follow these steps:
 
 * Create a new migration that contains the changes to be added.
 * Implement those changes in the Sequelize model.
-* Run migration.
+* Run migration (`docker-compose exec app npm run db:migrate`).
 
 ## Contributors
 - Jorge Cabrera
