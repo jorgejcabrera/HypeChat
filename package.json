@@ -14,6 +14,7 @@
   "scripts": {
     "start": "node ./api/bin/www",
     "development": "npm install && nodemon -L ./api/bin/www",
+    "pretest": "eslint --ignore-path .gitignore .",
     "test": "mocha",
     "covered-test": "nyc mocha",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
@@ -33,6 +34,8 @@
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "codecov": "^3.2.0",
+    "eslint": "^5.15.3",
+    "eslint-config-strongloop": "^2.1.0",
     "mocha": "^6.0.2",
     "nodemon": "^1.18.10",
     "nyc": "^13.3.0"
