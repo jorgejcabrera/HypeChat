@@ -18,10 +18,10 @@ describe('Basic Mocha String Test', () => {
 });
 
 describe('Sample endpoint test', () => {
-    describe('GET /users/:id', () => {
+    describe('GET /ping', () => {
         it("should return status 200", (done) => {
             chai.request(app)
-            .get('/users/1')
+            .get('/ping')
             .end((err, res) => {
                 res.should.have.status(200);
                 done();

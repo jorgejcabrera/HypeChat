@@ -3,6 +3,12 @@
 var { fs, path } = require('../config/dependencies');
 
 module.exports = (app) => {
+    // Health check
+    app.route('/ping')
+    .get((req, res) => {
+        res.send('pong');
+    });
+
     fs.readdirSync(__dirname)
     .filter(file => {
         return (file.indexOf('.') !== 0) 
