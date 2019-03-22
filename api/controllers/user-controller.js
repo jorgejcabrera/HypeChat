@@ -1,21 +1,35 @@
 'use strict';
 
-//TODO ver porque no anda, hay que ver como importa los packages node
-exports.create = function(req, res) {
+var { User } = require('../models');
+
+var UserController = {};
+
+UserController.name = 'UserController';
+
+UserController.create = (req, res) => {
+    console.log(req.body);
     User.create(req.body)
-        .then(user => res.json(user))
+        .then((user) => res.json(user));
 };
 
-exports.retrieve = function(req, res) {
-    res.send('User found');
+UserController.retrieve = (req, res) => {
+    User.findByPk(req.params.id)
+        .then((user) => {
+            if (user) {
+                res.json(user);    
+            } else {
+                res.status(404).send();
+            }
+            
+        });
 };
 
-exports.update = function(req, res) {
+UserController.update = (req, res) => {
     res.send('User updated');
 };
 
-exports.delete = function(req, res) {
+UserController.delete = (req, res) => {
     res.send('User deleted');
 };
 
-
+module.exports = UserController;

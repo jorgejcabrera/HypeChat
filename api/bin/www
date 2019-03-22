@@ -1,44 +1,14 @@
 #!/usr/bin/env node
+'use strict';
 
-/******************************************************/
-// Data Source
-const Sequelize = require('sequelize')
-const UserModel = require('../models/User')
+var { debug } = require('../config/dependencies');
 
-const sequelize = new Sequelize('hypechat','hypechat','hypechat', {
-    host: 'postgres',
-    dialect: 'postgres',
-    pool: {
-        max: 10,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-    }
-})
-sequelize.authenticate()
-  .then(() => {
-    console.log("DB connection was succesfull.")
-  })
-  .catch(err => {
-    console.log("Can not connect to the DB" + err);
-  })
-
-const User = UserModel(sequelize, Sequelize)
-sequelize.sync({ force: true })
-  .then(() => {
-    console.log(`Database & tables created!`)
-  })
-
-module.exports = {
-    User
-}
-/******************************************************/
+// Initialize DB.
+require('../models');
 
 var app = require('../app');
-var debug = require('debug')('hypechat:server');
 var port = process.env.PORT || '3000';
-app.set('port', port);
 
-app.listen(port, function() {
+app.listen(port, () => {
     debug('Listening on port: ' + port);
 });

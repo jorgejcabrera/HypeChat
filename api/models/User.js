@@ -1,14 +1,40 @@
+'use strict';
+
 module.exports = (sequelize, type) => {
-    const User = sequelize.define('users', {
+    var User = sequelize.define('User', {
         id: {
-            type: type.INTEGER,
+            allowNull: false,
+            autoIncrement: true,
             primaryKey: true,
-            autoIncrement: true
+            type: type.INTEGER
         },
-        firtName: type.STRING,
-        lastName: type.STRING,
-        email: type.STRING,
-        pwd: type.STRING
+        firstName: {
+            allowNull: false,
+            type: type.STRING
+        },
+        lastName: {
+            allowNull: false,
+            type: type.STRING
+        },
+        email: {
+            type: type.STRING,
+            allowNull: false,
+            validate: {
+                isEmail: true
+            }
+        },
+        password: {
+            type: type.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        }
     });
+
+    User.associate = (models) => {
+        // Add any relations (foreign keys) here.
+    };
+
     return User;
 }
