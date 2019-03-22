@@ -1,17 +1,33 @@
 'use strict';
 
-exports.create = function(req, res) {
-    res.send('User created');
+var { User } = require('../models');
+
+var UserController = {};
+
+UserController.name = 'UserController';
+
+UserController.create = (req, res) => {
+  User.create(req.body)
+    .then((user) => res.json(user));
 };
 
-exports.retrieve = function(req, res) {
-    res.send('User found');
+UserController.retrieve = (req, res) => {
+  User.findByPk(req.params.id)
+    .then((user) => {
+      if (user) {
+        res.json(user);
+      } else {
+        res.status(404).send();
+      }
+    });
 };
 
-exports.update = function(req, res) {
-    res.send('User updated');
+UserController.update = (req, res) => {
+  res.send('User updated');
 };
 
-exports.delete = function(req, res) {
-    res.send('User deleted');
+UserController.delete = (req, res) => {
+  res.send('User deleted');
 };
+
+module.exports = UserController;

@@ -1,34 +1,14 @@
 #!/usr/bin/env node
+'use strict';
 
-// Data Source
- const pg = require('pg');
- const config = {
-    host: 'postgres',
-    user: 'hypechat',
-    database: 'hypechat',
-    password: 'hypechat',
-    port: 5432
-};
-const pool = new pg.Pool(config);
-pool.connect(function (err, client, done) {
-    if (err) {
-        console.log("Can not connect to the DB" + err);
-        throw err;
-    }
-    console.log("DB connection was succesfull.");
-})
+var { debug } = require('../config/dependencies');
 
-// TODO put all this ddl into another file. 
-pool.query("CREATE TABLE users(id SERIAL PRIMARY KEY, firstname VARCHAR(40) NOT NULL, lastName VARCHAR(40) NOT NULL)", (err, res) => {
-    console.log(err, res);
-    pool.end();
-});
+// Initialize DB.
+require('../models');
 
 var app = require('../app');
-var debug = require('debug')('hypechat:server');
 var port = process.env.PORT || '3000';
-app.set('port', port);
 
-app.listen(port, function() {
-    debug('Listening on port: ' + port);
+app.listen(port, () => {
+  debug('Listening on port: ' + port);
 });

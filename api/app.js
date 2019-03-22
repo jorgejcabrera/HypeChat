@@ -1,5 +1,6 @@
-var express = require('express');
-var logger = require('morgan');
+'use strict';
+
+var { express, logger } = require('./config/dependencies');
 
 var app = express();
 
