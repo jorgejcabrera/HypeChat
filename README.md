@@ -1,5 +1,7 @@
 # HypeChat API Rest
 
+[![Build Status](https://travis-ci.com/jorgejcabrera/HypeChat.svg?branch=master)](https://travis-ci.com/jorgejcabrera/HypeChat)
+
 ## Run
 * `docker-compose up`
 
