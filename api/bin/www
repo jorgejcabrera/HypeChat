@@ -1,11 +1,19 @@
 #!/usr/bin/env node
 
+/******************************************************/
 // Data Source
 const Sequelize = require('sequelize')
+const UserModel = require('../models/User')
 
 const sequelize = new Sequelize('hypechat','hypechat','hypechat', {
     host: 'postgres',
     dialect: 'postgres',
+    pool: {
+        max: 10,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    }
 })
 sequelize.authenticate()
   .then(() => {
@@ -14,6 +22,17 @@ sequelize.authenticate()
   .catch(err => {
     console.log("Can not connect to the DB" + err);
   })
+
+const User = UserModel(sequelize, Sequelize)
+sequelize.sync({ force: true })
+  .then(() => {
+    console.log(`Database & tables created!`)
+  })
+
+module.exports = {
+    User
+}
+/******************************************************/
 
 var app = require('../app');
 var debug = require('debug')('hypechat:server');
