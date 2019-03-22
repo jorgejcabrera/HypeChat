@@ -7,29 +7,27 @@ var UserController = {};
 UserController.name = 'UserController';
 
 UserController.create = (req, res) => {
-    console.log(req.body);
-    User.create(req.body)
-        .then((user) => res.json(user));
+  User.create(req.body)
+    .then((user) => res.json(user));
 };
 
 UserController.retrieve = (req, res) => {
-    User.findByPk(req.params.id)
-        .then((user) => {
-            if (user) {
-                res.json(user);    
-            } else {
-                res.status(404).send();
-            }
-            
-        });
+  User.findByPk(req.params.id)
+    .then((user) => {
+      if (user) {
+        res.json(user);
+      } else {
+        res.status(404).send();
+      }
+    });
 };
 
 UserController.update = (req, res) => {
-    res.send('User updated');
+  res.send('User updated');
 };
 
 UserController.delete = (req, res) => {
-    res.send('User deleted');
+  res.send('User deleted');
 };
 
 module.exports = UserController;

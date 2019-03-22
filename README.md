@@ -15,6 +15,9 @@ The API uses Sequelize to connect to its PostgreSQL DB, and changes are handled 
 * Implement those changes in the Sequelize model.
 * Run migration (`docker-compose exec app npm run db:migrate`).
 
+## Before pushing
+Make sure that all tests pass and there are no code style errors by running `docker-compose exec app npm test` before pushing.
+
 ## Contributors
 - Jorge Cabrera
 - Rodrigo Zapico

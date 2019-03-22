@@ -14,11 +14,11 @@
   "scripts": {
     "start": "node ./api/bin/www",
     "development": "npm install && nodemon -L ./api/bin/www",
-    "pretest": "eslint --ignore-path .gitignore .",
+    "pretest": "eslint --ignore-path .gitignore . --fix",
     "test": "mocha",
     "covered-test": "nyc mocha",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/config/sequelize/migrations --seeders-path api/config/sequelize/seeders --models-path api/models/sequelize --config api/config/sequelize/config.json"
+    "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/config/sequelize/migrations --seeders-path api/config/sequelize/seeders --models-path api/models --config api/config/sequelize/config.json"
   },
   "dependencies": {
     "debug": "~2.6.9",
