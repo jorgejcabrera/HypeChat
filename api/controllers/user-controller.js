@@ -12,7 +12,7 @@ UserController.create = (req, res) => {
 };
 
 UserController.retrieve = (req, res) => {
-  User.findByPk(req.params.id)
+  User.findByPk(req.params.userId)
     .then((user) => {
       if (user) {
         res.json(user);
