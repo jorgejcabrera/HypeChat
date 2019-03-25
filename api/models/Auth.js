@@ -2,7 +2,6 @@
 
 module.exports = (sequelize, type) => {
   var Auth = sequelize.define('Auth', {
-    tableName: "Auth",
     id: {
       allowNull: false,
       autoIncrement: true,
