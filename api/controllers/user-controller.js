@@ -1,12 +1,17 @@
 'use strict';
 
 var { User } = require('../models');
+var { bcrypt } = require('../config/dependencies');
 
+const saltRounds = 10;
 var UserController = {};
 
 UserController.name = 'UserController';
 
 UserController.create = (req, res) => {
+  var salt = bcrypt.genSaltSync(saltRounds);
+  var hash = bcrypt.hashSync(req.body.password, salt);
+  req.body.password = hash;
   User.create(req.body)
     .then((user) => res.json(user));
 };

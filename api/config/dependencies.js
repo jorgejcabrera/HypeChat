@@ -11,4 +11,5 @@ module.exports = {
   Sequelize: Sequelize,
   express: require('express'),
   logger: require('morgan'),
+  bcrypt: require('bcrypt'),
 };
