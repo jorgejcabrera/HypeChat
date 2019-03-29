@@ -14,27 +14,28 @@ UserController.create = (req, res) => {
   User.findOne({ where: {email} })
     .then((user) => {
       if (user) {
-        /*TODO 
+        /* TODO
           1- return error message: "User already exists."
           2- log error
         */
         res.status(400).send();
       } else {
-        bcrypt.hash(req.body.password,saltRounds, function(err, hash){
+        bcrypt.hash(req.body.password, saltRounds, function(err, hash){
           req.body.password = hash;
           req.body.email = email;
-          /*TODO 
-           1- ignore pwd attribute in json response. May be we should use a mapper, 
+          /* TODO
+           1- ignore pwd attribute in json response.
+           May be we should use a mapper,
            or create dto for private and public data.
           */
           User.create(req.body)
-          .then((user) => {
-            Auth.create(AuthService.create(email));
-            res.json(user)
-          });
+            .then((user) => {
+              Auth.create(AuthService.create(email));
+              res.json(user);
+            });
         });
       }
-    });    
+    });
 };
 
 UserController.retrieve = (req, res) => {

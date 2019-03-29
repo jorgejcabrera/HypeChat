@@ -6,7 +6,7 @@ var EmailUtils = {};
 EmailUtils.name = 'EmailUtils';
 
 EmailUtils.normalize = function(email) {
-    return normalizeemail(email);
+  return normalizeemail(email);
 };
 
 module.exports = EmailUtils;

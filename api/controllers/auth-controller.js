@@ -8,29 +8,30 @@ var AuthController = {};
 AuthController.name = 'AuthController';
 
 AuthController.login = (req, res) => {
-    var email = EmailUtils.normalize(req.body.email);
-    User.findOne({ where: {email} })
-        .then( user => {
-            if (user) {
-                /*TODO
-                    1- before create a new access token, we should expire (delete) previous token  
+  var email = EmailUtils.normalize(req.body.email);
+  User.findOne({ where: {email} })
+    .then(user => {
+      if (user) {
+        /* TODO
+                    1- before create a new access token,
+                    we should expire (delete) previous token
                 */
-                bcrypt.compare(req.body.password, user.password, function(err,eq) {
-                    if (eq) {
-                        Auth.create(AuthService.create(req.body.email))
-                        .then((auth) => res.json(auth.accessToken));
-                    } else {
-                        res.status(403).send();
-                    }
-                });
-            } else {
-                res.status(404).send();
-            }
+        bcrypt.compare(req.body.password, user.password, function(err, eq) {
+          if (eq) {
+            Auth.create(AuthService.create(req.body.email))
+              .then((auth) => res.json(auth.accessToken));
+          } else {
+            res.status(403).send();
+          }
         });
+      } else {
+        res.status(404).send();
+      }
+    });
 };
 
 AuthController.logout = (req, res) => {
-    res.send('logout');
+  res.send('logout');
 };
 
 module.exports = AuthController;
