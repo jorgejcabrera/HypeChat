@@ -12,4 +12,5 @@ module.exports = {
   express: require('express'),
   logger: require('morgan'),
   bcrypt: require('bcrypt'),
+  randtoken: require('rand-token'),
 };

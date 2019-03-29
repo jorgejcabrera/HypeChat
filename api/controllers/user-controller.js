@@ -1,6 +1,6 @@
 'use strict';
 
-var { User } = require('../models');
+var { User, Auth } = require('../models');
 var { bcrypt } = require('../config/dependencies');
 
 const saltRounds = 10;
@@ -9,11 +9,23 @@ var UserController = {};
 UserController.name = 'UserController';
 
 UserController.create = (req, res) => {
-  var salt = bcrypt.genSaltSync(saltRounds);
-  var hash = bcrypt.hashSync(req.body.password, salt);
-  req.body.password = hash;
-  User.create(req.body)
+
+  bcrypt.hash(req.body.password,saltRounds, function(err, hash){
+    /*TODO
+      1. move this code to service
+      2. normalize email: remove blanck mark
+      3. validate email format
+    */
+    var auth = {};
+    auth.email = req.body.email;
+    auth.accessToken = hash;
+    Auth.create(auth);
+    req.body.password = hash;
+
+    //TODO ignore pwd attribute in json response. May be we should use a mapper.
+    User.create(req.body)
     .then((user) => res.json(user));
+  });
 };
 
 UserController.retrieve = (req, res) => {
