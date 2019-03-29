@@ -25,6 +25,7 @@
     "debug": "~2.6.9",
     "express": "^4.16.4",
     "morgan": "~1.9.0",
+    "normalize-email": "^1.1.1",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
     "rand-token": "^0.4.0",

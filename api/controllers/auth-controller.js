@@ -2,13 +2,14 @@
 
 var { Auth, User } = require('../models');
 var { AuthService } = require('../services');
+var { EmailUtils } = require('../utils');
 var { bcrypt } = require('../config/dependencies');
 var AuthController = {};
 AuthController.name = 'AuthController';
 
-//TODO move logic to auth service
 AuthController.login = (req, res) => {
-    User.findOne({ where: {email: req.body.email} })
+    var email = EmailUtils.normalize(req.body.email);
+    User.findOne({ where: {email} })
         .then( user => {
             if (user) {
                 bcrypt.compare(req.body.password, user.password, function(err,eq) {

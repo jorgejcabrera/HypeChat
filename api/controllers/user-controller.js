@@ -2,9 +2,12 @@
 
 var { User, Auth } = require('../models');
 var { AuthService } = require('../services');
+var { EmailUtils } = require('../utils');
+
 var { bcrypt } = require('../config/dependencies');
 
 const saltRounds = 10;
+
 var UserController = {};
 
 UserController.name = 'UserController';
@@ -12,12 +15,8 @@ UserController.name = 'UserController';
 UserController.create = (req, res) => {
 
   bcrypt.hash(req.body.password,saltRounds, function(err, hash){
-    /*TODO
-      1. normalize email: remove blanck mark
-      2. validate email format
-    */
+    req.body.email = EmailUtils.normalize(req.body.email);
     req.body.password = hash;
-
     //TODO ignore pwd attribute in json response. May be we should use a mapper.
     User.create(req.body)
     .then((user) => {

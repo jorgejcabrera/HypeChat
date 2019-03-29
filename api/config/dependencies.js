@@ -13,4 +13,5 @@ module.exports = {
   logger: require('morgan'),
   bcrypt: require('bcrypt'),
   randtoken: require('rand-token'),
+  normalizeemail: require('normalize-email'),
 };
