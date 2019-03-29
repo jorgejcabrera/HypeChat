@@ -12,6 +12,9 @@ AuthController.login = (req, res) => {
     User.findOne({ where: {email} })
         .then( user => {
             if (user) {
+                /*TODO
+                    1- before create a new access token, we should expire (delete) previous token  
+                */
                 bcrypt.compare(req.body.password, user.password, function(err,eq) {
                     if (eq) {
                         Auth.create(AuthService.create(req.body.email))

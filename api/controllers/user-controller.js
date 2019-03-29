@@ -3,27 +3,38 @@
 var { User, Auth } = require('../models');
 var { AuthService } = require('../services');
 var { EmailUtils } = require('../utils');
-
 var { bcrypt } = require('../config/dependencies');
 
 const saltRounds = 10;
-
 var UserController = {};
-
 UserController.name = 'UserController';
 
 UserController.create = (req, res) => {
-
-  bcrypt.hash(req.body.password,saltRounds, function(err, hash){
-    req.body.email = EmailUtils.normalize(req.body.email);
-    req.body.password = hash;
-    //TODO ignore pwd attribute in json response. May be we should use a mapper.
-    User.create(req.body)
+  var email = EmailUtils.normalize(req.body.email);
+  User.findOne({ where: {email} })
     .then((user) => {
-      Auth.create(AuthService.create(req.body.email));
-      res.json(user)
-    });
-  });
+      if (user) {
+        /*TODO 
+          1- return error message: "User already exists."
+          2- log error
+        */
+        res.status(400).send();
+      } else {
+        bcrypt.hash(req.body.password,saltRounds, function(err, hash){
+          req.body.password = hash;
+          req.body.email = email;
+          /*TODO 
+           1- ignore pwd attribute in json response. May be we should use a mapper, 
+           or create dto for private and public data.
+          */
+          User.create(req.body)
+          .then((user) => {
+            Auth.create(AuthService.create(email));
+            res.json(user)
+          });
+        });
+      }
+    });    
 };
 
 UserController.retrieve = (req, res) => {
