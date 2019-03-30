@@ -11,14 +11,20 @@ module.exports = {
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
-      // TODO: define how to store images first.
-      // image: {
-      //   type: type.STRING,
-      // },
+      // TODO: define how to store images. 
+      // For now let's just use an external URL.
+      image: {
+        allowNull: false,
+        type: type.STRING,
+        validate: {
+            isUrl: true,
+        }
+      },
       // TODO: check how to store the location.
       location: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       // TODO: add relation to users.
@@ -30,6 +36,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       welcomeMessage: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       // TODO: Active users
