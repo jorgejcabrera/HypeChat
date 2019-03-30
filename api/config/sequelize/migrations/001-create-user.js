@@ -17,6 +17,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      isAdmin: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,

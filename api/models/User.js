@@ -12,6 +12,11 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
+    //TODO this attribute must not be updateable
+    isAdmin: {
+      type: type.BOOLEAN,
+      allowNull: false,
+    },
     lastName: {
       allowNull: false,
       type: type.STRING,
