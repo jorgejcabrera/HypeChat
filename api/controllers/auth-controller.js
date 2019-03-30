@@ -7,37 +7,34 @@ var { bcrypt } = require('../config/dependencies');
 var AuthController = {};
 AuthController.name = 'AuthController';
 
-AuthController.login = (req, res) => {
+AuthController.login = async (req, res) => {
   var email = EmailUtils.normalize(req.body.email);
-  User.findOne({ where: {email} })
-    .then(user => {
-      if (user) {
-        bcrypt.compare(req.body.password, user.password, function(err, eq) {
-          if (eq) {
-            Auth.destroy(({ where: {email} }));
-            Auth.create(AuthService.create(user.id))
-              .then((auth) => res.json(auth));
-          } else {
-            res.status(403).send('Access denied.');
-          }
-        });
-      } else {
-        res.status(404).send('User not found.');
-      }
-    });
+  var user = await User.findOne({ where: {email} });
+
+  if (user) {
+    var eq = await bcrypt.compare(req.body.password, user.password);
+    if (eq) {
+      Auth.destroy(({ where: {email} }));
+      var auth = await Auth.create(AuthService.create(user.id));
+      res.json(auth);
+    } else {
+      res.status(403).send('Access denied.');
+    }
+  } else {
+    res.status(404).send('User not found.');
+  }
 };
 
-AuthController.logout = (req, res) => {
+AuthController.logout = async (req, res) => {
   var accessToken = req.body.accessToken;
-  Auth.findOne({ where: {accessToken} })
-    .then(auth => {
-      if (auth) {
-        Auth.destroy(({ where: {accessToken} }));
-        res.status(200).send(auth.userId + ' logout');
-      } else {
-        res.status(404).send('User not found.');
-      }
-    });
+  var auth = await Auth.findOne({ where: {accessToken} });
+
+  if (auth) {
+    Auth.destroy(({ where: {accessToken} }));
+    res.status(200).send(auth.userId + ' logout');
+  } else {
+    res.status(404).send('User not found.');
+  }
 };
 
 module.exports = AuthController;
