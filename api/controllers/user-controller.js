@@ -12,35 +12,29 @@ UserController.name = 'UserController';
 /* TODO
   1- maybe we should validate all user pwd: at least n number etc.
 */
-UserController.create = (req, res) => {
+UserController.create = async(req, res) => {
   var email = EmailUtils.normalize(req.body.email);
-  User.findOne({ where: {email} })
-    .then((user) => {
-      if (user) {
-        res.status(400).send('User already exists.');
-      } else {
-        bcrypt.hash(req.body.password, saltRounds, function(err, hash){
-          req.body.password = hash;
-          req.body.email = email;
-          User.create(req.body)
-            .then((user) => {
-              Auth.create(AuthService.create(user.id));
-              res.json(user);
-            });
-        });
-      }
-    });
+  var user = await User.findOne({ where: {email} });
+
+  if (user) {
+    res.status(400).send('User already exists.');
+  } else {
+    var hash = await bcrypt.hash(req.body.password, saltRounds);
+    req.body.password = hash;
+    req.body.email = email;
+    user = await User.create(req.body);
+    Auth.create(AuthService.create(user.id));
+    res.json(user);
+  }
 };
 
-UserController.retrieve = (req, res) => {
-  User.findByPk(req.params.userId)
-    .then((user) => {
-      if (user) {
-        res.json(user);
-      } else {
-        res.status(404).send();
-      }
-    });
+UserController.retrieve = async(req, res) => {
+  var user = await User.findByPk(req.params.userId);
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).send();
+  }
 };
 
 UserController.update = (req, res) => {

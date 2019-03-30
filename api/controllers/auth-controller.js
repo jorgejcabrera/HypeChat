@@ -7,7 +7,7 @@ var { bcrypt } = require('../config/dependencies');
 var AuthController = {};
 AuthController.name = 'AuthController';
 
-AuthController.login = async (req, res) => {
+AuthController.login = async(req, res) => {
   var email = EmailUtils.normalize(req.body.email);
   var user = await User.findOne({ where: {email} });
 
@@ -25,7 +25,7 @@ AuthController.login = async (req, res) => {
   }
 };
 
-AuthController.logout = async (req, res) => {
+AuthController.logout = async(req, res) => {
   var accessToken = req.body.accessToken;
   var auth = await Auth.findOne({ where: {accessToken} });
 
