@@ -11,16 +11,16 @@ module.exports = {
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
-      // TODO: define how to store images. 
+      // TODO: define how to store images.
       // For now let's just use an external URL.
       image: {
         allowNull: false,
-        type: type.STRING,
+        type: Sequelize.STRING,
         validate: {
-            isUrl: true,
-        }
+          isUrl: true,
+        },
       },
       // TODO: check how to store the location.
       location: {
