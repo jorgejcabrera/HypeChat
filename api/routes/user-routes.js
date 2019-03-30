@@ -1,13 +1,13 @@
 'use strict';
 
-var { UserController } = require('../controllers');
+var { UserController, MiddlewareController } = require('../controllers');
 
 module.exports = (app) => {
   app.route('/users')
     .post(UserController.create);
 
   app.route('/users/:userId')
-    .get(UserController.retrieve)
-    .put(UserController.update)
-    .delete(UserController.delete);
+    .get(MiddlewareController.isUserAuthenticated, UserController.retrieve)
+    .put(MiddlewareController.isUserAuthenticated, UserController.update)
+    .delete(MiddlewareController.isUserAuthenticated, UserController.delete);
 };

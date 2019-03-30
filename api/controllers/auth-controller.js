@@ -26,7 +26,7 @@ AuthController.login = async(req, res) => {
 };
 
 AuthController.logout = async(req, res) => {
-  var accessToken = req.body.accessToken;
+  var accessToken = req.headers['x-auth'];
   var auth = await Auth.findOne({ where: {accessToken} });
 
   if (auth) {

@@ -1,33 +1,21 @@
 'use strict';
 
+var { Auth } = require('../models');
+
 var MiddlewareController = {};
 MiddlewareController.name = 'MiddlewareController';
 
-MiddlewareController.isUserAuthenticated = (req, res, next) => {
-  console.log('paso por el middleware');
-  next();
-};
-
-/*
-const isUserAuthenticated = (req, res, next) => {
-  var accessToken = req.headers['X-Auth'];
-
-  console.log('paso por el middleware');
+MiddlewareController.isUserAuthenticated = async(req, res, next) => {
+  var accessToken = req.headers['x-auth'];
   if (typeof accessToken !== 'undefined') {
-    Auth.findOne({ where: {accessToken} })
-      .then(auth => {
-        if (auth) {
-          res.locals.auth = {
-            auth,
-          };
-        } else {
-          res.status(403).send('Invalid token.');
-        }
-      });
-    next();
+    var auth = await Auth.findOne({ where: {accessToken} });
+    if (!auth || req.params.userId !== auth.userId) {
+      res.status(401).send('Unauthorized.');
+    }
   } else {
     res.status(401).send('Unauthorized.');
   }
-};*/
+  next();
+};
 
 module.exports = MiddlewareController;
