@@ -6,45 +6,45 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER,
+      type: type.INTEGER,
     },
     name: {
       allowNull: false,
-      type: Sequelize.STRING
+      type: type.STRING,
     },
-    // TODO: define how to store images. 
+    // TODO: define how to store images.
     // For now let's just use an external URL.
     image: {
       allowNull: false,
       type: type.STRING,
       validate: {
-          isUrl: true,
-      }
+        isUrl: true,
+      },
     },
     // TODO: check how to store the location.
     location: {
       allowNull: false,
-      type: Sequelize.STRING,
+      type: type.STRING,
     },
     // TODO: add relation to users.
     creator: {
       allowNull: false,
-      type: Sequelize.STRING,
+      type: type.STRING,
     },
     description: {
-      type: Sequelize.STRING,
+      type: type.STRING,
     },
     welcomeMessage: {
       allowNull: false,
-      type: Sequelize.STRING,
+      type: type.STRING,
     },
     // TODO: Active users
   }, {
     hooks: {
-        beforeCreate: (organization, options) => {
-            organization.welcomeMessage = "Welcome to " + organization.name + "!";
-        },
-    }
+      beforeCreate: (organization, options) => {
+        organization.welcomeMessage = 'Welcome to ' + organization.name + '!';
+      },
+    },
   });
 
   Organization.associate = (models) => {
