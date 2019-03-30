@@ -2,6 +2,12 @@
 
 var MiddlewareController = {};
 MiddlewareController.name = 'MiddlewareController';
+
+MiddlewareController.isUserAuthenticated = (req, res, next) => {
+  console.log('paso por el middleware');
+  next();
+};
+
 /*
 const isUserAuthenticated = (req, res, next) => {
   var accessToken = req.headers['X-Auth'];

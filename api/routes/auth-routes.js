@@ -1,11 +1,11 @@
 'use strict';
 
-var { AuthController } = require('../controllers');
+var { AuthController, MiddlewareController } = require('../controllers');
 
 module.exports = (app) => {
   app.route('/login')
     .post(AuthController.login);
 
   app.route('/logout')
-    .post(AuthController.logout);
+    .post(MiddlewareController.isUserAuthenticated, AuthController.logout);
 };
