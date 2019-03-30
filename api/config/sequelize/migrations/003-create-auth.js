@@ -1,5 +1,10 @@
 'use strict';
 
+/* TODO 
+  1- create access token index
+  2- create fk
+  3- maybe we can use (userId,accessToken) like pk
+  */
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Auth', {
@@ -9,12 +14,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      email: {
-        type: Sequelize.STRING,
+      userId: {
         allowNull: false,
-        validate: {
-          isEmail: true,
-        },
+        type: Sequelize.INTEGER,
       },
       accessToken: {
         type: Sequelize.STRING,

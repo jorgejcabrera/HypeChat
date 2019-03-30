@@ -7,13 +7,10 @@ module.exports = (sequelize, type) => {
       autoIncrement: true,
       primaryKey: true,
       type: type.INTEGER,
-    },
-    email: {
-      type: type.STRING,
+    },    
+    userId: {
+      type: type.INTEGER,
       allowNull: false,
-      validate: {
-        isEmail: true,
-      },
     },
     accessToken: {
       type: type.STRING,

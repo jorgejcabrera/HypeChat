@@ -15,8 +15,8 @@ AuthController.login = (req, res) => {
         bcrypt.compare(req.body.password, user.password, function(err, eq) {
           if (eq) {
             Auth.destroy(({ where: {email} }));
-            Auth.create(AuthService.create(email))
-              .then((auth) => res.json(auth.accessToken));
+            Auth.create(AuthService.create(user.id))
+              .then((auth) => res.json(auth));
           } else {
             res.status(403).send('Access denied.');
           }
@@ -27,19 +27,35 @@ AuthController.login = (req, res) => {
     });
 };
 
-// TODO create access token index
 AuthController.logout = (req, res) => {
   var accessToken = req.body.accessToken;
   Auth.findOne({ where: {accessToken} })
     .then(auth => {
       if (auth) {
-        var email = auth.email;
         Auth.destroy(({ where: {accessToken} }));
-        res.status(200).send(email + ' logout');
+        res.status(200).send(auth.userId + ' logout');
       } else {
         res.status(404).send('User not found.');
       }
     });
 };
 
+// TODO this method sould be use by the middleware
+AuthController.checkToken = (req, res, next) => {
+  var accessToken = req.headers['X-Auth'];
+
+  if (typeof accessToken !== 'undefined') {
+    Auth.findOne({ where: {accessToken} })
+      .then(auth => {
+        if (auth) {
+          req.body.email = auth.email;
+        } else {
+          res.status(404).send('User not found.');
+        }
+      });
+    next();
+  } else {
+    res.sendStatus(403);
+  }
+};
 module.exports = AuthController;

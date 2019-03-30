@@ -21,7 +21,7 @@ UserController.create = (req, res) => {
           req.body.email = email;
           User.create(req.body)
             .then((user) => {
-              Auth.create(AuthService.create(email));
+              Auth.create(AuthService.create(user.id));
               res.json(user);
             });
         });
@@ -48,22 +48,4 @@ UserController.delete = (req, res) => {
   res.send('User deleted');
 };
 
-// TODO this method sould be use by the middleware
-UserController.checkToken = (req, res, next) => {
-  var accessToken = req.headers['X-Auth'];
-
-  if (typeof accessToken !== 'undefined') {
-    Auth.findOne({ where: {accessToken} })
-      .then(auth => {
-        if (auth) {
-          req.body.email = auth.email;
-        } else {
-          res.status(404).send('User not found.');
-        }
-      });
-    next();
-  } else {
-    res.sendStatus(403);
-  }
-};
 module.exports = UserController;
