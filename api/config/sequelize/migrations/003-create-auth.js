@@ -1,6 +1,6 @@
 'use strict';
 
-/* TODO 
+/* TODO
   1- create access token index
   2- create fk
   3- maybe we can use (userId,accessToken) like pk

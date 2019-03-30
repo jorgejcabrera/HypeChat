@@ -9,6 +9,9 @@ const saltRounds = 10;
 var UserController = {};
 UserController.name = 'UserController';
 
+/* TODO
+  1- maybe we should validate all user pwd: at least n number etc.
+*/
 UserController.create = (req, res) => {
   var email = EmailUtils.normalize(req.body.email);
   User.findOne({ where: {email} })

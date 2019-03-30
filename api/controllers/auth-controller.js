@@ -40,22 +40,4 @@ AuthController.logout = (req, res) => {
     });
 };
 
-// TODO this method sould be use by the middleware
-AuthController.checkToken = (req, res, next) => {
-  var accessToken = req.headers['X-Auth'];
-
-  if (typeof accessToken !== 'undefined') {
-    Auth.findOne({ where: {accessToken} })
-      .then(auth => {
-        if (auth) {
-          req.body.email = auth.email;
-        } else {
-          res.status(404).send('User not found.');
-        }
-      });
-    next();
-  } else {
-    res.sendStatus(403);
-  }
-};
 module.exports = AuthController;

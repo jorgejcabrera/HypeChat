@@ -7,7 +7,7 @@ module.exports = (sequelize, type) => {
       autoIncrement: true,
       primaryKey: true,
       type: type.INTEGER,
-    },    
+    },
     userId: {
       type: type.INTEGER,
       allowNull: false,
