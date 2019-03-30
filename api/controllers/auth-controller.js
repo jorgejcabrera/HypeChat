@@ -12,26 +12,34 @@ AuthController.login = (req, res) => {
   User.findOne({ where: {email} })
     .then(user => {
       if (user) {
-        /* TODO
-                    1- before create a new access token,
-                    we should expire (delete) previous token
-                */
         bcrypt.compare(req.body.password, user.password, function(err, eq) {
           if (eq) {
-            Auth.create(AuthService.create(req.body.email))
+            Auth.destroy(({ where: {email} }));
+            Auth.create(AuthService.create(email))
               .then((auth) => res.json(auth.accessToken));
           } else {
-            res.status(403).send();
+            res.status(403).send('Access denied.');
           }
         });
       } else {
-        res.status(404).send();
+        res.status(404).send('User not found.');
       }
     });
 };
 
+// TODO create access token index
 AuthController.logout = (req, res) => {
-  res.send('logout');
+  var accessToken = req.body.accessToken;
+  Auth.findOne({ where: {accessToken} })
+    .then(auth => {
+      if (auth) {
+        var email = auth.email;
+        Auth.destroy(({ where: {accessToken} }));
+        res.status(200).send(email + ' logout');
+      } else {
+        res.status(404).send('User not found.');
+      }
+    });
 };
 
 module.exports = AuthController;

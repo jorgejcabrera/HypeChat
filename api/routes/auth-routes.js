@@ -6,6 +6,6 @@ module.exports = (app) => {
   app.route('/login')
     .post(AuthController.login);
 
-  app.route('/:userId/logout')
-    .get(AuthController.logout);
+  app.route('/logout')
+    .post(AuthController.logout);
 };

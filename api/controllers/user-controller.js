@@ -14,20 +14,11 @@ UserController.create = (req, res) => {
   User.findOne({ where: {email} })
     .then((user) => {
       if (user) {
-        /* TODO
-          1- return error message: "User already exists."
-          2- log error
-        */
-        res.status(400).send();
+        res.status(400).send('User already exists.');
       } else {
         bcrypt.hash(req.body.password, saltRounds, function(err, hash){
           req.body.password = hash;
           req.body.email = email;
-          /* TODO
-           1- ignore pwd attribute in json response.
-           May be we should use a mapper,
-           or create dto for private and public data.
-          */
           User.create(req.body)
             .then((user) => {
               Auth.create(AuthService.create(email));
@@ -57,4 +48,22 @@ UserController.delete = (req, res) => {
   res.send('User deleted');
 };
 
+// TODO this method sould be use by the middleware
+UserController.checkToken = (req, res, next) => {
+  var accessToken = req.headers['X-Auth'];
+
+  if (typeof accessToken !== 'undefined') {
+    Auth.findOne({ where: {accessToken} })
+      .then(auth => {
+        if (auth) {
+          req.body.email = auth.email;
+        } else {
+          res.status(404).send('User not found.');
+        }
+      });
+    next();
+  } else {
+    res.sendStatus(403);
+  }
+};
 module.exports = UserController;
