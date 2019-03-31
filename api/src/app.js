@@ -42,7 +42,6 @@ app.use(async(req, res, next) => {
       req.user = auth.user.toJSON();
     }
   }
-  console.log(req.user);
   next();
 });
 

@@ -1,12 +1,8 @@
 'use strict';
 
-var { User, Auth } = require('../models');
-var { AuthService } = require('../services');
-var { EmailUtils } = require('../utils');
+var { UserService, AuthService } = require('../services');
 var { UserMapper } = require('../mappers');
-var { bcrypt } = require('../config/dependencies');
 
-const saltRounds = 10;
 var UserController = {};
 UserController.name = 'UserController';
 
@@ -14,25 +10,21 @@ UserController.name = 'UserController';
   1- maybe we should validate all user pwd: at least n number etc.
 */
 UserController.create = async(req, res) => {
-  var email = EmailUtils.normalize(req.body.email);
-  var user = await User.findOne({ where: {email} });
-
+  var user = await UserService.create(req.body);
   if (user) {
-    res.status(400).send('User already exists.');
+    var auth = await AuthService.create(user.id);
+    user = UserMapper.map(user, auth);
+    res.json(user);
   } else {
-    var hash = await bcrypt.hash(req.body.password, saltRounds);
-    req.body.password = hash;
-    req.body.email = email;
-    user = await User.create(req.body);
-    var auth = await Auth.create(AuthService.create(user.id));
-    res.json(UserMapper.map(user, auth));
+    res.status(400).send('User already exists.');
   }
 };
 
 UserController.retrieve = async(req, res) => {
-  var user = await User.findByPk(req.params.userId);
+  var user = await UserService.getById(req.params.userId);
   if (user) {
-    res.json(UserMapper.map(user));
+    user = UserMapper.map(user);
+    res.json(user);
   } else {
     res.status(404).send();
   }
