@@ -32,7 +32,7 @@ UserController.create = async(req, res) => {
 UserController.retrieve = async(req, res) => {
   var user = await User.findByPk(req.params.userId);
   if (user) {
-    res.json(user);
+    res.json(UserMapper.map(user));
   } else {
     res.status(404).send();
   }
