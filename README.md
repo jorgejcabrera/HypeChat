@@ -23,7 +23,7 @@ The API uses Sequelize to connect to its PostgreSQL DB, and changes are handled 
 Make sure that all tests pass and there are no code style errors by running `docker-compose exec app npm test` before pushing.
 
 ### Architecture
-![alt text](https://github.com/jorgejcabrera/Call-center/blob/master/documentation/arquitectura.png)
+![alt text](https://github.com/jorgejcabrera/HypeChat/blob/login/api/img/hypechat-arquitecture.png)
 
 ## Contributors
 - Jorge Cabrera
