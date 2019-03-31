@@ -25,7 +25,7 @@ UserController.create = async(req, res) => {
     req.body.email = email;
     user = await User.create(req.body);
     var auth = await Auth.create(AuthService.create(user.id));
-    res.json(UserMapper.map(user,auth));
+    res.json(UserMapper.map(user, auth));
   }
 };
 

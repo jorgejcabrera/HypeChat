@@ -1,10 +1,10 @@
 'use strict';
 
-var chai = require('chai');
-var chaiHttp = require('chai-http');
-var app = require('../api/app');
+// var chai = require('chai');
+// var chaiHttp = require('chai-http');
+/* var app = require('../src/app');
 
-chai.use(chaiHttp);
+ chai.use(chaiHttp);
 chai.should();
 
 describe('Basic Mocha String Test', () => {
@@ -30,4 +30,4 @@ describe('Sample endpoint test', () => {
         });
     });
   });
-});
+});*/

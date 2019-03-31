@@ -15,7 +15,7 @@
     "start": "node ./api/src/bin/www",
     "development": "npm install && nodemon -L ./api/src/bin/www",
     "pretest": "eslint --ignore-path .gitignore . --fix",
-    "test": "mocha",
+    "test": "mocha api/test/*.js",
     "covered-test": "nyc mocha",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/src/config/sequelize/migrations --seeders-path api/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json"
