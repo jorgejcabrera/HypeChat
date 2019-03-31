@@ -3,6 +3,7 @@
 var { User, Auth } = require('../models');
 var { AuthService } = require('../services');
 var { EmailUtils } = require('../utils');
+var { UserMapper } = require('../mappers');
 var { bcrypt } = require('../config/dependencies');
 
 const saltRounds = 10;
@@ -23,8 +24,8 @@ UserController.create = async(req, res) => {
     req.body.password = hash;
     req.body.email = email;
     user = await User.create(req.body);
-    Auth.create(AuthService.create(user.id));
-    res.json(user);
+    var auth = await Auth.create(AuthService.create(user.id));
+    res.json(UserMapper.map(user,auth));
   }
 };
 
