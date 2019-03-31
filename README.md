@@ -3,8 +3,12 @@
 [![Build Status](https://travis-ci.com/jorgejcabrera/HypeChat.svg?branch=master)](https://travis-ci.com/jorgejcabrera/HypeChat)
 
 ## Run
+<<<<<<< HEAD
 * `docker-compose up -d`
 * `docker-compose exec app npm run db:migrate`
+=======
+* `docker-compose up`
+>>>>>>> bad97cdff1ae8496b3bcc9e6f9f0364ced36a932
 
 The API will listen on `localhost:3000`, and reload on any changes to the source.
 
@@ -14,6 +18,10 @@ The API uses Sequelize to connect to its PostgreSQL DB, and changes are handled 
 * Create a new migration that contains the changes to be added.
 * Implement those changes in the Sequelize model.
 * Run migration (`docker-compose exec app npm run db:migrate`).
+
+## Installing new packages
+* If it's a package that'll be needed in production: `docker-compose exec app npm install --save PACKAGE_NAME`
+* If it's a dev-only package (such as test frameworks): `docker-compose exec app npm install --save-dev PACKAGE_NAME`
 
 ## Before pushing
 Make sure that all tests pass and there are no code style errors by running `docker-compose exec app npm test` before pushing.

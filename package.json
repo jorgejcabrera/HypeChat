@@ -12,8 +12,13 @@
   },
   "homepage": "https://github.com/jorgejcabrera/HypeChat#readme",
   "scripts": {
+<<<<<<< HEAD
     "start": "node ./api/src/bin/www",
     "development": "npm install && nodemon -L ./api/src/bin/www",
+=======
+    "start": "node ./api/bin/www",
+    "development": "nodemon -L ./api/bin/www",
+>>>>>>> bad97cdff1ae8496b3bcc9e6f9f0364ced36a932
     "pretest": "eslint --ignore-path .gitignore . --fix",
     "test": "mocha",
     "covered-test": "nyc mocha",
