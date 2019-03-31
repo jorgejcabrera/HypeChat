@@ -3,12 +3,8 @@
 [![Build Status](https://travis-ci.com/jorgejcabrera/HypeChat.svg?branch=master)](https://travis-ci.com/jorgejcabrera/HypeChat)
 
 ## Run
-<<<<<<< HEAD
 * `docker-compose up -d`
 * `docker-compose exec app npm run db:migrate`
-=======
-* `docker-compose up`
->>>>>>> bad97cdff1ae8496b3bcc9e6f9f0364ced36a932
 
 The API will listen on `localhost:3000`, and reload on any changes to the source.
 
