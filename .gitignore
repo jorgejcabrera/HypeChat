@@ -59,8 +59,12 @@ typings/
 # dotenv environment variables file
 .env
 
+*DS_Store
 .idea/
 .iml
 *iml
 # next.js build output
 .next
+
+# sublime files
+*.sublime*

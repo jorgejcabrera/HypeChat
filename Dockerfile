@@ -3,7 +3,7 @@ FROM node:8
 ENV HOME=/usr/src/app
 
 COPY package.json package-lock.json $HOME/
-COPY api/config $HOME/api/config
+COPY api/src/config $HOME/api/src/config
 
 WORKDIR $HOME
 RUN npm install

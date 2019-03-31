@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.com/jorgejcabrera/HypeChat.svg?branch=master)](https://travis-ci.com/jorgejcabrera/HypeChat)
 
 ## Run
-* `docker-compose up`
+* `docker-compose up -d`
+* `docker-compose exec app npm run db:migrate`
 
 The API will listen on `localhost:3000`, and reload on any changes to the source.
 
@@ -20,6 +21,9 @@ The API uses Sequelize to connect to its PostgreSQL DB, and changes are handled 
 
 ## Before pushing
 Make sure that all tests pass and there are no code style errors by running `docker-compose exec app npm test` before pushing.
+
+## Architecture
+![alt text](https://github.com/jorgejcabrera/HypeChat/blob/login/api/img/hypechat-arquitecture.png)
 
 ## Contributors
 - Jorge Cabrera

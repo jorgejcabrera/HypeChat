@@ -1,6 +1,8 @@
 'use strict';
 
 var Sequelize = require('sequelize');
+var swaggerUi = require('swagger-ui-express');
+var swaggerDocument = require('./swagger/config.json');
 var env = process.env.NODE_ENV || 'development';
 Sequelize.config = require('./sequelize/config.json')[env];
 
@@ -11,4 +13,9 @@ module.exports = {
   Sequelize: Sequelize,
   express: require('express'),
   logger: require('morgan'),
+  bcrypt: require('bcrypt'),
+  randtoken: require('rand-token'),
+  normalizeemail: require('normalize-email'),
+  swaggerUi: swaggerUi,
+  swaggerDocument: swaggerDocument,
 };

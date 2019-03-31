@@ -12,23 +12,27 @@
   },
   "homepage": "https://github.com/jorgejcabrera/HypeChat#readme",
   "scripts": {
-    "start": "node ./api/bin/www",
-    "development": "nodemon -L ./api/bin/www",
-    "pretest": "eslint --ignore-path .gitignore . --fix",
-    "test": "mocha",
-    "covered-test": "nyc mocha",
+    "start": "node ./api/src/bin/www",
+    "development": "npm install && nodemon -L ./api/src/bin/www",
+    "pretest": "eslint . --fix",
+    "test": "mocha api/test/**/*",
+    "covered-test": "nyc mocha api/test/**/*",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/config/sequelize/migrations --seeders-path api/config/sequelize/seeders --models-path api/models --config api/config/sequelize/config.json"
+    "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/src/config/sequelize/migrations --seeders-path api/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json"
   },
   "dependencies": {
+    "bcrypt": "^3.0.5",
     "debug": "~2.6.9",
     "express": "^4.16.4",
     "morgan": "~1.9.0",
+    "normalize-email": "^1.1.1",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
+    "rand-token": "^0.4.0",
     "request": "^2.88.0",
     "sequelize": "^5.1.0",
-    "sequelize-cli": "^5.2.0"
+    "sequelize-cli": "^5.2.0",
+    "swagger-ui-express": "^4.0.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -38,6 +42,7 @@
     "eslint-config-strongloop": "^2.1.0",
     "mocha": "^6.0.2",
     "nodemon": "^1.18.10",
-    "nyc": "^13.3.0"
+    "nyc": "^13.3.0",
+    "sinon": "^7.3.1"
   }
 }
