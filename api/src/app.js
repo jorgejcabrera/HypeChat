@@ -1,6 +1,11 @@
 'use strict';
 
-var { express, logger, swaggerUi, swaggerDocument } = require('./config/dependencies');
+var {
+  express,
+  logger,
+  swaggerUi,
+  swaggerDocument,
+} = require('./config/dependencies');
 
 var app = express();
 
