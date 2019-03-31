@@ -10,19 +10,18 @@ AuthController.name = 'AuthController';
 AuthController.login = async(req, res) => {
   var email = EmailUtils.normalize(req.body.email);
   var user = await User.findOne({ where: {email} });
+
   if (user) {
     var userId = user.id;
     var eq = await bcrypt.compare(req.body.password, user.password);
     if (eq) {
-      Auth.destroy(({ where: {userId} }));
-      var auth = await Auth.create(AuthService.create(user.id));
-      res.json(auth);
-    } else {
-      res.status(400).send('Invalid user or password.');
+      await Auth.destroy(({ where: {userId} }));
+      var auth = await Auth.create(AuthService.create(userId));
+      return res.json(auth);
     }
-  } else {
-    res.status(400).send('Invalid user or password.');
   }
+
+  res.status(400).send('Invalid user or password.');
 };
 
 AuthController.logout = async(req, res) => {
@@ -30,7 +29,7 @@ AuthController.logout = async(req, res) => {
   var auth = await Auth.findOne({ where: {accessToken} });
 
   if (auth) {
-    Auth.destroy(({ where: {accessToken} }));
+    await Auth.destroy(({ where: {accessToken} }));
     res.status(200).send(auth.userId + ' logout');
   } else {
     res.status(404).send('User not found.');
