@@ -4,7 +4,6 @@
 
 ## Run
 * `docker-compose up -d`
-* `docker-compose exec app npm run db:migrate`
 
 The API will listen on `localhost:3000`, and reload on any changes to the source.
 
