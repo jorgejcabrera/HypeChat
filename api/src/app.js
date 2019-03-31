@@ -1,12 +1,13 @@
 'use strict';
 
-var { express, logger } = require('./config/dependencies');
+var { express, logger, swaggerUi, swaggerDocument } = require('./config/dependencies');
 
 var app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Enable CORS.
 app.use(function(req, res, next) {
