@@ -2,11 +2,11 @@
 
 var { FileUtils } = require('../utils');
 
-var services = {};
+var middleware = {};
 
 FileUtils.processFilesInDir(__dirname, __filename, (filepath) => {
-  var service = require(filepath);
-  services[service.name] = service;
+  var mid = require(filepath);
+  middleware[mid.name] = mid;
 });
 
-module.exports = services;
+module.exports = middleware;

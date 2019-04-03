@@ -7,7 +7,7 @@ var {
   swaggerDocument,
 } = require('./config/dependencies');
 
-var { Auth, User } = require('./models');
+var { CorsHandler, ErrorHandler, AuthHandler } = require('./middleware');
 
 var app = express();
 
@@ -17,34 +17,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Enable CORS.
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, X-Auth, X-Client'
-  );
-  next();
-});
+app.use(CorsHandler.cors);
 
 // Fetch user and add it to request.
-app.use(async(req, res, next) => {
-  var accessToken = req.headers['x-auth'];
-  if (accessToken) {
-    var auth = await Auth.findOne({
-      where: { accessToken },
-      include: [
-        { model: User, as: 'user' },
-      ],
-    });
-    if (auth) {
-      req.user = auth.user.toJSON();
-    }
-  }
-  next();
-});
+app.use(AuthHandler.authenticate);
 
 require('./routes')(app);
+
+// Handle any errors.
+app.use(ErrorHandler.default);
 
 module.exports = app;

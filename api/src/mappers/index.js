@@ -1,10 +1,10 @@
 'use strict';
 
-var { processFilesInDir } = require('../bin/helpers');
+var { FileUtils } = require('../utils');
 
 var mappers = {};
 
-processFilesInDir(__dirname, __filename, (filepath) => {
+FileUtils.processFilesInDir(__dirname, __filename, (filepath) => {
   var mapper = require(filepath);
   mappers[mapper.name] = mapper;
 });
