@@ -1,6 +1,6 @@
 'use strict';
 
-var { processFilesInDir } = require('../bin/helpers');
+var { FileUtils } = require('../utils');
 var { Sequelize } = require('../config/dependencies');
 var config = Sequelize.config;
 
@@ -21,7 +21,7 @@ if (config.use_env_variable) {
 
 var models = {};
 
-processFilesInDir(__dirname, __filename, (filepath) => {
+FileUtils.processFilesInDir(__dirname, __filename, (filepath) => {
   var model = sequelize.import(filepath);
   models[model.name] = model;
 });

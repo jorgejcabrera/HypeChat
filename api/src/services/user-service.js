@@ -17,6 +17,10 @@ UserService.create = async(userData) => {
     userData.password = await bcrypt.hash(userData.password, saltRounds);
     user = await User.create(userData);
     return user;
+  } else {
+    var e = new Error();
+    e.name = 'UserAlreadyExists';
+    throw e;
   }
 };
 

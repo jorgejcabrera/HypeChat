@@ -2,6 +2,9 @@
 
 var { fs, path } = require('../config/dependencies');
 
+var FileUtils = {};
+FileUtils.name = 'FileUtils';
+
 var shouldProcess = (baseFile, file) => {
   var isHidden = (file.indexOf('.') === 0);
   var isBaseFile = (file === path.basename(baseFile));
@@ -9,7 +12,7 @@ var shouldProcess = (baseFile, file) => {
   return !isHidden && !isBaseFile && isJson;
 };
 
-module.exports.processFilesInDir = (dirname, filename, process) => {
+FileUtils.processFilesInDir = (dirname, filename, process) => {
   fs.readdirSync(dirname)
     .filter(file => {
       return shouldProcess(filename, file);
@@ -18,3 +21,5 @@ module.exports.processFilesInDir = (dirname, filename, process) => {
       process(filepath);
     });
 };
+
+module.exports = FileUtils;

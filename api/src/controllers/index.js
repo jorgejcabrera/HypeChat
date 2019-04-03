@@ -1,10 +1,10 @@
 'use strict';
 
-var { processFilesInDir } = require('../bin/helpers');
+var { FileUtils } = require('../utils');
 
 var controllers = {};
 
-processFilesInDir(__dirname, __filename, (filepath) => {
+FileUtils.processFilesInDir(__dirname, __filename, (filepath) => {
   var controller = require(filepath);
   controllers[controller.name] = controller;
 });

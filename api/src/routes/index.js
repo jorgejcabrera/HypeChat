@@ -1,6 +1,6 @@
 'use strict';
 
-var { processFilesInDir } = require('../bin/helpers');
+var { FileUtils } = require('../utils');
 
 module.exports = (app) => {
   // Health check
@@ -9,7 +9,7 @@ module.exports = (app) => {
       res.send('pong');
     });
 
-  processFilesInDir(__dirname, __filename, (filepath) => {
+  FileUtils.processFilesInDir(__dirname, __filename, (filepath) => {
     require(filepath)(app);
   });
 };
