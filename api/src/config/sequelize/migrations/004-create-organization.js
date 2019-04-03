@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Organizations', {
+    return queryInterface.createTable('Organization', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -27,10 +27,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      // TODO: add relation to users.
-      creator: {
+      creatorId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
+        references: { model: 'User', key: 'id' },
       },
       description: {
         type: Sequelize.STRING,

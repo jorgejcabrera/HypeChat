@@ -26,10 +26,9 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
-    // TODO: add relation to users.
-    creator: {
+    creatorId: {
       allowNull: false,
-      type: type.STRING,
+      type: type.INTEGER,
     },
     description: {
       type: type.STRING,
@@ -49,6 +48,7 @@ module.exports = (sequelize, type) => {
 
   Organization.associate = (models) => {
     // Add any relations (foreign keys) here.
+    Organization.belongsTo(models.User, { as: 'creator', foreignKey: 'creatorId' })
   };
 
   return Organization;
