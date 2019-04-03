@@ -19,17 +19,11 @@ describe('Auth Routes Test', () => {
   });
 
   beforeEach(() => {
-    User.findOne.resetHistory();
-    Auth.create.resetHistory();
-    Auth.destroy.resetHistory();
-    bcrypt.compare.resetHistory();
+    sinon.resetHistory();
   });
 
   after(() => {
-    User.findOne.restore();
-    Auth.create.restore();
-    Auth.destroy.restore();
-    bcrypt.compare.restore();
+    sinon.restore();
   });
 
   describe('Login', () => {

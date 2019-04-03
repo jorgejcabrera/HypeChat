@@ -2,24 +2,24 @@
 
 var { FileUtils } = require('../utils');
 var { Sequelize } = require('../config/dependencies');
-var config = Sequelize.config;
 
 var sequelize;
-if (config.use_env_variable) {
+if (Sequelize.config.use_env_variable) {
   sequelize = new Sequelize(
-    process.env[config.use_env_variable],
-    config
+    process.env[Sequelize.config.use_env_variable],
+    Sequelize.config
   );
 } else {
   sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config
+    Sequelize.config.database,
+    Sequelize.config.username,
+    Sequelize.config.password,
+    Sequelize.config
   );
 }
 
 var models = {};
+models.Database = sequelize;
 
 FileUtils.processFilesInDir(__dirname, __filename, (filepath) => {
   var model = sequelize.import(filepath);

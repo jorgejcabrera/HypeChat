@@ -1,0 +1,13 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "id": 1,
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "johndoe@test.com",
+      "password": "hashedPassword",
+      "isAdmin": false
+    }
+  }
+]

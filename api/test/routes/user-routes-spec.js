@@ -17,17 +17,11 @@ describe('User Routes Test', () => {
   });
 
   beforeEach(() => {
-    User.findOne.resetHistory();
-    User.findByPk.resetHistory();
-    User.create.resetHistory();
-    Auth.create.resetHistory();
+    sinon.resetHistory();
   });
 
   after(() => {
-    User.findOne.restore();
-    User.findByPk.restore();
-    User.create.restore();
-    Auth.create.restore();
+    sinon.restore();
   });
 
   var userData = {

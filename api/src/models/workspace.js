@@ -40,7 +40,7 @@ module.exports = (sequelize, type) => {
     // TODO: Active users
   }, {
     hooks: {
-      beforeCreate: (workspace, options) => {
+      beforeValidate: (workspace, options) => {
         workspace.welcomeMessage = 'Welcome to ' + workspace.name + '!';
       },
     },
