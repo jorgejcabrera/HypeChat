@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (sequelize, type) => {
-  var Organization = sequelize.define('Organization', {
+  var Workspace = sequelize.define('Workspace', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -40,16 +40,16 @@ module.exports = (sequelize, type) => {
     // TODO: Active users
   }, {
     hooks: {
-      beforeCreate: (organization, options) => {
-        organization.welcomeMessage = 'Welcome to ' + organization.name + '!';
+      beforeCreate: (workspace, options) => {
+        workspace.welcomeMessage = 'Welcome to ' + workspace.name + '!';
       },
     },
   });
 
-  Organization.associate = (models) => {
+  Workspace.associate = (models) => {
     // Add any relations (foreign keys) here.
-    Organization.belongsTo(models.User, { as: 'creator', foreignKey: 'creatorId' })
+    Workspace.belongsTo(models.User, { as: 'creator', foreignKey: 'creatorId' })
   };
 
-  return Organization;
+  return Workspace;
 };
