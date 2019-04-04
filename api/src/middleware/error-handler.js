@@ -49,7 +49,7 @@ ErrorHandler.default = (err, req, res, next) => {
     case 'InvalidUserPwd':
       response.status = 400;
       response.json.type = 'invalidUserPwd';
-      break;   
+      break;
   }
 
   res.status(response.status).json(response.json);

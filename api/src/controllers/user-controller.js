@@ -6,9 +6,6 @@ var { UserMapper } = require('../mappers');
 var UserController = {};
 UserController.name = 'UserController';
 
-/* TODO
-  1- maybe we should validate all user pwd: at least n number etc.
-*/
 UserController.create = async(req, res, next) => {
   var user = await UserService
     .create(req.body)
@@ -26,16 +23,20 @@ UserController.retrieve = async(req, res, next) => {
   var user = await UserService
     .getById(req.params.userId)
     .catch((err) => next(err));
-  if (user) {
-    user = UserMapper.map(user);
-    res.json(user);
-  } else {
-    res.status(404).send();
-  }
+  if (!user)
+    return res.status(404).send();
+  user = UserMapper.map(user);
+  res.json(user);
 };
 
-UserController.update = (req, res, next) => {
-  res.send('User updated');
+UserController.update = async(req, res, next) => {
+  var user = await UserService
+    .udpate(req.params.userId, req.body)
+    .catch((err) => next(err));
+  if (!user)
+    return res.status(404).send();
+  user = UserMapper.map(user);
+  res.json(user);
 };
 
 UserController.delete = (req, res, next) => {

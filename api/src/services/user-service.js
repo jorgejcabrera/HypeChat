@@ -16,11 +16,11 @@ UserService.create = async(userData) => {
   var user = await User.findOne({ where: {email: userData.email} });
 
   if (!PwdValidator.isValid(userData)){
-    var e = new Error();
-    e.name = 'InvalidUserPwd';
-    throw e;
+    var pe = new Error();
+    pe.name = 'InvalidUserPwd';
+    throw pe;
   }
-  
+
   if (!user) {
     userData.password = await bcrypt.hash(userData.password, saltRounds);
     user = await User.create(userData);
@@ -40,6 +40,21 @@ UserService.getById = async(userId) => {
 UserService.getByEmail = async(email) => {
   email = EmailUtils.normalize(email);
   var user = await User.findOne({ where: {email} });
+  return user && user.toJSON();
+};
+
+UserService.udpate = async(id, body) => {
+  var user = await User
+    .findByPk(id);
+  if (!user)
+    return null;
+  if (body.hasOwnProperty('firstName')) {
+    await User.update(
+      {firstName: body.firstName},
+      {where: {id}}
+    );
+    user.firstName = body.firstName;
+  }
   return user && user.toJSON();
 };
 
