@@ -8,7 +8,7 @@ var TestUtils = {};
 
 TestUtils.clearDB = async() => {
   for (var key in models) {
-    if (['Database'].includes(key)) return null;
+    if (['Database'].includes(key)) continue;
     await models[key].destroy({ where: {}, force: true });
   };
 };
@@ -25,7 +25,20 @@ TestUtils.userFactory = async(props = {}) => {
     return Object.assign({}, defaultProps, props);
   };
 
-  return services.UserService.create(await data(props));
+  return await services.UserService.create(await data(props));
+};
+
+TestUtils.workspaceFactory = async(props = {}) => {
+  const data = async(props = {}) => {
+    const defaultProps = {
+      name: faker.company.companyName(),
+      image: faker.image.imageUrl(),
+      location: faker.address.streetAddress(),
+      creatorId: 1,
+    };
+    return Object.assign({}, defaultProps, props);
+  };
+  return await services.WorkspaceService.create(await data(props));
 };
 
 module.exports = TestUtils;

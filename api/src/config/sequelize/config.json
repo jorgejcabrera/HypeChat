@@ -14,7 +14,8 @@
     "storage": ":memory",
     "define": {
       "freezeTableName": true
-    }
+    },
+    "logging": null
   },
   "production": {
     "use_env_variable": "DATABASE_URL",

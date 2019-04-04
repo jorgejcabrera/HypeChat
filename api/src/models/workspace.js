@@ -51,6 +51,7 @@ module.exports = (sequelize, type) => {
     Workspace.belongsTo(models.User, {
       as: 'creator',
       foreignKey: 'creatorId',
+      onDelete: 'CASCADE',
     });
   };
 

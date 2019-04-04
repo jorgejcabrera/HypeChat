@@ -7,12 +7,13 @@ WorkspaceService.name = 'WorkspaceService';
 
 WorkspaceService.create = async(workspaceData) => {
   delete workspaceData.id;
-  return await Workspace.create(workspaceData);
+  var workspace = await Workspace.create(workspaceData);
+  return workspace && workspace.toJSON();
 };
 
 WorkspaceService.getById = async(workspaceId) => {
   var workspace = await Workspace.findByPk(workspaceId);
-  return workspace;
+  return workspace && workspace.toJSON();
 };
 
 WorkspaceService.update = async(workspaceId, workspaceData) => {
@@ -23,7 +24,7 @@ WorkspaceService.update = async(workspaceId, workspaceData) => {
     where: { id: workspaceId },
   });
 
-  return updated[1][0];
+  return updated[1][0] && updated[1][0].toJSON();
 };
 
 WorkspaceService.delete = async(workspaceId) => {

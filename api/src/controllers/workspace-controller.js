@@ -7,7 +7,7 @@ WorkspaceController.name = 'WorkspaceController';
 
 WorkspaceController.create = async(req, res, next) => {
   // TODO: remove this after permissions are added.
-  req.body.creatorId = req.user ? req.user.id : 1;
+  req.body.creatorId = req.user ? req.user.id : req.body.creatorId;
   var workspace = await WorkspaceService
     .create(req.body)
     .catch((err) => next(err));
