@@ -3,41 +3,23 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var sinon = require('sinon');
+var TestUtils = require('../test-utils');
 var app = require('../../src/app');
-var { Auth, User } = require('../../src/models');
 
 chai.use(chaiHttp);
 
 describe('User Routes Test', () => {
-  before(() => {
-    sinon.stub(User, 'findOne');
-    sinon.stub(User, 'findByPk');
-    sinon.stub(User, 'create');
-    sinon.stub(Auth, 'create');
-  });
-
-  beforeEach(() => {
-    sinon.resetHistory();
+  beforeEach(async() => {
+    await TestUtils.clearDB();
   });
 
   after(() => {
     sinon.restore();
   });
 
-  var userData = {
-    firstName: 'Test',
-    lastName: 'User',
-    email: 'valid@email.com',
-    password: 'invalidPassword',
-  };
-
   describe('Create', () => {
     it('should return invalid when email is already used', async() => {
-      User.findOne.returns({
-        id: 1,
-        email: 'some@email.com',
-        password: 'hashedPassword',
-      });
+      await TestUtils.userFactory({email: 'some@email.com'});
 
       var res = await chai.request(app)
         .post('/users')
@@ -61,14 +43,15 @@ describe('User Routes Test', () => {
     });
 
     it('should return ok when all info is valid', async() => {
-      User.findOne.returns(null);
-      User.create.returnsArg(0);
-      Auth.create.returnsArg(0);
-
-
       var res = await chai.request(app)
         .post('/users')
-        .send(userData);
+        .send({
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'valid@email.com',
+          password: 'invalidPassword',
+          isAdmin: false,
+        });
 
       chai.assert.strictEqual(
         res.status,
@@ -84,8 +67,6 @@ describe('User Routes Test', () => {
 
   describe('Retrieve', () => {
     it('should return invalid when user does not exist', async() => {
-      User.findByPk.returns(null);
-
       var res = await chai.request(app).get('/users/1');
 
       chai.assert.strictEqual(
@@ -96,18 +77,19 @@ describe('User Routes Test', () => {
     });
 
     it('should return ok when user exists', async() => {
-      User.findByPk.returns(userData);
+      var user = await TestUtils.userFactory({email: 'valid@email.com'});
 
-      var res = await chai.request(app).get('/users/1');
+      var res = await chai.request(app).get('/users/' + user.id);
 
       chai.assert.strictEqual(
         res.status,
         200,
         'Status was not 200'
       );
-      chai.assert.deepEqual(
-        res.body,
-        userData,
+
+      chai.assert.strictEqual(
+        res.body.id,
+        user.id,
         'Response was not what was expected'
       );
     });

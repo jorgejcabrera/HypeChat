@@ -28,6 +28,27 @@ TestUtils.userFactory = async(props = {}) => {
   return await services.UserService.create(await data(props));
 };
 
+TestUtils.authenticatedUserFactory = async(props = {}) => {
+  const data = async(props = {}) => {
+    const defaultProps = {
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      isAdmin: false,
+    };
+    return Object.assign({}, defaultProps, props);
+  };
+
+  var userData = await data(props);
+  var email = userData.email;
+  var password = userData.password;
+  var user = await services.UserService.create(userData);
+  user.auth = await services.AuthService.login(email, password);
+
+  return user;
+};
+
 TestUtils.workspaceFactory = async(props = {}) => {
   const data = async(props = {}) => {
     const defaultProps = {

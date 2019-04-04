@@ -17,7 +17,7 @@ describe('Workspace Routes Test', () => {
   beforeEach(async() => {
     await TestUtils.clearDB();
     // We need to have a user so we can create workspaces.
-    user = await TestUtils.userFactory();
+    user = await TestUtils.authenticatedUserFactory();
     workspaceData = {
       name: 'Test Workspace',
       image: 'http://test.workspace.com',
@@ -38,6 +38,7 @@ describe('Workspace Routes Test', () => {
 
       var res = await chai.request(app)
         .post('/workspaces')
+        .set('X-Auth', user.auth.accessToken)
         .send(testData);
 
       chai.assert.strictEqual(
@@ -65,6 +66,7 @@ describe('Workspace Routes Test', () => {
 
       var res = await chai.request(app)
         .post('/workspaces')
+        .set('X-Auth', user.auth.accessToken)
         .send(testData);
 
       chai.assert.strictEqual(
@@ -89,6 +91,7 @@ describe('Workspace Routes Test', () => {
     it('should return ok when all info is valid', async() => {
       var res = await chai.request(app)
         .post('/workspaces')
+        .set('X-Auth', user.auth.accessToken)
         .send(workspaceData);
 
       chai.assert.strictEqual(

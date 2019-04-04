@@ -1,17 +1,31 @@
 'use strict';
 
 var { randtoken, bcrypt } = require('../config/dependencies');
+var UserService = require('./user-service');
 var { Auth } = require('../models');
 
 var AuthService = {};
 AuthService.name = 'AuthService';
+
+AuthService.login = async(email, inputPassword) => {
+  var user = await UserService.getByEmail(email);
+  if (user) {
+    var valid = await AuthService.authenticate(user, inputPassword);
+    if (valid) {
+      await AuthService.destroyByUser(user.id);
+      var auth = await AuthService.create(user.id);
+      return auth;
+    }
+  }
+  throw new Error('InvalidCredentials');
+};
 
 AuthService.create = async(userId) => {
   var auth = {};
   auth.userId = userId;
   auth.accessToken = randtoken.generate(128);
   auth = await Auth.create(auth);
-  return auth;
+  return auth && auth.toJSON();
 };
 
 AuthService.destroyByUser = async(userId) => {

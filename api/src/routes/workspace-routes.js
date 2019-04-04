@@ -1,13 +1,14 @@
 'use strict';
 
 var { WorkspaceController } = require('../controllers');
+var { AuthHandler } = require('../middleware');
 
 module.exports = (app) => {
   app.route('/workspaces')
-    .post(WorkspaceController.create);
+    .post(AuthHandler.authorize(), WorkspaceController.create);
 
   app.route('/workspaces/:workspaceId')
     .get(WorkspaceController.retrieve)
-    .put(WorkspaceController.update)
-    .delete(WorkspaceController.delete);
+    .put(AuthHandler.authorize(), WorkspaceController.update)
+    .delete(AuthHandler.authorize(), WorkspaceController.delete);
 };

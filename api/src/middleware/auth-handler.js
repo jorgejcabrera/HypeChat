@@ -15,11 +15,28 @@ AuthHandler.authenticate = async(req, res, next) => {
         { model: User, as: 'user' },
       ],
     });
+
     if (auth) {
       req.user = auth.user.toJSON();
     }
   }
+
   next();
+};
+
+// For now, we just check if the user is logged in.
+AuthHandler.authorize = () => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        type: 'unauthorized',
+      });
+    }
+
+    // authorization successful
+    next();
+  };
 };
 
 module.exports = AuthHandler;
