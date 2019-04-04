@@ -68,3 +68,5 @@ typings/
 
 # sublime files
 *.sublime*
+.config
+*memory

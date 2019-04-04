@@ -4,13 +4,12 @@ var UserMapper = {};
 UserMapper.name = 'UserMapper';
 
 UserMapper.map = function(user, auth) {
-  var jsonUser = user.toJSON ? user.toJSON() : user;
-  delete jsonUser.password;
-  delete jsonUser.isAdmin;
+  delete user.password;
+  delete user.isAdmin;
   if (auth) {
-    jsonUser.accessToken = auth.accessToken;
+    user.accessToken = auth.accessToken;
   }
-  return jsonUser;
+  return user;
 };
 
 module.exports = UserMapper;

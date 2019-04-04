@@ -1,29 +1,26 @@
 'use strict';
 
-var { UserService, AuthService } = require('../services');
+var { AuthService } = require('../services');
 
 var AuthController = {};
 AuthController.name = 'AuthController';
 
 AuthController.login = async(req, res, next) => {
-  var user = await UserService
-    .getByEmail(req.body.email)
-    .catch((err) => next(err));
-  if (user) {
-    var valid = await AuthService
-      .authenticate(user, req.body.password)
-      .catch((err) => next(err));
-    if (valid) {
-      await AuthService
-        .destroyByUser(user.id)
-        .catch((err) => next(err));
-      var auth = await AuthService
-        .create(user.id)
-        .catch((err) => next(err));
-      return res.json(auth);
-    }
-  }
-  res.status(400).send({ status: 'error', type: 'invalidCredentials' });
+  // TODO: Check that we have the required fields.
+  var auth = await AuthService
+    .login(req.body.email, req.body.password)
+    .catch((err) => {
+      if (err.message === 'InvalidCredentials') {
+        res.status(400).send({
+          status: 'error',
+          type: 'invalidCredentials',
+        });
+        return;
+      }
+      console.log(err);
+      next(err);
+    });
+  auth && res.json(auth);
 };
 
 AuthController.logout = async(req, res, next) => {

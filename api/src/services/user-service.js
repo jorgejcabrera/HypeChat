@@ -16,7 +16,7 @@ UserService.create = async(userData) => {
   if (!user) {
     userData.password = await bcrypt.hash(userData.password, saltRounds);
     user = await User.create(userData);
-    return user;
+    return user && user.toJSON();
   } else {
     var e = new Error();
     e.name = 'UserAlreadyExists';
@@ -26,13 +26,13 @@ UserService.create = async(userData) => {
 
 UserService.getById = async(userId) => {
   var user = await User.findByPk(userId);
-  return user;
+  return user && user.toJSON();
 };
 
 UserService.getByEmail = async(email) => {
   email = EmailUtils.normalize(email);
   var user = await User.findOne({ where: {email} });
-  return user;
+  return user && user.toJSON();
 };
 
 module.exports = UserService;

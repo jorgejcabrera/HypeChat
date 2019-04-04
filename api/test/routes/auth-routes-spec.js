@@ -3,39 +3,22 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var sinon = require('sinon');
+var TestUtils = require('../test-utils');
 var app = require('../../src/app');
-
-var { Auth, User } = require('../../src/models');
-var { bcrypt } = require('../../src/config/dependencies');
 
 chai.use(chaiHttp);
 
 describe('Auth Routes Test', () => {
-  before(() => {
-    sinon.stub(User, 'findOne');
-    sinon.stub(Auth, 'create');
-    sinon.stub(Auth, 'destroy');
-    sinon.stub(bcrypt, 'compare');
-  });
-
-  beforeEach(() => {
-    User.findOne.resetHistory();
-    Auth.create.resetHistory();
-    Auth.destroy.resetHistory();
-    bcrypt.compare.resetHistory();
+  beforeEach(async() => {
+    await TestUtils.clearDB();
   });
 
   after(() => {
-    User.findOne.restore();
-    Auth.create.restore();
-    Auth.destroy.restore();
-    bcrypt.compare.restore();
+    sinon.restore();
   });
 
   describe('Login', () => {
     it('should return invalid when user is invalid', async() => {
-      User.findOne.returns(null);
-
       var res = await chai.request(app)
         .post('/login')
         .send({
@@ -56,8 +39,7 @@ describe('Auth Routes Test', () => {
     });
 
     it('should return invalid when password is invalid', async() => {
-      User.findOne.returns({id: 1, password: 'hashedPassword'});
-      bcrypt.compare.returns(false);
+      await TestUtils.userFactory({email: 'valid@email.com'});
 
       var res = await chai.request(app)
         .post('/login')
@@ -71,6 +53,7 @@ describe('Auth Routes Test', () => {
         400,
         'Status was not 400'
       );
+
       chai.assert.deepEqual(
         res.body,
         { status: 'error', type: 'invalidCredentials' },
@@ -79,17 +62,16 @@ describe('Auth Routes Test', () => {
     });
 
     it('should return ok when credentials are valid', async() => {
-      User.findOne.returns({id: 1, password: 'hashedPassword'});
-      Auth.create.returnsArg(0);
-      Auth.destroy.returns(null);
-      bcrypt.compare.returns(true);
-
+      await TestUtils.userFactory({
+        email: 'valid@email.com',
+        password: 'validPassword',
+      });
 
       var res = await chai.request(app)
         .post('/login')
         .send({
           email: 'valid@email.com',
-          password: 'somePassword',
+          password: 'validPassword',
         });
 
       chai.assert.strictEqual(
@@ -97,6 +79,7 @@ describe('Auth Routes Test', () => {
         200,
         'Status was not 200'
       );
+
       chai.assert.isObject(
         res.body,
         'Response was not what was expected'
