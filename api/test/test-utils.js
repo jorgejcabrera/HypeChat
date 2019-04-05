@@ -20,6 +20,7 @@ TestUtils.userFactory = async(props = {}) => {
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
+      status: 'ACTIVE',
       isAdmin: false,
     };
     return Object.assign({}, defaultProps, props);
@@ -35,6 +36,7 @@ TestUtils.authenticatedUserFactory = async(props = {}) => {
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
+      status: 'ACTIVE',
       isAdmin: false,
     };
     return Object.assign({}, defaultProps, props);

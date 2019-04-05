@@ -3,12 +3,14 @@
 var { randtoken, bcrypt } = require('../config/dependencies');
 var UserService = require('./user-service');
 var { Auth } = require('../models');
+var { EmailUtils } = require('../utils');
 
 var AuthService = {};
 AuthService.name = 'AuthService';
 
 AuthService.login = async(email, inputPassword) => {
-  var user = await UserService.getByEmail(email);
+  var normalizedEmail = EmailUtils.normalize(email);
+  var user = await UserService.getByEmail(normalizedEmail);
   if (!user)
     throw new Error('InvalidCredentials');
   var valid = await AuthService.authenticate(user, inputPassword);

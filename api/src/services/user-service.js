@@ -35,7 +35,7 @@ UserService.create = async(userData) => {
 
 UserService.getById = async(userId) => {
   var user = await User.findByPk(userId);
-  if (!UserValidator.isActive(user))
+  if (user && !UserValidator.isActive(user))
     return null;
   return user && user.toJSON();
 };
@@ -43,7 +43,7 @@ UserService.getById = async(userId) => {
 UserService.getByEmail = async(email) => {
   email = EmailUtils.normalize(email);
   var user = await User.findOne({ where: {email} });
-  if (!UserValidator.isActive(user))
+  if (user && !UserValidator.isActive(user))
     return null;
   return user && user.toJSON();
 };
