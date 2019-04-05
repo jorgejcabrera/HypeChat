@@ -17,7 +17,8 @@ describe('Workspace Routes Test', () => {
   beforeEach(async() => {
     await TestUtils.clearDB();
     // We need to have a user so we can create workspaces.
-    user = await TestUtils.authenticatedUserFactory();
+    user = await TestUtils.authenticatedUserFactory(
+      {password: 'validPassword.123'});
     workspaceData = {
       name: 'Test Workspace',
       image: 'http://test.workspace.com',

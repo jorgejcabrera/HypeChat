@@ -30,6 +30,9 @@ UserController.retrieve = async(req, res, next) => {
 };
 
 UserController.update = async(req, res, next) => {
+  var isAuthorized = await AuthService.isAuthorized(req);
+  if (!isAuthorized)
+    return res.status(403).send();
   var user = await UserService
     .udpate(req.params.userId, req.body)
     .catch((err) => next(err));

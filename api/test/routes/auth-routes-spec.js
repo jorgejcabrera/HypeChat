@@ -39,7 +39,8 @@ describe('Auth Routes Test', () => {
     });
 
     it('should return invalid when password is invalid', async() => {
-      await TestUtils.userFactory({email: 'valid@email.com'});
+      await TestUtils.userFactory(
+        {email: 'valid@email.com', password: 'myPassword.123'});
 
       var res = await chai.request(app)
         .post('/login')
@@ -64,14 +65,14 @@ describe('Auth Routes Test', () => {
     it('should return ok when credentials are valid', async() => {
       await TestUtils.userFactory({
         email: 'valid@email.com',
-        password: 'validPassword',
+        password: 'validPassword1.',
       });
 
       var res = await chai.request(app)
         .post('/login')
         .send({
           email: 'valid@email.com',
-          password: 'validPassword',
+          password: 'validPassword1.',
         });
 
       chai.assert.strictEqual(

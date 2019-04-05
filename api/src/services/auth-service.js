@@ -36,6 +36,10 @@ AuthService.destroyByToken = async(accessToken) => {
   await Auth.destroy({ where: {accessToken} });
 };
 
+AuthService.isAuthorized = async(req) => {
+  return req.user.id == Number(req.params.userId);
+};
+
 AuthService.authenticate = async(user, inputPassword) => {
   return await bcrypt.compare(inputPassword, user.password);
 };

@@ -19,7 +19,8 @@ describe('User Routes Test', () => {
 
   describe('Create', () => {
     it('should return invalid when email is already used', async() => {
-      await TestUtils.userFactory({email: 'some@email.com'});
+      await TestUtils.userFactory(
+        {email: 'some@email.com', password: 'myValidPwd.123'});
 
       var res = await chai.request(app)
         .post('/users')
@@ -27,7 +28,7 @@ describe('User Routes Test', () => {
           firstName: 'Test',
           lastName: 'User',
           email: 'some@email.com',
-          password: 'somePassword',
+          password: 'somePas1.ssword',
         });
 
       chai.assert.strictEqual(
@@ -49,7 +50,7 @@ describe('User Routes Test', () => {
           firstName: 'Test',
           lastName: 'User',
           email: 'valid@email.com',
-          password: 'invalidPassword',
+          password: 'invalidP1.assword',
           isAdmin: false,
         });
 
@@ -77,7 +78,8 @@ describe('User Routes Test', () => {
     });
 
     it('should return ok when user exists', async() => {
-      var user = await TestUtils.userFactory({email: 'valid@email.com'});
+      var user = await TestUtils.userFactory(
+        {email: 'valid@email.com', password: 'myPassword12.3'});
 
       var res = await chai.request(app).get('/users/' + user.id);
 
