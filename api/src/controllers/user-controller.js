@@ -42,8 +42,14 @@ UserController.update = async(req, res, next) => {
   res.json(user);
 };
 
-UserController.delete = (req, res, next) => {
-  res.send('User deleted');
+UserController.delete = async(req, res, next) => {
+  var isAuthorized = await AuthService.isAuthorized(req);
+  if (!isAuthorized)
+    return res.status(403).send();
+  var user = await UserService
+    .delete(req.params.userId)
+    .catch((err) => next(err));
+  res.json(user);
 };
 
 module.exports = UserController;

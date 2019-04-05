@@ -35,6 +35,10 @@ module.exports = (sequelize, type) => {
         notEmpty: true,
       },
     },
+    status: {
+      type: type.ENUM('ACTIVE', 'INACTIVE'),
+      allowNull: false,
+    },
   });
 
   User.associate = (models) => {

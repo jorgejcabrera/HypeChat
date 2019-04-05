@@ -2,7 +2,7 @@
 
 var { User } = require('../models');
 var { EmailUtils } = require('../utils');
-var { PwdValidator } = require('../validators');
+var { PwdValidator, UserValidator } = require('../validators');
 
 var { bcrypt } = require('../config/dependencies');
 
@@ -23,6 +23,7 @@ UserService.create = async(userData) => {
 
   if (!user) {
     userData.password = await bcrypt.hash(userData.password, saltRounds);
+    userData.status = 'ACTIVE';
     user = await User.create(userData);
     return user && user.toJSON();
   } else {
@@ -34,12 +35,16 @@ UserService.create = async(userData) => {
 
 UserService.getById = async(userId) => {
   var user = await User.findByPk(userId);
+  if (!UserValidator.isActive(user))
+    return null;
   return user && user.toJSON();
 };
 
 UserService.getByEmail = async(email) => {
   email = EmailUtils.normalize(email);
   var user = await User.findOne({ where: {email} });
+  if (!UserValidator.isActive(user))
+    return null;
   return user && user.toJSON();
 };
 
@@ -48,11 +53,28 @@ UserService.udpate = async(id, body) => {
     .findByPk(id);
   if (!user)
     return null;
+  if (!UserValidator.isActive(user)) {
+    var e = new Error();
+    throw e;
+  }
   var updated = await User.update(body, {
     returning: true,
     where: {id: id },
   });
   return updated[1][0] && updated[1][0].toJSON();
-  };
+};
+
+UserService.delete = async(userId) => {
+  var user = await User.findByPk(userId);
+  if (!user)
+    return null;
+  var updated = await User.update(
+    { status: 'INACTIVE',
+      email: EmailUtils.createPrefix(10) + user.email}, {
+      returning: true,
+      where: {id: userId },
+    });
+  return updated[1][0] && updated[1][0].toJSON();
+};
 
 module.exports = UserService;

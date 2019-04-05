@@ -9,7 +9,7 @@ AuthService.name = 'AuthService';
 
 AuthService.login = async(email, inputPassword) => {
   var user = await UserService.getByEmail(email);
-  if (!user) 
+  if (!user)
     throw new Error('InvalidCredentials');
   var valid = await AuthService.authenticate(user, inputPassword);
   if (valid) {
@@ -36,7 +36,7 @@ AuthService.destroyByToken = async(accessToken) => {
 };
 
 AuthService.isAuthorized = async(req) => {
-  return req.user.id == Number(req.params.userId);
+  return req.user != null && req.user.id === Number(req.params.userId);
 };
 
 AuthService.authenticate = async(user, inputPassword) => {
