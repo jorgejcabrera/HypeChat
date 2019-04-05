@@ -48,14 +48,11 @@ UserService.udpate = async(id, body) => {
     .findByPk(id);
   if (!user)
     return null;
-  if (body.hasOwnProperty('firstName')) {
-    await User.update(
-      {firstName: body.firstName},
-      {where: {id}}
-    );
-    user.firstName = body.firstName;
-  }
-  return user && user.toJSON();
-};
+  var updated = await User.update(body, {
+    returning: true,
+    where: {id: id },
+  });
+  return updated[1][0] && updated[1][0].toJSON();
+  };
 
 module.exports = UserService;

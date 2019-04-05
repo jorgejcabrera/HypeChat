@@ -9,15 +9,14 @@ AuthService.name = 'AuthService';
 
 AuthService.login = async(email, inputPassword) => {
   var user = await UserService.getByEmail(email);
-  if (user) {
-    var valid = await AuthService.authenticate(user, inputPassword);
-    if (valid) {
-      await AuthService.destroyByUser(user.id);
-      var auth = await AuthService.create(user.id);
-      return auth;
-    }
+  if (!user) 
+    throw new Error('InvalidCredentials');
+  var valid = await AuthService.authenticate(user, inputPassword);
+  if (valid) {
+    await AuthService.destroyByUser(user.id);
+    var auth = await AuthService.create(user.id);
+    return auth;
   }
-  throw new Error('InvalidCredentials');
 };
 
 AuthService.create = async(userId) => {
