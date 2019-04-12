@@ -52,4 +52,11 @@ UserController.delete = async(req, res, next) => {
   res.json(user);
 };
 
+UserController.stats = async(req, res, next) => {
+  var rows = await UserService
+    .findAllBetween(req)
+    .catch((err) => next(err));
+  res.json(UserMapper.stats(rows));
+};
+
 module.exports = UserController;

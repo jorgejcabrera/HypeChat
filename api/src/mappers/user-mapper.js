@@ -1,5 +1,8 @@
 'use strict';
 
+var { _,moment } = require('../config/dependencies');
+
+
 var UserMapper = {};
 UserMapper.name = 'UserMapper';
 
@@ -11,5 +14,16 @@ UserMapper.map = function(user, auth) {
   }
   return user;
 };
+
+UserMapper.stats = function(users) {
+  var response = {}
+  response["total"]=users.length;
+  var grouped = _.groupBy(users, function(item){
+    return moment(item.createdAt).format('YYYY-MM-DD');
+  });
+  response["summary_by_date"]=grouped;
+  return response;
+};
+
 
 module.exports = UserMapper;

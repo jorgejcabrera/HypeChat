@@ -13,6 +13,7 @@ AuthService.login = async(email, inputPassword) => {
   var user = await UserService.getByEmail(normalizedEmail);
   if (!user)
     throw new Error('InvalidCredentials');
+  // TOGO if user is inactive then can not login
   var valid = await AuthService.authenticate(user, inputPassword);
   if (valid) {
     await AuthService.destroyByUser(user.id);

@@ -4,7 +4,7 @@ var { User } = require('../models');
 var { EmailUtils } = require('../utils');
 var { PwdValidator, UserValidator } = require('../validators');
 
-var { bcrypt } = require('../config/dependencies');
+var { bcrypt, Sequelize } = require('../config/dependencies');
 
 const saltRounds = 10;
 
@@ -68,6 +68,7 @@ UserService.delete = async(userId) => {
   var user = await User.findByPk(userId);
   if (!user)
     return null;
+  // TODO DESTROY all tokens before delete user
   var updated = await User.update(
     { status: 'INACTIVE',
       email: EmailUtils.createPrefix(10) + user.email}, {
@@ -75,6 +76,22 @@ UserService.delete = async(userId) => {
       where: {id: userId },
     });
   return updated[1][0] && updated[1][0].toJSON();
+};
+
+UserService.findAllBetween = async(req) => {
+  var users = await User.findAll({
+    where: {
+      createdAt:
+        Sequelize.where(
+          Sequelize.fn('date', Sequelize.col('createdAt')),
+          '>', req.query.from) &&
+        Sequelize.where(
+          Sequelize.fn('date', Sequelize.col('createdAt')),
+          '<', req.query.to),
+    }, 
+    raw: true
+  });
+  return users;
 };
 
 module.exports = UserService;
