@@ -17,6 +17,11 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
+      creatorId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: { model: 'User', key: 'id' },
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

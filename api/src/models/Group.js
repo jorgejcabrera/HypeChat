@@ -8,6 +8,10 @@ module.exports = (sequelize, type) => {
       primaryKey: true,
       type: type.INTEGER,
     },
+    creatorId: {
+      allowNull: false,
+      type: type.INTEGER,
+    },
     name: {
       allowNull: true,
       type: type.STRING,
@@ -28,6 +32,10 @@ module.exports = (sequelize, type) => {
 
   Group.associate = (models) => {
     // Add any relations (foreign keys) here.
+    Group.belongsTo(models.User, { 
+      foreignKey: 'creatorId', 
+      as: 'create' 
+    });
   };
 
   return Group;
