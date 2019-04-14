@@ -88,8 +88,8 @@ UserService.findAllBetween = async(req) => {
         Sequelize.where(
           Sequelize.fn('date', Sequelize.col('createdAt')),
           '<', req.query.to),
-    }, 
-    raw: true
+    },
+    raw: true,
   });
   return users;
 };

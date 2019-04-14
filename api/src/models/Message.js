@@ -37,13 +37,13 @@ module.exports = (sequelize, type) => {
   Message.associate = (models) => {
     // Add any relations (foreign keys) here.
     Message.belongsTo(models.User, {
-        as: 'creator',
-        foreignKey: 'creatorId',
-      });
+      as: 'creator',
+      foreignKey: 'creatorId',
+    });
     Message.belongsTo(models.Message, {
-        as: 'parent',
-        foreignKey: 'parentMessageId',
-      });
+      as: 'parent',
+      foreignKey: 'parentMessageId',
+    });
   };
 
   return Message;

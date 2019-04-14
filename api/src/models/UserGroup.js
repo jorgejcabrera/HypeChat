@@ -32,14 +32,14 @@ module.exports = (sequelize, type) => {
 
   UserGroup.associate = (models) => {
     // Add any relations (foreign keys) here.
-    UserGroup.belongsTo(models.Group, { 
-        foreignKey: 'groupId', 
-        as: 'group' 
+    UserGroup.belongsTo(models.Group, {
+      foreignKey: 'groupId',
+      as: 'group',
     });
 
-    UserGroup.belongsTo(models.User, { 
-        foreignKey: 'userId', 
-        as: 'user' 
+    UserGroup.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'user',
     });
   };
 

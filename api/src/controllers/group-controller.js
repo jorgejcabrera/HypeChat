@@ -3,12 +3,12 @@
 var GroupController = {};
 GroupController.name = 'GroupController';
 
-//TODO
+// TODO
 GroupController.create = async(req, res, next) => {
 
 };
 
-//TODO
+// TODO
 GroupController.retrieve = async(req, res, next) => {
 
 };

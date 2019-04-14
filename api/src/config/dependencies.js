@@ -12,7 +12,7 @@ module.exports = {
   path: require('path'),
   Sequelize: Sequelize,
   express: require('express'),
-  _ : require('lodash'),
+  _: require('lodash'),
   moment: require('moment'),
   logger: require('morgan'),
   bcrypt: require('bcrypt'),

@@ -36,17 +36,17 @@ module.exports = (sequelize, type) => {
 
   MessageRecipient.associate = (models) => {
     // Add any relations (foreign keys) here.
-    MessageRecipient.belongsTo(models.User, { 
-        foreignKey: 'recipientId', 
-        as: 'user' 
+    MessageRecipient.belongsTo(models.User, {
+      foreignKey: 'recipientId',
+      as: 'user',
     });
-    MessageRecipient.belongsTo(models.UserGroup, { 
-        foreignKey: 'recipientGroupId', 
-        as: 'recipientGroup' 
+    MessageRecipient.belongsTo(models.UserGroup, {
+      foreignKey: 'recipientGroupId',
+      as: 'recipientGroup',
     });
-    MessageRecipient.belongsTo(models.Message, { 
-        foreignKey: 'messageId', 
-        as: 'message' 
+    MessageRecipient.belongsTo(models.Message, {
+      foreignKey: 'messageId',
+      as: 'message',
     });
   };
 
