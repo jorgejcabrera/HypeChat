@@ -36,6 +36,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+    }).then(function() {
+      return queryInterface.addConstraint('MessageRecipient',
+        ['messageId','recipientId','recipientGroupId'], {
+        type: 'unique',
+        name: 'message_recipient_unique_constraint',
+      })
     });
   },
   down: (queryInterface, Sequelize) => {

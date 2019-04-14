@@ -31,6 +31,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+    }).then(function() {
+      return queryInterface.addConstraint('UserGroup',['userId','groupId'], {
+        type: 'unique',
+        name: 'user_group_unique_constraint',
+      })
     });
   },
   down: (queryInterface, Sequelize) => {
