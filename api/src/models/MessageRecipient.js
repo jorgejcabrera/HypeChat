@@ -18,7 +18,7 @@ module.exports = (sequelize, type) => {
     },
     messageId: {
       allowNull: false,
-      type: type.STRING,
+      type: type.INTEGER,
     },
     isRead: {
       type: type.BOOLEAN,
