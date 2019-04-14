@@ -4,6 +4,6 @@ var { UserController } = require('../controllers');
 
 module.exports = (app) => {
 
-  app.route('/users/stats')
+  app.route('/stats/users')
     .get(UserController.stats);
 };
