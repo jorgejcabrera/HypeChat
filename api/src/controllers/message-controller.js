@@ -1,6 +1,7 @@
 'use strict';
 
 var { MessageService } = require('../services');
+var { MessageMapper } = require('../mappers');
 
 var MessageController = {};
 MessageController.name = 'MessageController';
@@ -15,6 +16,9 @@ MessageController.send = async(req, res, next) => {
 
 // TODO
 MessageController.retrieve = async(req, res, next) => {
-
+  var messages = await MessageService
+    .retrieveUserMessages(req)
+    .catch((err) => next(err));
+  res.json(MessageMapper.map(messages));
 };
 module.exports = MessageController;

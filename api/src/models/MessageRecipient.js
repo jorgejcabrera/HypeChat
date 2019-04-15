@@ -22,6 +22,7 @@ module.exports = (sequelize, type) => {
     },
     isRead: {
       type: type.BOOLEAN,
+      defaultValue:'false',
       allowNull: false,
     },
     createdAt: {
