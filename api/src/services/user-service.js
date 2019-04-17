@@ -2,7 +2,7 @@
 
 var { User } = require('../models');
 var { EmailUtils } = require('../utils');
-var { PwdValidator, UserValidator } = require('../validators');
+var { PwdValidator } = require('../validators');
 
 var { bcrypt, Sequelize } = require('../config/dependencies');
 
@@ -12,69 +12,78 @@ var UserService = {};
 UserService.name = 'UserService';
 
 UserService.create = async(userData) => {
-  userData.email = EmailUtils.normalize(userData.email);
-  var user = await User.findOne({ where: {email: userData.email} });
-
-  if (!PwdValidator.isValid(userData)){
+  if (!PwdValidator.isValid(userData.password)){
     var pe = new Error();
     pe.name = 'InvalidUserPwd';
     throw pe;
   }
 
-  if (!user) {
-    userData.password = await bcrypt.hash(userData.password, saltRounds);
-    userData.status = 'ACTIVE';
-    user = await User.create(userData);
-    return user && user.toJSON();
-  } else {
+  userData.email = EmailUtils.normalize(userData.email);
+  var user = await User.findOne({ where: {email: userData.email} });
+
+  if (user) {
     var e = new Error();
     e.name = 'UserAlreadyExists';
     throw e;
   }
+
+  userData.password = await bcrypt.hash(userData.password, saltRounds);
+  userData.status = 'ACTIVE';
+  user = await User.create(userData);
+  return user && user.toJSON();
 };
 
 UserService.getById = async(userId) => {
-  var user = await User.findByPk(userId);
-  if (user && !UserValidator.isActive(user))
-    return null;
+  var user = await User.findOne({
+    where: {
+      id: userId,
+      status: 'ACTIVE',
+    },
+  });
+
   return user && user.toJSON();
 };
 
 UserService.getByEmail = async(email) => {
-  email = EmailUtils.normalize(email);
-  var user = await User.findOne({ where: {email} });
-  if (user && !UserValidator.isActive(user))
-    return null;
+  var user = await User.findOne({
+    where: {
+      email: EmailUtils.normalize(email),
+      status: 'ACTIVE',
+    },
+  });
+
   return user && user.toJSON();
 };
 
-UserService.udpate = async(id, body) => {
-  var user = await User
-    .findByPk(id);
-  if (!user)
+UserService.udpate = async(id, newUserData) => {
+  // TODO: validar password, hashearla, remover campos que no
+  // son updateables.
+  var user = await UserService.getById(id);
+  if (!user) {
     return null;
-  if (!UserValidator.isActive(user)) {
-    var e = new Error();
-    throw e;
   }
-  var updated = await User.update(body, {
+
+  var updated = await User.update(newUserData, {
     returning: true,
-    where: {id: id },
+    where: { id: id },
   });
+
   return updated[1][0] && updated[1][0].toJSON();
 };
 
 UserService.delete = async(userId) => {
-  var user = await User.findByPk(userId);
-  if (!user)
+  var user = await UserService.getById(userId);
+  if (!user) {
     return null;
+  }
   // TODO DESTROY all tokens before delete user
-  var updated = await User.update(
-    { status: 'INACTIVE',
-      email: EmailUtils.createPrefix(10) + user.email}, {
-      returning: true,
-      where: {id: userId },
-    });
+  var updated = await User.update({
+    status: 'INACTIVE',
+    email: EmailUtils.createPrefix(10) + user.email,
+  }, {
+    returning: true,
+    where: {id: userId },
+  });
   return updated[1][0] && updated[1][0].toJSON();
 };
 
