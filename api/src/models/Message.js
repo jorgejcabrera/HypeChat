@@ -44,11 +44,11 @@ module.exports = (sequelize, type) => {
       as: 'parent',
       foreignKey: 'parentMessageId',
     });
-    //TODO no se si esto esta bien
+    // TODO no se si esto esta bien
     Message.hasMany(models.MessageRecipient, {
       as: 'messageId',
       foreignKey: 'messageId',
-    })
+    });
   };
 
   return Message;

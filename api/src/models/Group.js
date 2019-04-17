@@ -34,7 +34,7 @@ module.exports = (sequelize, type) => {
     // Add any relations (foreign keys) here.
     Group.belongsTo(models.User, {
       foreignKey: 'creatorId',
-      as: 'create',
+      as: 'creator',
     });
   };
 
