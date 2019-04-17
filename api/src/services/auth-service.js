@@ -11,22 +11,29 @@ AuthService.name = 'AuthService';
 AuthService.login = async(email, inputPassword) => {
   var normalizedEmail = EmailUtils.normalize(email);
   var user = await UserService.getByEmail(normalizedEmail);
-  if (!user)
-    throw new Error('InvalidCredentials');
-  // TOGO if user is inactive then can not login
-  var valid = await AuthService.authenticate(user, inputPassword);
-  if (valid) {
-    await AuthService.destroyByUser(user.id);
-    var auth = await AuthService.create(user.id);
-    return auth;
+  if (!user) {
+    var e = new Error();
+    e.name = 'InvalidCredentials';
+    throw e;
   }
+
+  var valid = await AuthService.authenticate(user, inputPassword);
+  if (!valid) {
+    e = new Error();
+    e.name = 'InvalidCredentials';
+    throw e;
+  }
+
+  await AuthService.destroyByUser(user.id);
+  var auth = await AuthService.create(user.id);
+  return auth;
 };
 
 AuthService.create = async(userId) => {
-  var auth = {};
-  auth.userId = userId;
-  auth.accessToken = randtoken.generate(128);
-  auth = await Auth.create(auth);
+  var auth = await Auth.create({
+    userId: userId,
+    accessToken: randtoken.generate(128),
+  });
   return auth && auth.toJSON();
 };
 
