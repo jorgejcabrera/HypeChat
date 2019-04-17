@@ -6,7 +6,6 @@ MessageMapper.name = 'MessageMapper';
 MessageMapper.map = function(messages) {
   messages.forEach(function(v){
     delete v.id;
-    delete v.recipientId;
     delete v.messageId;
     delete v.createdAt;
     delete v.updatedAt;

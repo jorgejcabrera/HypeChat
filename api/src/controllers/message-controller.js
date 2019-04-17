@@ -1,15 +1,20 @@
 'use strict';
 
-var { MessageService } = require('../services');
+var { MessageService, UserService } = require('../services');
 var { MessageMapper } = require('../mappers');
 
 var MessageController = {};
 MessageController.name = 'MessageController';
 
-// TODO
 MessageController.send = async(req, res, next) => {
   try {
-    var message = await MessageService.send(req.params.userId, req.body);
+    var sender = req.user;
+    var recipient = await UserService.getById(req.params.recipientId);
+    if (!recipient || !sender)
+      return res.status(404).send();
+    if (recipient.id === sender.id)
+      return res.status(400).send();
+    var message = await MessageService.send(recipient.id, req.body, sender.id);
     res.json(message);
   } catch (err) {
     next(err);
