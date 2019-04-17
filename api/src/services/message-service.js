@@ -5,10 +5,10 @@ var { Message, MessageRecipient } = require('../models');
 var MessageService = {};
 MessageService.name = 'MessageService';
 
-MessageService.send = async(user, messageData) => {
+MessageService.send = async(recipientId, messageData) => {
   var message = await Message.create(messageData);
   await MessageRecipient.create({
-    recipientId: user,
+    recipientId: recipientId,
     messageId: message.id,
   });
   return message && message.toJSON();
@@ -24,9 +24,9 @@ MessageService.retrieveUserMessages = async(req) => {
       include: [{ model: Message, as: 'message' }],
       raw: true,
     });
-  } catch (ex) {
+  } catch (err) {
     // TODO put here some logs
-    throw ex;
+    throw err;
   }
   return messageRecipient;
 };

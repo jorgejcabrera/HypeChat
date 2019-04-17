@@ -8,17 +8,21 @@ MessageController.name = 'MessageController';
 
 // TODO
 MessageController.send = async(req, res, next) => {
-  var response = await MessageService
-    .send(req.params.userId, req.body)
-    .catch((err) => next(err));
-  res.json(response);
+  try {
+    var message = await MessageService.send(req.params.userId, req.body);
+    res.json(message);
+  } catch (err) {
+    next(err);
+  }
 };
 
 // TODO
 MessageController.retrieve = async(req, res, next) => {
-  var messages = await MessageService
-    .retrieveUserMessages(req)
-    .catch((err) => next(err));
-  res.json(MessageMapper.map(messages));
+  try {
+    var messages = await MessageService.retrieveUserMessages(req);
+    res.json(MessageMapper.map(messages));
+  } catch (err) {
+    next(err);
+  }
 };
 module.exports = MessageController;
