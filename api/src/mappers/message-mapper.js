@@ -13,7 +13,9 @@ MessageMapper.map = function(messages) {
     delete v['message.parentMessageId'];
     delete v['message.messageId'];
   });
-  return messages;
+  return messages.sort(function(x,y){
+    return x['message.createdAt'] - y['message.createdAt'];
+  });
 };
 
 module.exports = MessageMapper;

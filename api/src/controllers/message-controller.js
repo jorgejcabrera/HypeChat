@@ -49,4 +49,21 @@ MessageController.retrieveSendedMessages = async(req, res, next) => {
     next(err);
   }
 };
+
+MessageController.retrieveChat = async(req, res, next) => {
+  try {
+    var sender = req.user;
+    var recipient = await UserService.getById(req.params.recipientId);
+    if (!MessageValidator.areValidMembers(sender,recipient))
+      return res.status(400).send();
+    var sendedMessages = await MessageService.retrieveMessages(recipient.id,sender.id);
+    var messages = await MessageService.retrieveMessages(sender.id,recipient.id);
+    var conversation = [...new Set([...sendedMessages, ...messages])];
+    res.json(MessageMapper.map(conversation));
+  } catch (err) {
+    //TODO LOGS
+    next(err);
+  }
+};
+
 module.exports = MessageController;

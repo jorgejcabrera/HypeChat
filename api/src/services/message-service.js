@@ -17,7 +17,10 @@ MessageService.send = async(recipientId, messageData, senderId) => {
   return message && message.toJSON();
 };
 
-// TODO We must have an index by recipientId colum
+/* TODO We must have an index by 
+  - recipientId colum in message_recipient table
+  - creatorId colum in message table
+*/
 MessageService.retrieveMessages = async(recipientId,senderId) => {
   var messageRecipient;
   try {
@@ -37,11 +40,8 @@ MessageService.retrieveMessages = async(recipientId,senderId) => {
   return messageRecipient;
 };
 
+//TODO
 MessageService.retrieveGroupMessages = async(req) => {
-
-};
-
-MessageService.retrieveSendedMessages = async(req) => {
 
 };
 
