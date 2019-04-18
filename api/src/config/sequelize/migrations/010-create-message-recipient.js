@@ -42,8 +42,8 @@ module.exports = {
           type: 'unique',
           name: 'message_recipient_unique_constraint',
         });
-      
-      queryInterface.addIndex('MessageRecipient',['recipientId']);
+
+      queryInterface.addIndex('MessageRecipient', ['recipientId']);
     });
   },
   down: (queryInterface, Sequelize) => {

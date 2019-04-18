@@ -42,10 +42,10 @@ module.exports = (sequelize, type) => {
   });
 
   User.associate = (models) => {
-    User.belongsToMany(models.Workspace,{
+    User.belongsToMany(models.Workspace, {
       through: 'WorkspaceUsers',
       as: 'workspaces',
-      foreignKey: 'userId'
+      foreignKey: 'userId',
     });
   };
 

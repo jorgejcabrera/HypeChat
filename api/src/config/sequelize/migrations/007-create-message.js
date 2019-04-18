@@ -32,7 +32,7 @@ module.exports = {
         type: Sequelize.DATE,
       },
     }).then(() => {
-      queryInterface.addIndex('Message',['creatorId']);
+      queryInterface.addIndex('Message', ['creatorId']);
     });
   },
   down: (queryInterface, Sequelize) => {

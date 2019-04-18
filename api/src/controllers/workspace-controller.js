@@ -18,11 +18,11 @@ WorkspaceController.create = async(req, res, next) => {
 WorkspaceController.addUser = async(req, res, next) => {
   try {
     var workspace = await WorkspaceService
-    .getById(req.params.workspaceId);
+      .getById(req.params.workspaceId);
     var user = await UserService.getById(req.params.userId);
     if (!user || !workspace)
       return res.status(404).send();
-    var userWorkspace = await WorkspaceService.addUser(workspace.id,user.id);
+    var userWorkspace = await WorkspaceService.addUser(workspace.id, user.id);
     res.status(201).send(userWorkspace);
   } catch (err) {
     next(err);

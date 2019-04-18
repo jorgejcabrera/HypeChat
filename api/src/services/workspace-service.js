@@ -16,7 +16,7 @@ WorkspaceService.getById = async(workspaceId) => {
   return workspace && workspace.toJSON();
 };
 
-WorkspaceService.addUser =  async(workspaceId,userId) => {
+WorkspaceService.addUser = async(workspaceId, userId) => {
   var worspaceUser = await WorkspaceUsers.create({
     userId: userId,
     workspaceId: workspaceId,
