@@ -1,6 +1,8 @@
 'use strict';
 
 var { MessageService, UserService } = require('../services');
+var { MessageValidator } = require('../validators');
+
 var { MessageMapper } = require('../mappers');
 
 var MessageController = {};
@@ -10,23 +12,40 @@ MessageController.send = async(req, res, next) => {
   try {
     var sender = req.user;
     var recipient = await UserService.getById(req.params.recipientId);
-    if (!recipient || !sender)
-      return res.status(404).send();
-    if (recipient.id === sender.id)
+    if (!MessageValidator.areValidMembers(sender,recipient))
       return res.status(400).send();
     var message = await MessageService.send(recipient.id, req.body, sender.id);
     res.json(message);
   } catch (err) {
+    //TODO LOGS with warn level
     next(err);
   }
 };
 
-// TODO
-MessageController.retrieve = async(req, res, next) => {
+MessageController.retrieveRecipientMessages = async(req, res, next) => {
   try {
-    var messages = await MessageService.retrieveUserMessages(req);
+    var recipient = req.user;
+    var sender = await UserService.getById(req.params.senderId);
+    if (!MessageValidator.areValidMembers(sender,recipient))
+      return res.status(400).send();
+    var messages = await MessageService.retrieveMessages(recipient.id,sender.id);
     res.json(MessageMapper.map(messages));
   } catch (err) {
+    //TODO LOGS
+    next(err);
+  }
+};
+
+MessageController.retrieveSendedMessages = async(req, res, next) => {
+  try {
+    var sender = req.user;
+    var recipient = await UserService.getById(req.params.recipientId);
+    if (!MessageValidator.areValidMembers(sender,recipient))
+      return res.status(400).send();
+    var messages = await MessageService.retrieveMessages(recipient.id,sender.id);
+    res.json(MessageMapper.map(messages));
+  } catch (err) {
+    //TODO LOGS
     next(err);
   }
 };
