@@ -1,6 +1,6 @@
 'use strict';
 
-var { WorkspaceService } = require('../services');
+var { WorkspaceService, UserService } = require('../services');
 
 var WorkspaceController = {};
 WorkspaceController.name = 'WorkspaceController';
@@ -10,6 +10,20 @@ WorkspaceController.create = async(req, res, next) => {
     req.body.creatorId = req.user.id;
     var workspace = await WorkspaceService.create(req.body);
     res.json(workspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.addUser = async(req, res, next) => {
+  try {
+    var workspace = await WorkspaceService
+    .getById(req.params.workspaceId);
+    var user = await UserService.getById(req.params.userId);
+    if (!user || !workspace)
+      return res.status(404).send();
+    var userWorkspace = await WorkspaceService.addUser(workspace.id,user.id);
+    res.status(201).send(userWorkspace);
   } catch (err) {
     next(err);
   }

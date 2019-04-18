@@ -7,6 +7,9 @@ module.exports = (app) => {
   app.route('/workspaces')
     .post(AuthHandler.authorize(), WorkspaceController.create);
 
+  app.route('/workspaces/:workspaceId/user/:userId')
+    .post(WorkspaceController.addUser);
+
   app.route('/workspaces/:workspaceId')
     .get(WorkspaceController.retrieve)
     .put(AuthHandler.authorize(), WorkspaceController.update)
