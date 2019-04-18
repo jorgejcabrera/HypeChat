@@ -7,12 +7,12 @@ module.exports = (app) => {
     .post(MessageController.send)
     .get(MessageController.retrieveSendedMessages);
 
-    app.route('/user_recipient/:recipientId/chat')
+  app.route('/user_recipient/:recipientId/chat')
     .get(MessageController.retrieveChat);
 
   app.route('/user_sender/:senderId/messages')
     .get(MessageController.retrieveRecipientMessages);
 
-  /*app.route('/group_recipient/:recipientId/messages')
+  /* app.route('/group_recipient/:recipientId/messages')
     .get(MessageController.retrieve);*/
 };

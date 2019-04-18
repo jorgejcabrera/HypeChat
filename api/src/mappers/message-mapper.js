@@ -13,7 +13,7 @@ MessageMapper.map = function(messages) {
     delete v['message.parentMessageId'];
     delete v['message.messageId'];
   });
-  return messages.sort(function(x,y){
+  return messages.sort(function(x, y){
     return x['message.createdAt'] - y['message.createdAt'];
   });
 };

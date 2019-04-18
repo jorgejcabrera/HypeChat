@@ -17,19 +17,19 @@ MessageService.send = async(recipientId, messageData, senderId) => {
   return message && message.toJSON();
 };
 
-/* TODO We must have an index by 
+/* TODO We must have an index by
   - recipientId colum in message_recipient table
   - creatorId colum in message table
 */
-MessageService.retrieveMessages = async(recipientId,senderId) => {
+MessageService.retrieveMessages = async(recipientId, senderId) => {
   var messageRecipient;
   try {
     messageRecipient = await MessageRecipient.findAll({
       where: { recipientId: recipientId },
-      include: [{ 
-        model: Message, 
+      include: [{
+        model: Message,
         as: 'message',
-        where: { creatorId: senderId,}, 
+        where: { creatorId: senderId},
       }],
       raw: true,
     });
@@ -40,7 +40,7 @@ MessageService.retrieveMessages = async(recipientId,senderId) => {
   return messageRecipient;
 };
 
-//TODO
+// TODO
 MessageService.retrieveGroupMessages = async(req) => {
 
 };
