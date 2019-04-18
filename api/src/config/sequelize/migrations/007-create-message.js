@@ -31,6 +31,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+    }).then(() => {
+      queryInterface.addIndex('Message',['creatorId']);
     });
   },
   down: (queryInterface, Sequelize) => {
