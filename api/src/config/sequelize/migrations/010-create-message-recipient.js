@@ -24,6 +24,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: 'Message', key: 'id' },
       },
+      workspaceId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: { model: 'Workspace', key: 'id' },
+      },
       isRead: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

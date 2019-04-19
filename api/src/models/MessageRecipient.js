@@ -20,6 +20,10 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.INTEGER,
     },
+    workspaceId: {
+      allowNull: false,
+      type: type.INTEGER,
+    },
     isRead: {
       type: type.BOOLEAN,
       defaultValue: 'false',
@@ -48,6 +52,10 @@ module.exports = (sequelize, type) => {
     MessageRecipient.belongsTo(models.Message, {
       foreignKey: 'messageId',
       as: 'message',
+    });
+    MessageRecipient.belongsTo(models.Workspace, {
+      foreignKey: 'workspaceId',
+      as: 'workspace',
     });
   };
 
