@@ -28,6 +28,18 @@ WorkspaceService.retrieveUsers = async(workspaceId) => {
   return users;
 };
 
+WorkspaceService.retrieveWorkspacesByUser = async(userId) => {
+  var workspaces =  await WorkspaceUsers.findAll({
+    where: { userId: userId },
+    include: [{
+      model: Workspace,
+      as: 'workspace',
+    }],
+    raw: true,
+  });
+  return workspaces;
+};
+
 WorkspaceService.addUser = async(workspaceId, userId) => {
   var worspaceUser = await WorkspaceUsers.create({
     userId: userId,

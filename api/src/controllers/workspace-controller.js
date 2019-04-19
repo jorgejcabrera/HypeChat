@@ -55,6 +55,19 @@ WorkspaceController.retrieveUsers = async(req, res, next) => {
   }
 };
 
+WorkspaceController.retrieveWorkspacesByUser = async(req, res, next) => {
+  try {
+    var user = await UserService.getById(req.params.userId);
+    if (!user)
+      return res.status(404).send();
+    var workspaces = await WorkspaceService
+      .retrieveWorkspacesByUser(user.id);
+    res.json(workspaces);
+  } catch (err) {
+    next(err);
+  }
+};
+
 WorkspaceController.update = async(req, res, next) => {
   try {
     var workspace = await WorkspaceService
