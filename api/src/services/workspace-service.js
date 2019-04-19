@@ -29,7 +29,7 @@ WorkspaceService.retrieveUsers = async(workspaceId) => {
 };
 
 WorkspaceService.retrieveWorkspacesByUser = async(userId) => {
-  var workspaces =  await WorkspaceUsers.findAll({
+  var workspaces = await WorkspaceUsers.findAll({
     where: { userId: userId },
     include: [{
       model: Workspace,
