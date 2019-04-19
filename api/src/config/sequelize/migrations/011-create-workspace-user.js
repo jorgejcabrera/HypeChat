@@ -27,6 +27,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+    }).then(() => {
+      queryInterface.addIndex('WorkspaceUsers', ['userId']);
+
+      queryInterface.addIndex('WorkspaceUsers', ['workspaceId']);
+      
+      queryInterface.addConstraint('WorkspaceUsers', ['userId', 'workspaceId'], {
+        type: 'unique',
+        name: 'workspace_user_unique_constraint',
+      });
     });
   },
   down: (queryInterface, Sequelize) => {

@@ -19,7 +19,7 @@ WorkspaceController.addUser = async(req, res, next) => {
   try {
     var workspace = await WorkspaceService
       .getById(req.params.workspaceId);
-    var user = await UserService.getById(req.params.userId);
+    var user = await UserService.getById(req.body.userId);
     if (!user || !workspace)
       return res.status(404).send();
     var userWorkspace = await WorkspaceService.addUser(workspace.id, user.id);
