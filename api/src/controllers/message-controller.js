@@ -16,7 +16,9 @@ MessageController.send = async(req, res, next) => {
 
     var sender = req.user;
     var recipient = await UserService.getById(req.params.recipientId);
-    if (!MessageValidator.areValidMembers(sender, recipient))
+    var areValidMembers = await MessageValidator
+      .areValidMembers(sender, recipient, workspace.id);
+    if (!areValidMembers)
       return res.status(400).send();
     var message = await MessageService
       .send(recipient.id, req.body, sender.id, workspace.id);
@@ -36,7 +38,9 @@ MessageController.retrieveMessages = async(req, res, next) => {
 
     var recipient = req.user;
     var sender = await UserService.getById(req.params.senderId);
-    if (!MessageValidator.areValidMembers(sender, recipient))
+    var areValidMembers = await MessageValidator
+      .areValidMembers(sender, recipient, workspace.id);
+    if (!areValidMembers)
       return res.status(400).send();
     var messages = await MessageService
       .retrieveMessages(recipient.id, sender.id, workspace.id);
@@ -55,7 +59,9 @@ MessageController.retrieveSendedMessages = async(req, res, next) => {
 
     var sender = req.user;
     var recipient = await UserService.getById(req.params.recipientId);
-    if (!MessageValidator.areValidMembers(sender, recipient))
+    var areValidMembers = await MessageValidator
+      .areValidMembers(sender, recipient, workspace.id);
+    if (!areValidMembers)
       return res.status(400).send();
 
     var messages = await MessageService
@@ -75,7 +81,9 @@ MessageController.retrieveChat = async(req, res, next) => {
 
     var sender = req.user;
     var recipient = await UserService.getById(req.params.recipientId);
-    if (!MessageValidator.areValidMembers(sender, recipient))
+    var areValidMembers = await MessageValidator
+      .areValidMembers(sender, recipient, workspace.id);
+    if (!areValidMembers)
       return res.status(400).send();
     var sendedMessages = await MessageService
       .retrieveMessages(recipient.id, sender.id, workspace.id);
