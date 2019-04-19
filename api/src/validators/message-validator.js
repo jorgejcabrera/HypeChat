@@ -3,10 +3,13 @@
 var MessageValidator = {};
 MessageValidator.name = 'MessageValidator';
 
-var { WorkspaceUsers } = require('../models');
+var { WorkspaceUsers, User } = require('../models');
 
 // TODO we must check if both users are workspace members.
-MessageValidator.areValidMembers = async(sender, recipient, workspaceId) => {
+MessageValidator.areValidMembers = async(sender, recipientId, workspaceId) => {
+  var recipient = await User.findOne({
+    where: { id: recipientId, status: 'ACTIVE' },
+  });
   if (!recipient || !sender)
     return false;
 

@@ -13,15 +13,13 @@ MessageController.send = async(req, res, next) => {
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
     if (!workspace)
       return res.status(404).send();
-
-    var sender = req.user;
-    var recipient = await UserService.getById(req.params.recipientId);
     var areValidMembers = await MessageValidator
-      .areValidMembers(sender, recipient, workspace.id);
+      .areValidMembers(req.user, req.params.recipientId, workspace.id);
     if (!areValidMembers)
       return res.status(400).send();
-    var message = await MessageService
-      .send(recipient.id, req.body, sender.id, workspace.id);
+    
+      var message = await MessageService
+      .send(req.params.recipientId, req.body, req.user.id, workspace.id);
 
     res.json(message);
   } catch (err) {
@@ -35,15 +33,13 @@ MessageController.retrieveMessages = async(req, res, next) => {
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
     if (!workspace)
       return res.status(404).send();
-
-    var recipient = req.user;
-    var sender = await UserService.getById(req.params.senderId);
     var areValidMembers = await MessageValidator
-      .areValidMembers(sender, recipient, workspace.id);
+      .areValidMembers(req.user, req.params.senderId, workspace.id);
     if (!areValidMembers)
       return res.status(400).send();
+
     var messages = await MessageService
-      .retrieveMessages(recipient.id, sender.id, workspace.id);
+      .retrieveMessages(req.user.id, req.params.senderId, workspace.id);
     res.json(MessageMapper.map(messages));
   } catch (err) {
     // TODO LOGS
@@ -56,16 +52,13 @@ MessageController.retrieveSendedMessages = async(req, res, next) => {
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
     if (!workspace)
       return res.status(404).send();
-
-    var sender = req.user;
-    var recipient = await UserService.getById(req.params.recipientId);
     var areValidMembers = await MessageValidator
-      .areValidMembers(sender, recipient, workspace.id);
+      .areValidMembers(req.user, req.params.recipientId, workspace.id);
     if (!areValidMembers)
       return res.status(400).send();
 
     var messages = await MessageService
-      .retrieveMessages(recipient.id, sender.id, workspace.id);
+      .retrieveMessages(req.params.recipientId, req.user.id, workspace.id);
     res.json(MessageMapper.map(messages));
   } catch (err) {
     // TODO LOGS
@@ -78,17 +71,15 @@ MessageController.retrieveChat = async(req, res, next) => {
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
     if (!workspace)
       return res.status(404).send();
-
-    var sender = req.user;
-    var recipient = await UserService.getById(req.params.recipientId);
     var areValidMembers = await MessageValidator
-      .areValidMembers(sender, recipient, workspace.id);
+      .areValidMembers(req.user, req.params.recipientId, workspace.id);
     if (!areValidMembers)
       return res.status(400).send();
+
     var sendedMessages = await MessageService
-      .retrieveMessages(recipient.id, sender.id, workspace.id);
+      .retrieveMessages(req.params.recipientId, req.user.id, workspace.id);
     var messages = await MessageService
-      .retrieveMessages(sender.id, recipient.id, workspace.id);
+      .retrieveMessages(req.user.id, req.params.recipientId, workspace.id);
     var conversation = [...sendedMessages, ...messages];
     res.json(MessageMapper.map(conversation));
   } catch (err) {
