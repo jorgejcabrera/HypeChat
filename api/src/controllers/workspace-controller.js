@@ -33,12 +33,23 @@ WorkspaceController.retrieve = async(req, res, next) => {
   try {
     var workspace = await WorkspaceService
       .getById(req.params.workspaceId);
-
-    if (!workspace) {
+    if (!workspace)
       return res.status(404).send();
-    }
-
     res.json(workspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.retrieveUsers = async(req, res, next) => {
+  try {
+    var workspace = await WorkspaceService
+      .getById(req.params.workspaceId);
+    if (!workspace)
+      return res.status(404).send();
+    var users = await WorkspaceService
+      .retrieveUsers(workspace.id);
+    res.json(users);
   } catch (err) {
     next(err);
   }
@@ -48,11 +59,8 @@ WorkspaceController.update = async(req, res, next) => {
   try {
     var workspace = await WorkspaceService
       .update(req.params.workspaceId, req.body);
-
-    if (!workspace) {
+    if (!workspace)
       return res.status(404).send();
-    }
-
     res.json(workspace);
   } catch (err) {
     next(err);

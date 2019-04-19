@@ -31,11 +31,12 @@ module.exports = {
       queryInterface.addIndex('WorkspaceUsers', ['userId']);
 
       queryInterface.addIndex('WorkspaceUsers', ['workspaceId']);
-      
-      queryInterface.addConstraint('WorkspaceUsers', ['userId', 'workspaceId'], {
-        type: 'unique',
-        name: 'workspace_user_unique_constraint',
-      });
+
+      queryInterface.addConstraint('WorkspaceUsers',
+        ['userId', 'workspaceId'], {
+          type: 'unique',
+          name: 'workspace_user_unique_constraint',
+        });
     });
   },
   down: (queryInterface, Sequelize) => {

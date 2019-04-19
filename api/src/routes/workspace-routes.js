@@ -6,7 +6,8 @@ var { AuthHandler } = require('../middleware');
 module.exports = (app) => {
 
   app.route('/workspaces/:workspaceId/users')
-    .post(WorkspaceController.addUser);
+    .post(WorkspaceController.addUser)
+    .get(WorkspaceController.retrieveUsers);
 
   app.route('/workspaces/:workspaceId')
     .get(WorkspaceController.retrieve)

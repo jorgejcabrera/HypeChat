@@ -5,18 +5,10 @@ module.exports = (sequelize, type) => {
     userId: {
       type: type.INTEGER,
       allowNull: false,
-      references: {
-        model: 'User',
-        key: 'id',
-      },
     },
     workspaceId: {
       type: type.INTEGER,
       allowNull: false,
-      references: {
-        model: 'Workspace',
-        key: 'id',
-      },
     },
     createdAt: {
       allowNull: false,
@@ -28,17 +20,16 @@ module.exports = (sequelize, type) => {
     },
   });
 
-  /* WorkspaceUsers.associate = (models) => {
+  WorkspaceUsers.associate = (models) => {
     // Add any relations (foreign keys) here.
     WorkspaceUsers.belongsTo(models.User, {
-        foreignKey: 'userId',
-        as: 'user',
+      foreignKey: 'userId',
+      as: 'user',
     });
     WorkspaceUsers.belongsTo(models.Workspace, {
-        foreignKey: 'workspaceId',
-        as: 'workspace',
+      foreignKey: 'workspaceId',
+      as: 'workspace',
     });
-  };*/
-
+  };
   return WorkspaceUsers;
 };

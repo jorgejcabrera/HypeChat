@@ -1,6 +1,6 @@
 'use strict';
 
-var { Workspace, WorkspaceUsers } = require('../models');
+var { Workspace, WorkspaceUsers, User } = require('../models');
 
 var WorkspaceService = {};
 WorkspaceService.name = 'WorkspaceService';
@@ -14,6 +14,18 @@ WorkspaceService.create = async(workspaceData) => {
 WorkspaceService.getById = async(workspaceId) => {
   var workspace = await Workspace.findByPk(workspaceId);
   return workspace && workspace.toJSON();
+};
+
+WorkspaceService.retrieveUsers = async(workspaceId) => {
+  var users = await WorkspaceUsers.findAll({
+    where: { workspaceId: workspaceId },
+    include: [{
+      model: User,
+      as: 'user',
+    }],
+    raw: true,
+  });
+  return users;
 };
 
 WorkspaceService.addUser = async(workspaceId, userId) => {
