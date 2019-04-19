@@ -1,6 +1,6 @@
 'use strict';
 
-var { MessageService, UserService, WorkspaceService } = require('../services');
+var { MessageService, WorkspaceService } = require('../services');
 var { MessageValidator } = require('../validators');
 
 var { MessageMapper } = require('../mappers');
@@ -10,6 +10,7 @@ MessageController.name = 'MessageController';
 
 MessageController.send = async(req, res, next) => {
   try {
+    // TODO
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
     if (!workspace)
       return res.status(404).send();
@@ -17,8 +18,8 @@ MessageController.send = async(req, res, next) => {
       .areValidMembers(req.user, req.params.recipientId, workspace.id);
     if (!areValidMembers)
       return res.status(400).send();
-    
-      var message = await MessageService
+
+    var message = await MessageService
       .send(req.params.recipientId, req.body, req.user.id, workspace.id);
 
     res.json(message);
