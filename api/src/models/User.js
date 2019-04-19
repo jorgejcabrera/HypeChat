@@ -35,10 +35,18 @@ module.exports = (sequelize, type) => {
         notEmpty: true,
       },
     },
+    status: {
+      type: type.ENUM('ACTIVE', 'INACTIVE'),
+      allowNull: false,
+    },
   });
 
   User.associate = (models) => {
-    // Add any relations (foreign keys) here.
+    User.belongsToMany(models.Workspace, {
+      through: 'WorkspaceUsers',
+      as: 'workspaces',
+      foreignKey: 'userId',
+    });
   };
 
   return User;

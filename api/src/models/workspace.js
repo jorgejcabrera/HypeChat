@@ -48,11 +48,12 @@ module.exports = (sequelize, type) => {
 
   Workspace.associate = (models) => {
     // Add any relations (foreign keys) here.
-    Workspace.belongsTo(models.User, {
-      as: 'creator',
-      foreignKey: 'creatorId',
-      onDelete: 'CASCADE',
+    Workspace.belongsToMany(models.User, {
+      through: 'WorkspaceUsers',
+      as: 'users',
+      foreignKey: 'workspaceId',
     });
+
   };
 
   return Workspace;

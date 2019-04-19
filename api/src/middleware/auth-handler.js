@@ -15,7 +15,6 @@ AuthHandler.authenticate = async(req, res, next) => {
         { model: User, as: 'user' },
       ],
     });
-
     if (auth) {
       req.user = auth.user.toJSON();
     }

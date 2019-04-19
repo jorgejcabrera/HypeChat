@@ -46,6 +46,10 @@ ErrorHandler.default = (err, req, res, next) => {
       response.status = 400;
       response.json.type = 'userAlreadyExists';
       break;
+    case 'InvalidUserPwd':
+      response.status = 400;
+      response.json.type = 'invalidUserPwd';
+      break;
   }
 
   res.status(response.status).json(response.json);

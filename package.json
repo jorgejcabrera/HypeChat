@@ -24,6 +24,8 @@
     "bcrypt": "^3.0.5",
     "debug": "~2.6.9",
     "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "morgan": "~1.9.0",
     "normalize-email": "^1.1.1",
     "pg": "^6.4.2",
