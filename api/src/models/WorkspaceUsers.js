@@ -10,6 +10,11 @@ module.exports = (sequelize, type) => {
       type: type.INTEGER,
       allowNull: false,
     },
+    role: {
+      type: type.ENUM('CREATOR', 'MODERATOR', 'MEMBER'),
+      defaultValue: 'MEMBER',
+      required: true,
+    },
     createdAt: {
       allowNull: false,
       type: type.DATE,

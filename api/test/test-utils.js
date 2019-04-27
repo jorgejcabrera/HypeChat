@@ -51,7 +51,7 @@ TestUtils.authenticatedUserFactory = async(props = {}) => {
   return user;
 };
 
-TestUtils.workspaceFactory = async(props = {}) => {
+TestUtils.workspaceFactory = async(props = {}, members = []) => {
   const data = async(props = {}) => {
     const defaultProps = {
       name: faker.company.companyName(),
@@ -61,7 +61,17 @@ TestUtils.workspaceFactory = async(props = {}) => {
     };
     return Object.assign({}, defaultProps, props);
   };
-  return await services.WorkspaceService.create(await data(props));
+  var workspace = await services.WorkspaceService.create(await data(props));
+
+  for (var idx in members) {
+    await services.WorkspaceService.addUser(
+      workspace.id,
+      members[idx].id,
+      members[idx].role
+    );
+  }
+
+  return workspace;
 };
 
 module.exports = TestUtils;

@@ -12,19 +12,22 @@ chai.use(chaiHttp);
 describe('Workspace Routes Test', () => {
 
   var user;
+  var otherUser;
   var workspaceData;
 
   beforeEach(async() => {
     await TestUtils.clearDB();
     // We need to have a user so we can create workspaces.
     user = await TestUtils.authenticatedUserFactory(
-      {password: 'validPassword.123'});
+      {password: 'validPassword.123'}
+    );
+    otherUser = await TestUtils.authenticatedUserFactory(
+      {password: 'validPassword.123'}
+    );
     workspaceData = {
       name: 'Test Workspace',
       image: 'http://test.workspace.com',
       location: 'Street 101, City, Country',
-      // TODO: remove this after route is secured.
-      creatorId: user.id,
     };
   });
 
@@ -109,29 +112,228 @@ describe('Workspace Routes Test', () => {
   });
 
   describe('Retrieve', () => {
-    it('should return invalid when workspace does not exist', async() => {
-      var res = await chai.request(app).get('/workspaces/1');
+    it('should return unauthorized when workspace does not exist',
+      async() => {
+        var res = await chai.request(app)
+          .get('/workspaces/1')
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      });
+
+    it('should return ok when workspace exists and user is creator',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id }
+        );
+        var res = await chai.request(app)
+          .get('/workspaces/' + workspace.id)
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+        chai.assert.strictEqual(
+          res.body.id,
+          workspace.id,
+          'Response was not what was expected'
+        );
+      });
+
+    it('should return ok when workspace exists and user is moderator',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [ { id: otherUser.id, role: 'MODERATOR' } ]
+        );
+        var res = await chai.request(app)
+          .get('/workspaces/' + workspace.id)
+          .set('X-Auth', otherUser.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+        chai.assert.strictEqual(
+          res.body.id,
+          workspace.id,
+          'Response was not what was expected'
+        );
+      });
+
+    it('should return ok when workspace exists and user is member',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [ { id: otherUser.id, role: 'MEMBER' } ]
+        );
+        var res = await chai.request(app)
+          .get('/workspaces/' + workspace.id)
+          .set('X-Auth', otherUser.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+        chai.assert.strictEqual(
+          res.body.id,
+          workspace.id,
+          'Response was not what was expected'
+        );
+      });
+
+    it('should return unauthorized when workspace exists and user'
+      + ' doesn\'t belong', async() => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id }
+      );
+      var res = await chai.request(app)
+        .get('/workspaces/' + workspace.id)
+        .set('X-Auth', otherUser.auth.accessToken);
 
       chai.assert.strictEqual(
         res.status,
-        404,
-        'Status was not 404'
+        401,
+        'Status was not 401'
       );
     });
 
-    it('should return ok when workspace exists', async() => {
-      var workspace = await TestUtils.workspaceFactory({ creatorId: user.id });
-      var res = await chai.request(app).get('/workspaces/' + workspace.id);
+    it('should return unauthorized when user is creator of another workspace '
+     + 'but doesn\'t belong to this one', async() => {
+      var workspace1 = await TestUtils.workspaceFactory(
+        { creatorId: user.id }
+      );
+      await TestUtils.workspaceFactory(
+        { creatorId: otherUser.id }
+      );
+      var res = await chai.request(app)
+        .get('/workspaces/' + workspace1.id)
+        .set('X-Auth', otherUser.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        401,
+        'Status was not 401'
+      );
+    });
+  });
+
+  describe('Delete', () => {
+    it('should return unauthorized when user doesn\'t belong', async() => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id }
+      );
+
+      var res = await chai.request(app)
+        .delete('/workspaces/' + workspace.id)
+        .set('X-Auth', otherUser.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        401,
+        'Status was not 401'
+      );
+
+      // Check that workspace still exists.
+      res = await chai.request(app)
+        .get('/workspaces/' + workspace.id)
+        .set('X-Auth', user.auth.accessToken);
 
       chai.assert.strictEqual(
         res.status,
         200,
         'Status was not 200'
       );
+    });
+
+    it('should return unauthorized when user is member', async() => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id },
+        [ { id: otherUser.id, role: 'MEMBER' } ]
+      );
+
+      var res = await chai.request(app)
+        .delete('/workspaces/' + workspace.id)
+        .set('X-Auth', otherUser.auth.accessToken);
+
       chai.assert.strictEqual(
-        res.body.id,
-        workspace.id,
-        'Response was not what was expected'
+        res.status,
+        401,
+        'Status was not 401'
+      );
+
+      // Check that workspace still exists.
+      res = await chai.request(app)
+        .get('/workspaces/' + workspace.id)
+        .set('X-Auth', user.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        200,
+        'Status was not 200'
+      );
+    });
+
+    it('should return unauthorized when user is moderator', async() => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id },
+        [ { id: otherUser.id, role: 'MODERATOR' } ]
+      );
+
+      var res = await chai.request(app)
+        .delete('/workspaces/' + workspace.id)
+        .set('X-Auth', otherUser.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        401,
+        'Status was not 401'
+      );
+
+      // Check that workspace still exists.
+      res = await chai.request(app)
+        .get('/workspaces/' + workspace.id)
+        .set('X-Auth', user.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        200,
+        'Status was not 200'
+      );
+    });
+
+    it('should return ok when user is creator', async() => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id }
+      );
+
+      var res = await chai.request(app)
+        .delete('/workspaces/' + workspace.id)
+        .set('X-Auth', user.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        200,
+        'Status was not 200'
+      );
+
+      // Check that workspace no longer exists.
+      res = await chai.request(app)
+        .get('/workspaces/' + workspace.id)
+        .set('X-Auth', user.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        401,
+        'Status was not 401'
       );
     });
   });
