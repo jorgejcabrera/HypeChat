@@ -8,14 +8,14 @@ module.exports = (sequelize, type) => {
       primaryKey: true,
       type: type.INTEGER,
     },
-    firstName: {
-      allowNull: false,
-      type: type.STRING,
-    },
     // TODO this attribute must not be updateable
     isAdmin: {
       type: type.BOOLEAN,
       allowNull: false,
+    },
+    firstName: {
+      allowNull: false,
+      type: type.STRING,
     },
     lastName: {
       allowNull: false,

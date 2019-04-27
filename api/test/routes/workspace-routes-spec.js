@@ -445,4 +445,130 @@ describe('Workspace Routes Test', () => {
         );
       });
   });
+
+  describe('Add Group', () => {
+
+    var addGroup = async(groupData, members, token, expect, expectError) => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id },
+        members
+      );
+
+      var res = await chai.request(app)
+        .post('/workspaces/' + workspace.id + '/groups')
+        .set('X-Auth', token)
+        .send(groupData);
+
+      if (expect === 'UNAUTHORIZED') {
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      } else if (expect === 'INVALID') {
+        chai.assert.strictEqual(
+          res.status,
+          400,
+          'Status was not 400'
+        );
+
+        if (expectError) {
+          chai.assert.deepEqual(
+            res.body,
+            expectError,
+            'Response was not what was expected'
+          );
+        }
+      } else if (expect === 'OK') {
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        delete res.body.id;
+        delete res.body.createdAt;
+        delete res.body.updatedAt;
+        groupData.workspaceId = workspace.id;
+        chai.assert.deepEqual(
+          res.body,
+          groupData,
+          'Response was not what was expected'
+        );
+      }
+    };
+
+    it('should return unauthorized when calling user doesn\'t belong',
+      async() => {
+        await addGroup(
+          {
+            creatorId: otherUser.id,
+            name: 'A test group',
+            isActive: true,
+          },
+          [],
+          otherUser.auth.accessToken,
+          'UNAUTHORIZED'
+        );
+      });
+
+    it('should return ok when calling user is member',
+      async() => {
+        await addGroup(
+          {
+            creatorId: otherUser.id,
+            name: 'A test group',
+            isActive: true,
+          },
+          [ { id: otherUser.id, role: 'MEMBER' } ],
+          otherUser.auth.accessToken,
+          'OK'
+        );
+      });
+
+    it('should return ok when calling user is moderator',
+      async() => {
+        await addGroup(
+          {
+            creatorId: otherUser.id,
+            name: 'A test group',
+            isActive: true,
+          },
+          [ { id: otherUser.id, role: 'MODERATOR' } ],
+          otherUser.auth.accessToken,
+          'OK'
+        );
+      });
+
+    it('should return ok when calling user is creator',
+      async() => {
+        await addGroup(
+          {
+            creatorId: user.id,
+            name: 'A test group',
+            isActive: true,
+          },
+          [],
+          user.auth.accessToken,
+          'OK'
+        );
+      });
+
+    it('should return invalid when group name is missing',
+      async() => {
+        await addGroup(
+          { isActive: true },
+          [],
+          user.auth.accessToken,
+          'INVALID',
+          {
+            status: 'error',
+            type: 'validationError',
+            validationErrors: [
+              {error: 'isBlank', path: 'name'},
+            ],
+          },
+        );
+      });
+  });
 });

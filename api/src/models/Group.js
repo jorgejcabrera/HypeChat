@@ -12,8 +12,12 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.INTEGER,
     },
+    workspaceId: {
+      allowNull: false,
+      type: type.INTEGER,
+    },
     name: {
-      allowNull: true,
+      allowNull: false,
       type: type.STRING,
     },
     isActive: {
@@ -35,6 +39,10 @@ module.exports = (sequelize, type) => {
     Group.belongsTo(models.User, {
       foreignKey: 'creatorId',
       as: 'creator',
+    });
+    Group.belongsTo(models.Workspace, {
+      foreignKey: 'workspaceId',
+      as: 'workspace',
     });
   };
 
