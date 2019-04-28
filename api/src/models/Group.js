@@ -44,6 +44,11 @@ module.exports = (sequelize, type) => {
       foreignKey: 'workspaceId',
       as: 'workspace',
     });
+    Group.belongsToMany(models.User, {
+      through: 'UserGroup',
+      as: 'users',
+      foreignKey: 'groupId',
+    });
   };
 
   return Group;

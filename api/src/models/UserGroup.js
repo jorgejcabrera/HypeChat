@@ -9,12 +9,12 @@ module.exports = (sequelize, type) => {
       type: type.INTEGER,
     },
     userId: {
-      allowNull: true,
+      allowNull: false,
       type: type.INTEGER,
     },
     groupId: {
       type: type.INTEGER,
-      allowNull: true,
+      allowNull: false,
     },
     isActive: {
       allowNull: false,

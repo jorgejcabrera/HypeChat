@@ -63,6 +63,8 @@ AuthHandler.authorizeWorkspace = (roles) => {
       });
     }
 
+    req.user.workspaceRole = workspaceUser.role;
+
     // authorization successful
     next();
   };

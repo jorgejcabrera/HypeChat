@@ -571,4 +571,116 @@ describe('Workspace Routes Test', () => {
         );
       });
   });
+
+  describe('List Groups', () => {
+
+    var groups;
+    var expected;
+
+    beforeEach(async() => {
+      groups = [
+        {
+          creatorId: user.id,
+          name: 'A test group',
+          isActive: true,
+        },
+        {
+          creatorId: otherUser.id,
+          name: 'Another test group',
+          isActive: true,
+        },
+      ];
+
+      expected = groups;
+    });
+
+    var addGroup = async(members, groups, token, expect, expectResponse) => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id },
+        members,
+        groups
+      );
+
+      var res = await chai.request(app)
+        .get('/workspaces/' + workspace.id + '/groups')
+        .set('X-Auth', token);
+
+      if (expect === 'UNAUTHORIZED') {
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      } else if (expect === 'OK') {
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        if (expectResponse) {
+          res.body = res.body.map((group) => {
+            delete group.id;
+            delete group.createdAt;
+            delete group.updatedAt;
+          });
+
+          expectResponse = expectResponse.map((group) => {
+            group.workspaceId = workspace.id;
+          });
+
+          chai.assert.deepEqual(
+            res.body,
+            expectResponse,
+            'Response was not what was expected'
+          );
+        }
+      }
+    };
+
+    it('should return unauthorized when calling user doesn\'t belong',
+      async() => {
+        await addGroup(
+          [],
+          groups,
+          otherUser.auth.accessToken,
+          'UNAUTHORIZED'
+        );
+      });
+
+    it('should return ok when calling user is creator',
+      async() => {
+        await addGroup(
+          [ { id: otherUser.id, role: 'MEMBER' } ],
+          groups,
+          user.auth.accessToken,
+          'OK',
+          expected
+        );
+      });
+
+    it('should return ok when calling user is moderator',
+      async() => {
+        await addGroup(
+          [ { id: otherUser.id, role: 'MODERATOR' } ],
+          groups,
+          otherUser.auth.accessToken,
+          'OK',
+          expected
+        );
+      });
+
+    it('should return ok when calling user is member',
+      async() => {
+        expected = [ groups[1] ];
+        await addGroup(
+          [ { id: otherUser.id, role: 'MEMBER' } ],
+          groups,
+          otherUser.auth.accessToken,
+          'OK',
+          expected
+        );
+      });
+
+  });
 });

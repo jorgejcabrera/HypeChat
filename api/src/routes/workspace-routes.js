@@ -6,23 +6,23 @@ var { AuthHandler } = require('../middleware');
 module.exports = (app) => {
 
   app.route('/workspaces/:workspaceId/groups')
+    .get(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
+      GroupController.list
+    )
     .post(
       AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
       GroupController.create
     );
-  // .get(
-  //   AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
-  //   WorkspaceController.retrieveGroups
-  // );
 
   app.route('/workspaces/:workspaceId/users')
-    .post(
-      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR']),
-      WorkspaceController.addUser
-    )
     .get(
       AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
       WorkspaceController.retrieveUsers
+    )
+    .post(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR']),
+      WorkspaceController.addUser
     );
 
   app.route('/workspaces/:workspaceId')

@@ -51,7 +51,7 @@ TestUtils.authenticatedUserFactory = async(props = {}) => {
   return user;
 };
 
-TestUtils.workspaceFactory = async(props = {}, members = []) => {
+TestUtils.workspaceFactory = async(props = {}, members = [], groups = []) => {
   const data = async(props = {}) => {
     const defaultProps = {
       name: faker.company.companyName(),
@@ -69,6 +69,11 @@ TestUtils.workspaceFactory = async(props = {}, members = []) => {
       members[idx].id,
       members[idx].role
     );
+  }
+
+  for (idx in groups) {
+    groups[idx].workspaceId = workspace.id;
+    await services.GroupService.create(groups[idx]);
   }
 
   return workspace;

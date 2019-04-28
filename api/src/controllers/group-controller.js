@@ -16,8 +16,13 @@ GroupController.create = async(req, res, next) => {
   }
 };
 
-// TODO
-GroupController.retrieve = async(req, res, next) => {
+GroupController.list = async(req, res, next) => {
+  try {
+    var list = await GroupService.list(req.user, req.params.workspaceId);
+    res.send(list);
+  } catch (err) {
+    next(err);
+  }
 
 };
 
