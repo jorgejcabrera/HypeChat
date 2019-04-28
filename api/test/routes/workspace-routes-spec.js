@@ -681,6 +681,176 @@ describe('Workspace Routes Test', () => {
           expected
         );
       });
+  });
 
+  describe('Update User Roles', () => {
+    var updateUserRole = async(newData, members, token, expect) => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id },
+        members
+      );
+
+      var res = await chai.request(app)
+        .put('/workspaces/' + workspace.id + '/users/' + newData.id)
+        .set('X-Auth', token)
+        .send(newData);
+
+      if (expect === 'UNAUTHORIZED') {
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      } else if (expect === 'OK') {
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+      }
+      return workspace;
+    };
+
+    it('should return unauthorized when calling user doesn\'t belong',
+      async() => {
+        await updateUserRole(
+          { id: otherUser.id, role: 'MODERATOR'},
+          [],
+          otherUser.auth.accessToken,
+          'INVALID'
+        );
+      });
+
+    it('should return invalid when calling user is member',
+      async() => {
+        await updateUserRole(
+          { id: otherUser.id, role: 'MODERATOR'},
+          [ { id: otherUser.id, role: 'MEMBER' } ],
+          otherUser.auth.accessToken,
+          'INVALID'
+        );
+      });
+
+    it('should return invalid when calling user is moderator',
+      async() => {
+        await updateUserRole(
+          { id: otherUser.id, role: 'MEMBER'},
+          [ { id: otherUser.id, role: 'MODERATOR' } ],
+          otherUser.auth.accessToken,
+          'INVALID'
+        );
+      });
+
+    it('should return ok when calling user is creator',
+      async() => {
+        var workspace = await updateUserRole(
+          { id: otherUser.id, role: 'MODERATOR'},
+          [ { id: otherUser.id, role: 'MEMBER' } ],
+          user.auth.accessToken,
+          'OK'
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/users')
+          .set('X-Auth', otherUser.auth.accessToken)
+          .send({ userId: thirdUser.id });
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+      });
+  });
+
+  describe('Remove User', () => {
+    var removeUser = async(deleteId, members, token, expect) => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id },
+        members
+      );
+
+      var res = await chai.request(app)
+        .delete('/workspaces/' + workspace.id + '/users/' + deleteId)
+        .set('X-Auth', token);
+
+      if (expect === 'UNAUTHORIZED') {
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      } else if (expect === 'OK') {
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+      }
+
+      res = await chai.request(app)
+        .get('/workspaces/' + workspace.id + '/users')
+        .set('X-Auth', user.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.status,
+        200,
+        'Status was not 200'
+      );
+
+      chai.assert.strictEqual(
+        res.body.length,
+        expect === 'OK' ? members.length : members.length + 1,
+        'Response length was not as expected'
+      );
+
+      return workspace;
+    };
+
+    it('should return unauthorized when calling user doesn\'t belong',
+      async() => {
+        await removeUser(
+          thirdUser.id,
+          [ { id: thirdUser.id, role: 'MEMBER' } ],
+          otherUser.auth.accessToken,
+          'INVALID'
+        );
+      });
+
+    it('should return invalid when calling user is member',
+      async() => {
+        await removeUser(
+          thirdUser.id,
+          [
+            { id: otherUser.id, role: 'MEMBER' },
+            { id: thirdUser.id, role: 'MEMBER' },
+          ],
+          otherUser.auth.accessToken,
+          'INVALID'
+        );
+      });
+
+    it('should return ok when calling user is moderator',
+      async() => {
+        await removeUser(
+          thirdUser.id,
+          [
+            { id: otherUser.id, role: 'MODERATOR' },
+            { id: thirdUser.id, role: 'MEMBER' },
+          ],
+          otherUser.auth.accessToken,
+          'OK'
+        );
+      });
+
+    it('should return ok when calling user is creator',
+      async() => {
+        await removeUser(
+          otherUser.id,
+          [ { id: otherUser.id, role: 'MEMBER' } ],
+          user.auth.accessToken,
+          'OK'
+        );
+      });
   });
 });

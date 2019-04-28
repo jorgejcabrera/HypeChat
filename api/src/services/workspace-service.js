@@ -57,6 +57,28 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
   return worspaceUser && worspaceUser.toJSON();
 };
 
+WorkspaceService.updateUserRole = async(workspaceId, userId, role) => {
+  var updated = await WorkspaceUsers.update({
+    role: role,
+  }, {
+    returning: true,
+    where: {
+      userId: userId,
+      workspaceId: workspaceId,
+    },
+  });
+  return updated[1][0] && updated[1][0].toJSON();
+};
+
+WorkspaceService.removeUser = async(workspaceId, userId) => {
+  return await WorkspaceUsers.destroy({
+    where: {
+      userId: userId,
+      workspaceId: workspaceId,
+    },
+  });
+};
+
 WorkspaceService.update = async(workspaceId, workspaceData) => {
   delete workspaceData.id;
   delete workspaceData.creatorId;

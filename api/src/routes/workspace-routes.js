@@ -15,6 +15,16 @@ module.exports = (app) => {
       GroupController.create
     );
 
+  app.route('/workspaces/:workspaceId/users/:userId')
+    .put(
+      AuthHandler.authorizeWorkspace(['CREATOR']),
+      WorkspaceController.updateUserRole
+    )
+    .delete(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR']),
+      WorkspaceController.removeUser
+    );
+
   app.route('/workspaces/:workspaceId/users')
     .get(
       AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
