@@ -21,6 +21,7 @@
     "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/src/config/sequelize/migrations --seeders-path api/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json"
   },
   "dependencies": {
+    "amqplib": "^0.5.3",
     "bcrypt": "^3.0.5",
     "debug": "~2.6.9",
     "express": "^4.16.4",

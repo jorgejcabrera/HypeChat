@@ -1,8 +1,9 @@
 'use strict';
 
 var { Message, MessageRecipient } = require('../models');
-
+var { amqp } = require('../config/dependencies');
 var MessageService = {};
+var messageQueue = 'messageQueue';
 MessageService.name = 'MessageService';
 
 MessageService.send =
@@ -16,6 +17,17 @@ async(recipientId, messageData, senderId, workspaceId) => {
     workspaceId: workspaceId,
     messageId: message.id,
   });
+
+  // sending data to rabbit queue
+  amqp.then(function(conn) {
+    var ok = conn.createChannel();
+    ok = ok.then(function(ch) {
+      ch.assertQueue(messageQueue);
+      ch.sendToQueue(messageQueue, 
+      new Buffer('{"recipientId": ' + recipientId + ',"senderId": ' + senderId + "}"));
+    });
+    return ok;
+  }).then(null, console.warn);
   return message && message.toJSON();
 };
 
