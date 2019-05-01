@@ -23,8 +23,10 @@ async(recipientId, messageData, senderId, workspaceId) => {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
       ch.assertQueue(messageQueue);
-      ch.sendToQueue(messageQueue, 
-      new Buffer('{"recipientId": ' + recipientId + ',"senderId": ' + senderId + "}"));
+      ch.sendToQueue(messageQueue,
+        new Buffer(
+          '{"recipientId": ' + recipientId +
+          ',"senderId": ' + senderId + '}'));
     });
     return ok;
   }).then(null, console.warn);
