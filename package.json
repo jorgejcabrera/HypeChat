@@ -18,7 +18,7 @@
     "test": "NODE_ENV=test mocha api/test/**/*",
     "covered-test": "NODE_ENV=test nyc mocha api/test/**/*",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/src/config/sequelize/migrations --seeders-path api/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json"
+    "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/src/config/sequelize/migrations --seeders-path api/src/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json && ./node_modules/.bin/sequelize db:seed:all --migrations-path api/src/config/sequelize/migrations --seeders-path api/src/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json"
   },
   "dependencies": {
     "amqplib": "^0.5.3",

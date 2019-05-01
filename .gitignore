@@ -70,3 +70,4 @@ typings/
 *.sublime*
 .config
 *memory
+.bash_history
