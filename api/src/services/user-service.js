@@ -4,7 +4,7 @@ var { User } = require('../models');
 var { EmailUtils } = require('../utils');
 var { PwdValidator } = require('../validators');
 
-var { bcrypt, Sequelize } = require('../config/dependencies');
+var { bcrypt, Sequelize, moment } = require('../config/dependencies');
 
 const saltRounds = 10;
 
@@ -87,20 +87,35 @@ UserService.delete = async(userId) => {
   return updated[1][0] && updated[1][0].toJSON();
 };
 
-UserService.findAllBetween = async(req) => {
+UserService.getNewUserStats = async(fromDate, toDate) => {
   var users = await User.findAll({
     where: {
-      createdAt:
-        Sequelize.where(
-          Sequelize.fn('date', Sequelize.col('createdAt')),
-          '>', req.query.from) &&
-        Sequelize.where(
-          Sequelize.fn('date', Sequelize.col('createdAt')),
-          '<', req.query.to),
+      createdAt: {
+        [Sequelize.Op.gt]: moment(fromDate, 'YYYY-MM-DD').startOf('day'),
+        [Sequelize.Op.lt]: moment(toDate, 'YYYY-MM-DD').endOf('day'),
+      },
     },
+    attributes: [
+      Sequelize.fn('count', Sequelize.col('id')),
+      Sequelize.fn('date', Sequelize.col('createdAt')),
+    ],
+    group: Sequelize.fn('date', Sequelize.col('createdAt')),
     raw: true,
   });
-  return users;
+
+  var newUserStats = {};
+  newUserStats.total = 0;
+  newUserStats.summary = {};
+  users.forEach((dayData) => {
+    dayData.count = parseInt(dayData.count, 10);
+    newUserStats.total += dayData.count;
+    newUserStats.summary[dayData.date] = {
+      total: dayData.count,
+      accumulated: newUserStats.total,
+    };
+  });
+
+  return newUserStats;
 };
 
 module.exports = UserService;
