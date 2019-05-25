@@ -70,3 +70,6 @@ typings/
 *.sublime*
 .config
 *memory
+
+# docker-compose
+.bash_history
