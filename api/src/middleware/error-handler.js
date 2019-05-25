@@ -63,6 +63,9 @@ ErrorHandler.default = (err, req, res, next) => {
       break;
   }
 
+  if (response.status === 500) {
+    console.log(err);
+  }
   res.status(response.status).json(response.json);
 };
 

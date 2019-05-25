@@ -17,13 +17,37 @@ WorkspaceController.create = async(req, res, next) => {
 
 WorkspaceController.addUser = async(req, res, next) => {
   try {
-    var workspace = await WorkspaceService
-      .getById(req.params.workspaceId);
+    var workspace = await WorkspaceService.getById(req.params.workspaceId);
     var user = await UserService.getById(req.body.userId);
     if (!user || !workspace)
       return res.status(404).send();
     var userWorkspace = await WorkspaceService.addUser(workspace.id, user.id);
-    res.status(201).send(userWorkspace);
+    res.json(userWorkspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.updateUserRole = async(req, res, next) => {
+  try {
+    var userWorkspace = await WorkspaceService.updateUserRole(
+      req.params.workspaceId,
+      req.params.userId,
+      req.body.role,
+    );
+    res.json(userWorkspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.removeUser = async(req, res, next) => {
+  try {
+    await WorkspaceService.removeUser(
+      req.params.workspaceId,
+      req.params.userId,
+    );
+    res.send();
   } catch (err) {
     next(err);
   }

@@ -74,8 +74,8 @@ UserController.delete = async(req, res, next) => {
 
 UserController.stats = async(req, res, next) => {
   try {
-    var rows = await UserService.findAllBetween(req);
-    res.json(UserMapper.stats(rows));
+    var rows = await UserService.getNewUserStats(req.query.from, req.query.to);
+    res.json(rows);
   } catch (err) {
     next(err);
   }
