@@ -1,15 +1,11 @@
 'use strict';
 
-
-const result = require('dotenv').config();
-
-if (result.error) {
-  throw result.error;
-}
+require('dotenv').config();
 
 var Sequelize = require('sequelize');
 var swaggerUi = require('swagger-ui-express');
 var swaggerDocument = require('./swagger/config.json');
+
 var env = process.env.NODE_ENV || 'development';
 Sequelize.config = require('./sequelize/config.json')[env];
 
