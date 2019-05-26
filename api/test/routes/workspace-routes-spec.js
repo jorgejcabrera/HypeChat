@@ -115,6 +115,110 @@ describe('Workspace Routes Test', () => {
     });
   });
 
+  describe('List', () => {
+    var adminUser;
+
+    beforeEach(async() => {
+      // Create some workspaces to be able to list something.
+      for (var i = 0; i < 25; i++) {
+        await TestUtils.workspaceFactory({ creatorId: user.id });
+      };
+
+      // Create an admin user.
+      adminUser = await TestUtils.authenticatedUserFactory(
+        { password: 'validPassword.123', isAdmin: true }
+      );
+    });
+
+    it('should return unauthorized when user is not admin',
+      async() => {
+        var res = await chai.request(app)
+          .get('/workspaces')
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      });
+
+    it('should return ok when user is admin',
+      async() => {
+        var res = await chai.request(app)
+          .get('/workspaces')
+          .set('X-Auth', adminUser.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.strictEqual(
+          res.body.pageContents.length,
+          10,
+          'Contents were not what was expected'
+        );
+
+        chai.assert.strictEqual(
+          res.body.pageNumber,
+          1,
+          'Page number not what was expected'
+        );
+
+        chai.assert.strictEqual(
+          res.body.total,
+          25,
+          'Total was not what was expected'
+        );
+      });
+
+    it('should return ok when asking for last page',
+      async() => {
+        var res = await chai.request(app)
+          .get('/workspaces?page=3')
+          .set('X-Auth', adminUser.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.strictEqual(
+          res.body.pageContents.length,
+          5,
+          'Contents were not what was expected'
+        );
+
+        chai.assert.strictEqual(
+          res.body.pageNumber,
+          3,
+          'Page number not what was expected'
+        );
+
+        chai.assert.strictEqual(
+          res.body.total,
+          25,
+          'Total was not what was expected'
+        );
+      });
+
+    it('should return invalid when asking for page out of range',
+      async() => {
+        var res = await chai.request(app)
+          .get('/workspaces?page=4')
+          .set('X-Auth', adminUser.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          404,
+          'Status was not 404'
+        );
+      });
+  });
+
   describe('Retrieve', () => {
     it('should return unauthorized when workspace does not exist',
       async() => {
@@ -500,7 +604,6 @@ describe('Workspace Routes Test', () => {
           'Response was not what was expected'
         );
       });
-
   });
 
   describe('Add User', () => {

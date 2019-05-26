@@ -105,6 +105,18 @@ WorkspaceController.retrieve = async(req, res, next) => {
   }
 };
 
+WorkspaceController.listAll = async(req, res, next) => {
+  try {
+    var page = await WorkspaceService.list(req.query.page);
+    res.json(page);
+  } catch (err) {
+    if (err.name === 'OutOfBounds') {
+      return res.status(404).send();
+    }
+    next(err);
+  }
+};
+
 WorkspaceController.retrieveUsers = async(req, res, next) => {
   try {
     var workspace = await WorkspaceService

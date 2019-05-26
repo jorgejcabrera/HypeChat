@@ -56,6 +56,10 @@ module.exports = (app) => {
     );
 
   app.route('/workspaces')
+    .get(
+      AuthHandler.authorize({ requireAdmin: true }),
+      WorkspaceController.listAll
+    )
     .post(AuthHandler.authorize(), WorkspaceController.create);
 
   app.route('/workspaces/accept-invite')

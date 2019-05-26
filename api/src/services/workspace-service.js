@@ -19,6 +19,32 @@ WorkspaceService.create = async(workspaceData) => {
   return workspace && workspace.toJSON();
 };
 
+WorkspaceService.list = async(pageNumber = 1) => {
+  const PAGE_SIZE = 10;
+
+  var offset = (pageNumber - 1) * PAGE_SIZE;
+  var workspacesCount = await Workspace.count();
+  if (workspacesCount < offset) {
+    var e = new Error();
+    e.name = 'OutOfBounds';
+    throw e;
+  }
+
+  var workspaces = await Workspace.findAll({
+    offset: offset,
+    limit: PAGE_SIZE,
+    order: [['id', 'ASC']],
+  });
+
+  workspaces = workspaces.map((workspace) => workspace.toJSON());
+
+  return {
+    pageContents: workspaces,
+    pageNumber: parseInt(pageNumber, 10),
+    total: workspacesCount,
+  };
+};
+
 WorkspaceService.getById = async(workspaceId) => {
   var workspace = await Workspace.findByPk(workspaceId);
   return workspace && workspace.toJSON();
