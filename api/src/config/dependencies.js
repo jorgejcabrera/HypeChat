@@ -25,4 +25,5 @@ module.exports = {
   swaggerDocument: swaggerDocument,
   passport: require('passport'),
   FacebookStrategy: require('passport-facebook-token'),
+  jwt: require('jsonwebtoken'),
 };

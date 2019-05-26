@@ -35,6 +35,12 @@ module.exports = (app) => {
       WorkspaceController.addUser
     );
 
+  app.route('/workspaces/:workspaceId/invite')
+    .post(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR']),
+      WorkspaceController.inviteUser
+    );
+
   app.route('/workspaces/:workspaceId')
     .get(
       AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
@@ -51,4 +57,10 @@ module.exports = (app) => {
 
   app.route('/workspaces')
     .post(AuthHandler.authorize(), WorkspaceController.create);
+
+  app.route('/workspaces/accept-invite')
+    .post(
+      AuthHandler.authorize(),
+      WorkspaceController.addUserWithInvite
+    );
 };

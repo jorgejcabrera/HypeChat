@@ -342,6 +342,167 @@ describe('Workspace Routes Test', () => {
     });
   });
 
+  describe('Invite User', () => {
+    it('should return unauthorized when calling user doesn\'t belong',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id }
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/invite')
+          .set('X-Auth', otherUser.auth.accessToken)
+          .send({ email: thirdUser.email });
+
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      });
+
+    it('should return unauthorized when calling user is member',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [ { id: otherUser.id, role: 'MEMBER' } ]
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/invite')
+          .set('X-Auth', otherUser.auth.accessToken)
+          .send({ email: thirdUser.email });
+
+        chai.assert.strictEqual(
+          res.status,
+          401,
+          'Status was not 401'
+        );
+      });
+
+    it('should return ok when calling user is moderator',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [ { id: otherUser.id, role: 'MODERATOR' } ]
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/invite')
+          .set('X-Auth', otherUser.auth.accessToken)
+          .send({ email: thirdUser.email });
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.isObject(
+          res.body,
+          'Response was not what was expected'
+        );
+      });
+
+    it('should return ok when calling user is creator',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/invite')
+          .set('X-Auth', user.auth.accessToken)
+          .send({ email: thirdUser.email });
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.isObject(
+          res.body,
+          'Response was not what was expected'
+        );
+      });
+
+    it('should return invalid when user to add doesn\'t exist',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/invite')
+          .set('X-Auth', user.auth.accessToken)
+          .send({ email: 'someInvalid@email.com' });
+
+        chai.assert.strictEqual(
+          res.status,
+          404,
+          'Status was not 404'
+        );
+      });
+  });
+
+  describe('Accept Invite', () => {
+    it('should return ok when user and token are valid',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id }
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/invite')
+          .set('X-Auth', user.auth.accessToken)
+          .send({ email: otherUser.email });
+
+        res = await chai.request(app)
+          .post('/workspaces/accept-invite')
+          .set('X-Auth', otherUser.auth.accessToken)
+          .send({ inviteToken: res.body.inviteToken });
+
+        res = await chai.request(app)
+          .get('/workspaces/' + workspace.id + '/users')
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.equal(
+          res.body.length,
+          2,
+          'Response was not what was expected'
+        );
+      });
+
+    it('should return invalid when calling user doesn\'t match token',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id }
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/invite')
+          .set('X-Auth', user.auth.accessToken)
+          .send({ email: otherUser.email });
+
+        res = await chai.request(app)
+          .post('/workspaces/accept-invite')
+          .set('X-Auth', thirdUser.auth.accessToken)
+          .send({ inviteToken: res.body.inviteToken });
+
+        res = await chai.request(app)
+          .get('/workspaces/' + workspace.id + '/users')
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.equal(
+          res.body.length,
+          1,
+          'Response was not what was expected'
+        );
+      });
+
+  });
+
   describe('Add User', () => {
     it('should return unauthorized when calling user doesn\'t belong',
       async() => {

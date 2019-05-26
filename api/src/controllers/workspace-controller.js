@@ -2,6 +2,8 @@
 
 var { WorkspaceService, UserService } = require('../services');
 
+var { jwt } = require('../config/dependencies');
+
 var WorkspaceController = {};
 WorkspaceController.name = 'WorkspaceController';
 
@@ -10,6 +12,44 @@ WorkspaceController.create = async(req, res, next) => {
     req.body.creatorId = req.user.id;
     var workspace = await WorkspaceService.create(req.body);
     res.json(workspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.inviteUser = async(req, res, next) => {
+  try {
+    var workspace = await WorkspaceService.getById(req.params.workspaceId);
+    var user = await UserService.getByEmail(req.body.email);
+    if (!user || !workspace)
+      return res.status(404).send();
+    var token = jwt.sign(
+      {
+        workspaceId: workspace.id,
+        userId: user.id,
+        role: 'MEMBER',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    res.json({ inviteToken: token });
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.addUserWithInvite = async(req, res, next) => {
+  try {
+    var decoded = jwt.verify(req.body.inviteToken, process.env.JWT_SECRET);
+    if (decoded.userId !== req.user.id) {
+      return res.status(401).send('Unauthorized');
+    }
+    var userWorkspace = await WorkspaceService.addUser(
+      decoded.workspaceId,
+      decoded.userId,
+      decoded.role
+    );
+    res.json(userWorkspace);
   } catch (err) {
     next(err);
   }
