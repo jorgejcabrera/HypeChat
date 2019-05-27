@@ -25,7 +25,7 @@ AuthController.logout = async(req, res, next) => {
   try {
     await AuthService.destroyByToken(req.headers['x-auth']);
     var user = req.user;
-    UserService.udpate(user.id, {firebaseToken:''});
+    UserService.udpate(user.id, {firebaseToken:null});
     res.send();
   } catch (err) {
     next(err);
