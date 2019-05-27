@@ -50,6 +50,8 @@ ErrorHandler.default = (err, req, res, next) => {
       response.status = 400;
       response.json.type = 'invalidUserPwd';
       break;
+    default:
+      console.error(err);
   }
 
   res.status(response.status).json(response.json);

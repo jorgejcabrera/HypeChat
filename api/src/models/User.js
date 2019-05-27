@@ -21,6 +21,10 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
+    firebaseToken: {
+      allowNull: true,
+      type: type.STRING,
+    },
     email: {
       type: type.STRING,
       allowNull: false,

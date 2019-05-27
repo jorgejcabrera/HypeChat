@@ -1,6 +1,6 @@
 'use strict';
 
-var { AuthService } = require('../services');
+var { AuthService, UserService } = require('../services');
 
 var AuthController = {};
 AuthController.name = 'AuthController';
@@ -8,7 +8,7 @@ AuthController.name = 'AuthController';
 AuthController.login = async(req, res, next) => {
   // TODO: Check that we have the required fields.
   try {
-    var auth = await AuthService.login(req.body.email, req.body.password);
+    var auth = await AuthService.login(req.body.email, req.body.password, req.body.firebaseToken);
     res.json(auth);
   } catch (err) {
     if (err.name === 'InvalidCredentials') {
@@ -24,6 +24,8 @@ AuthController.login = async(req, res, next) => {
 AuthController.logout = async(req, res, next) => {
   try {
     await AuthService.destroyByToken(req.headers['x-auth']);
+    var user = req.user;
+    UserService.udpate(user.id, {firebaseToken:''});
     res.send();
   } catch (err) {
     next(err);

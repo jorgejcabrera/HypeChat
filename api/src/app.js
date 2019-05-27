@@ -5,16 +5,24 @@ var {
   logger,
   swaggerUi,
   swaggerDocument,
+  firebaseAdmin,
 } = require('./config/dependencies');
 
 var { CorsHandler, ErrorHandler, AuthHandler } = require('./middleware');
 
+var serviceAccount = require('./config/serviceAccountKey.json');
 var app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Initialize firebase
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount),
+  databaseURL: "https://hypechat-fda96.firebaseio.com"
+});
 
 // Enable CORS.
 app.use(CorsHandler.cors);

@@ -20,4 +20,5 @@ module.exports = {
   normalizeemail: require('normalize-email'),
   swaggerUi: swaggerUi,
   swaggerDocument: swaggerDocument,
+  firebaseAdmin: require('firebase-admin'),
 };

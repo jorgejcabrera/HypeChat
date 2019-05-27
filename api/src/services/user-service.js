@@ -17,16 +17,15 @@ UserService.create = async(userData) => {
     pe.name = 'InvalidUserPwd';
     throw pe;
   }
-
   userData.email = EmailUtils.normalize(userData.email);
   var user = await User.findOne({ where: {email: userData.email} });
-
+  
   if (user) {
     var e = new Error();
     e.name = 'UserAlreadyExists';
     throw e;
   }
-
+  
   userData.password = await bcrypt.hash(userData.password, saltRounds);
   userData.status = 'ACTIVE';
   user = await User.create(userData);

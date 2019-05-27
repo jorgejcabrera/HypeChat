@@ -8,7 +8,7 @@ var { EmailUtils } = require('../utils');
 var AuthService = {};
 AuthService.name = 'AuthService';
 
-AuthService.login = async(email, inputPassword) => {
+AuthService.login = async(email, inputPassword, firebaseToken) => {
   var normalizedEmail = EmailUtils.normalize(email);
   var user = await UserService.getByEmail(normalizedEmail);
   if (!user) {
@@ -17,6 +17,8 @@ AuthService.login = async(email, inputPassword) => {
     throw e;
   }
 
+  //TODO expirar token de firebase antes de asignarselo a un nuevo usuario
+  UserService.udpate(user.id, {firebaseToken: firebaseToken});
   var valid = await AuthService.authenticate(user, inputPassword);
   if (!valid) {
     e = new Error();
