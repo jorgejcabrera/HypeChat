@@ -17,11 +17,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      firebaseToken: {
-        allowNull: true,
-        type: Sequelize.STRING,
-        unique: true,
-      },
       isAdmin: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
