@@ -1,6 +1,7 @@
 'use strict';
 
 var { Workspace, WorkspaceUsers, User } = require('../models');
+var GroupService = require('./group-service');
 
 var WorkspaceService = {};
 WorkspaceService.name = 'WorkspaceService';
@@ -14,6 +15,15 @@ WorkspaceService.create = async(workspaceData) => {
       workspace.creatorId,
       'CREATOR'
     );
+
+    await GroupService.create({
+      workspaceId: workspace.id,
+      creatorId: workspace.creatorId,
+      name: 'general',
+      description: 'Bienvenido a #general!',
+      visibility: 'PUBLIC',
+      isActive: true,
+    });
   }
 
   return workspace && workspace.toJSON();

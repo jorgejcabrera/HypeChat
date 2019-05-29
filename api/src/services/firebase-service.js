@@ -29,7 +29,7 @@ FirebaseService.sendNofication = async(sender, messageData) => {
     var payload = {
       notification: {
         title: sender.firstName,
-        body: messageData.messageBody,
+        body: messageData.message,
       },
       tokens: tokens,
     };
