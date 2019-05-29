@@ -17,7 +17,7 @@ AuthService.login = async(email, inputPassword, firebaseToken) => {
     throw e;
   }
 
-  //TODO expirar token de firebase antes de asignarselo a un nuevo usuario
+  // TODO expirar token de firebase antes de asignarselo a un nuevo usuario
   UserService.udpate(user.id, {firebaseToken: firebaseToken});
   var valid = await AuthService.authenticate(user, inputPassword);
   if (!valid) {

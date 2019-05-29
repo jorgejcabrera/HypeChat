@@ -1,6 +1,10 @@
 'use strict';
 
-var { MessageService, WorkspaceService } = require('../services');
+var {
+  MessageService,
+  WorkspaceService,
+  FirebaseService,
+} = require('../services');
 var { MessageValidator } = require('../validators');
 
 var { MessageMapper } = require('../mappers');
@@ -25,6 +29,15 @@ MessageController.send = async(req, res, next) => {
     res.json(message);
   } catch (err) {
     // TODO LOGS with warn level
+    next(err);
+  }
+};
+
+MessageController.sendMessage = async(req, res, next) => {
+  try {
+    await FirebaseService.sendMessage(req.body);
+    res.json();
+  } catch (err) {
     next(err);
   }
 };

@@ -21,7 +21,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Initialize firebase
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: "https://hypechat-fda96.firebaseio.com"
+  databaseURL: 'https://hypechat-fda96.firebaseio.com',
 });
 
 // Enable CORS.

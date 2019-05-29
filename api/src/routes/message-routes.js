@@ -15,4 +15,7 @@ module.exports = (app) => {
 
   /* app.route('/group_recipient/:recipientId/messages')
     .get(MessageController.retrieve);*/
+
+  app.route('/messages')
+    .post(MessageController.sendMessage);
 };
