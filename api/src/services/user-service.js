@@ -77,7 +77,7 @@ UserService.update = async(id, newUserData) => {
 
   newUserData = Object.assign({}, user, newUserData);
 
-  var updated = await User.update(newUserData, {
+  await User.update(newUserData, {
     returning: true,
     where: { id: id },
   });

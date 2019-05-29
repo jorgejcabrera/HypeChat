@@ -118,7 +118,7 @@ WorkspaceService.removeUser = async(workspaceId, userId) => {
 WorkspaceService.update = async(workspaceId, workspaceData) => {
   delete workspaceData.id;
   delete workspaceData.creatorId;
-  var updated = await Workspace.update(workspaceData, {
+  await Workspace.update(workspaceData, {
     returning: true,
     where: { id: workspaceId },
   });

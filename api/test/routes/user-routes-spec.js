@@ -52,8 +52,8 @@ describe('User Routes Test', () => {
   describe('Update', () => {
     it('should return invalid when user is not authorized', async() => {
       var res = await chai.request(app)
-      .put('/users/1')
-      .send();
+        .put('/users/1')
+        .send();
 
       chai.assert.strictEqual(
         res.status,
@@ -89,8 +89,8 @@ describe('User Routes Test', () => {
   describe('Delete', () => {
     it('should return invalid when user is not authorized', async() => {
       var res = await chai.request(app)
-      .delete('/users/1')
-      .send();
+        .delete('/users/1')
+        .send();
 
       chai.assert.strictEqual(
         res.status,
@@ -107,7 +107,7 @@ describe('User Routes Test', () => {
       var res = await chai.request(app)
         .delete('/users/' + user.id)
         .set('X-Auth', user.auth.accessToken);
-        
+
       chai.assert.strictEqual(
         res.status,
         200,
