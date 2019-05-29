@@ -7,6 +7,7 @@ module.exports = {
         userId: {
           type: Sequelize.INTEGER,
           allowNull: false,
+          onDelete: 'CASCADE',
           references: {
             model: 'User',
             key: 'id',
@@ -15,6 +16,7 @@ module.exports = {
         workspaceId: {
           type: Sequelize.INTEGER,
           allowNull: false,
+          onDelete: 'CASCADE',
           references: {
             model: 'Workspace',
             key: 'id',

@@ -8,6 +8,14 @@ WorkspaceService.name = 'WorkspaceService';
 WorkspaceService.create = async(workspaceData) => {
   delete workspaceData.id;
   var workspace = await Workspace.create(workspaceData);
+  if (workspace) {
+    await WorkspaceService.addUser(
+      workspace.id,
+      workspace.creatorId,
+      'CREATOR'
+    );
+  }
+
   return workspace && workspace.toJSON();
 };
 
@@ -40,12 +48,35 @@ WorkspaceService.retrieveWorkspacesByUser = async(userId) => {
   return workspaces;
 };
 
-WorkspaceService.addUser = async(workspaceId, userId) => {
+WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
   var worspaceUser = await WorkspaceUsers.create({
     userId: userId,
     workspaceId: workspaceId,
+    role: role,
   });
   return worspaceUser && worspaceUser.toJSON();
+};
+
+WorkspaceService.updateUserRole = async(workspaceId, userId, role) => {
+  var updated = await WorkspaceUsers.update({
+    role: role,
+  }, {
+    returning: true,
+    where: {
+      userId: userId,
+      workspaceId: workspaceId,
+    },
+  });
+  return updated[1][0] && updated[1][0].toJSON();
+};
+
+WorkspaceService.removeUser = async(workspaceId, userId) => {
+  return await WorkspaceUsers.destroy({
+    where: {
+      userId: userId,
+      workspaceId: workspaceId,
+    },
+  });
 };
 
 WorkspaceService.update = async(workspaceId, workspaceData) => {

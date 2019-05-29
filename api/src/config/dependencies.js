@@ -1,8 +1,11 @@
 'use strict';
 
+require('dotenv').config();
+
 var Sequelize = require('sequelize');
 var swaggerUi = require('swagger-ui-express');
 var swaggerDocument = require('./swagger/config.json');
+
 var env = process.env.NODE_ENV || 'development';
 Sequelize.config = require('./sequelize/config.json')[env];
 
@@ -20,4 +23,6 @@ module.exports = {
   normalizeemail: require('normalize-email'),
   swaggerUi: swaggerUi,
   swaggerDocument: swaggerDocument,
+  passport: require('passport'),
+  FacebookStrategy: require('passport-facebook-token'),
 };
