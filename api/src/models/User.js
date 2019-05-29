@@ -52,8 +52,7 @@ module.exports = (sequelize, type) => {
   }, {
     validate: {
       atLeastOneLogin() {
-        if (!this.getDataValue('facebookId')
-          && !this.getDataValue('password')) {
+        if (!this.facebookId && !this.password) {
           var e = new Error();
           e.name = 'NoLoginSpecified';
           throw e;

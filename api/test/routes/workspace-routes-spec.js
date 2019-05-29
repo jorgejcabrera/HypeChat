@@ -858,7 +858,7 @@ describe('Workspace Routes Test', () => {
       expected = groups;
     });
 
-    var addGroup = async(members, groups, token, expect, expectResponse) => {
+    var listGroups = async(members, groups, token, expect, expectResponse) => {
       var workspace = await TestUtils.workspaceFactory(
         { creatorId: user.id },
         members,
@@ -904,7 +904,7 @@ describe('Workspace Routes Test', () => {
 
     it('should return unauthorized when calling user doesn\'t belong',
       async() => {
-        await addGroup(
+        await listGroups(
           [],
           groups,
           otherUser.auth.accessToken,
@@ -914,7 +914,7 @@ describe('Workspace Routes Test', () => {
 
     it('should return ok when calling user is creator',
       async() => {
-        await addGroup(
+        await listGroups(
           [ { id: otherUser.id, role: 'MEMBER' } ],
           groups,
           user.auth.accessToken,
@@ -925,7 +925,7 @@ describe('Workspace Routes Test', () => {
 
     it('should return ok when calling user is moderator',
       async() => {
-        await addGroup(
+        await listGroups(
           [ { id: otherUser.id, role: 'MODERATOR' } ],
           groups,
           otherUser.auth.accessToken,
@@ -937,7 +937,7 @@ describe('Workspace Routes Test', () => {
     it('should return ok when calling user is member',
       async() => {
         expected = [ groups[1] ];
-        await addGroup(
+        await listGroups(
           [ { id: otherUser.id, role: 'MEMBER' } ],
           groups,
           otherUser.auth.accessToken,

@@ -33,7 +33,6 @@ if (process.env.NODE_ENV !== 'test') {
           email: profile.emails[0].value,
         };
       }
-      console.log(user);
       done(null, user);
     } catch (err) {
       done(err);

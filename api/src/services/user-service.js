@@ -75,6 +75,8 @@ UserService.udpate = async(id, newUserData) => {
     return null;
   }
 
+  newUserData = Object.assign({}, user, newUserData);
+
   var updated = await User.update(newUserData, {
     returning: true,
     where: { id: id },
