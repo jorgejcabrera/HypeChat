@@ -67,7 +67,7 @@ UserService.getByFacebookId = async(facebookId) => {
   return user && user.toJSON();
 };
 
-UserService.udpate = async(id, newUserData) => {
+UserService.update = async(id, newUserData) => {
   // TODO: validar password, hashearla, remover campos que no
   // son updateables.
   var user = await UserService.getById(id);
@@ -83,6 +83,17 @@ UserService.udpate = async(id, newUserData) => {
   });
 
   return updated[1][0] && updated[1][0].toJSON();
+};
+
+UserService.updateFirebaseToken = async(id, token) => {
+  if (!token) return;
+
+  await User.update({ firebaseToken: null }, {
+    where: { firebaseToken: token },
+    validate: false,
+  });
+
+  await UserService.update(id, { firebaseToken: token });
 };
 
 UserService.delete = async(userId) => {

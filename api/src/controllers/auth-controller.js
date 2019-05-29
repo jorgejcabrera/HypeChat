@@ -9,9 +9,8 @@ AuthController.login = async(req, res, next) => {
   // TODO: Check that we have the required fields.
   try {
     var auth = await AuthService.login(
-      req.body.email,
-      req.body.password,
-      req.body.firebaseToken
+      req.user,
+      req.body
     );
     res.json(auth);
   } catch (err) {
@@ -29,7 +28,7 @@ AuthController.logout = async(req, res, next) => {
   try {
     await AuthService.destroyByToken(req.headers['x-auth']);
     var user = req.user;
-    UserService.udpate(user.id, {firebaseToken: null});
+    UserService.update(user.id, {firebaseToken: null});
     res.send();
   } catch (err) {
     next(err);

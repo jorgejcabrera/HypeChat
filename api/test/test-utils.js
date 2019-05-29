@@ -46,7 +46,7 @@ TestUtils.authenticatedUserFactory = async(props = {}) => {
   var email = userData.email;
   var password = userData.password;
   var user = await services.UserService.create(userData);
-  user.auth = await services.AuthService.login(email, password);
+  user.auth = await services.AuthService.login(null, { email, password });
 
   return user;
 };

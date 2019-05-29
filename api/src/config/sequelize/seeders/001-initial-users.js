@@ -13,7 +13,7 @@ module.exports = {
       isAdmin: false,
       createdAt: '2019-04-30T20:26:11.519Z',
       updatedAt: '2019-04-30T20:26:11.519Z',
-      firebaseToken: 'a',
+      firebaseToken: null,
     }, {
       firstName: 'Jorge',
       lastName: 'Cabrera',
@@ -23,7 +23,7 @@ module.exports = {
       isAdmin: false,
       createdAt: '2019-04-30T21:26:11.519Z',
       updatedAt: '2019-04-30T21:26:11.519Z',
-      firebaseToken: 'b',
+      firebaseToken: null,
     }, {
       firstName: 'Gabriel',
       lastName: 'Robles',
@@ -33,7 +33,7 @@ module.exports = {
       isAdmin: false,
       createdAt: '2019-04-30T22:26:11.519Z',
       updatedAt: '2019-04-30T22:26:11.519Z',
-      firebaseToken: 'c',
+      firebaseToken: null,
     }, {
       firstName: 'Ariel',
       lastName: 'Alvarez Windey',
@@ -43,7 +43,7 @@ module.exports = {
       isAdmin: false,
       createdAt: '2019-05-01T20:26:11.519Z',
       updatedAt: '2019-05-01T20:26:11.519Z',
-      firebaseToken: 'd',
+      firebaseToken: null,
     }, {
       firstName: 'Admin',
       lastName: 'Admin',
@@ -53,7 +53,7 @@ module.exports = {
       isAdmin: true,
       createdAt: '2019-05-01T16:26:11.519Z',
       updatedAt: '2019-05-01T16:26:11.519Z',
-      firebaseToken: 'e',
+      firebaseToken: null,
     }], {});
   },
 

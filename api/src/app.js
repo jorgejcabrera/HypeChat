@@ -32,6 +32,7 @@ if (process.env.NODE_ENV !== 'test') {
           lastName: profile.name.familyName,
           email: profile.emails[0].value,
         };
+        user = await UserService.create(user);
       }
       done(null, user);
     } catch (err) {
