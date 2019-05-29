@@ -115,6 +115,41 @@ describe('Workspace Routes Test', () => {
     });
   });
 
+  describe('Update', () => {
+    it('should return unauthorized when user doesn\' belong', async() => {
+      var res = await chai.request(app)
+        .put('/workspaces/1')
+        .set('X-Auth', user.auth.accessToken)
+        .send({name: 'changed name'});
+
+      chai.assert.strictEqual(
+        res.status,
+        401,
+        'Status was not 401'
+      );
+    });
+
+    it('should return ok when all info is valid', async() => {
+      var workspace = await TestUtils.workspaceFactory({ creatorId: user.id });
+
+      var res = await chai.request(app)
+        .put('/workspaces/' + workspace.id)
+        .set('X-Auth', user.auth.accessToken)
+        .send({name: 'changed name'});
+
+      chai.assert.strictEqual(
+        res.status,
+        200,
+        'Status was not 200'
+      );
+
+      chai.assert.isObject(
+        res.body,
+        'Response was not what was expected'
+      );
+    });
+  });
+
   describe('List', () => {
     var adminUser;
 

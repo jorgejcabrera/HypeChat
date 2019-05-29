@@ -123,7 +123,7 @@ WorkspaceService.update = async(workspaceId, workspaceData) => {
     where: { id: workspaceId },
   });
 
-  return updated[1][0] && updated[1][0].toJSON();
+  return await Workspace.findOne({ where: { id: workspaceId } });
 };
 
 WorkspaceService.delete = async(workspaceId) => {

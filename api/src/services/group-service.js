@@ -1,6 +1,6 @@
 'use strict';
 
-var { Group, UserGroup } = require('../models');
+var { Workspace, Group, UserGroup } = require('../models');
 
 var GroupService = {};
 GroupService.name = 'GroupService';
@@ -66,6 +66,18 @@ GroupService.getById = async(groupId) => {
       { association: 'users' },
     ],
   });
+
+  if (group && group.visibility === 'PUBLIC') {
+    var workspace = await Workspace.findOne({
+      where: { id: group.workspaceId },
+      include: [
+        { association: 'users' },
+      ],
+    });
+
+    group.users = workspace.users;
+  }
+
   return group && group.toJSON();
 };
 

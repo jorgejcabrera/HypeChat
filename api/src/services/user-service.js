@@ -82,7 +82,7 @@ UserService.update = async(id, newUserData) => {
     where: { id: id },
   });
 
-  return updated[1][0] && updated[1][0].toJSON();
+  return newUserData;
 };
 
 UserService.updateFirebaseToken = async(id, token) => {
@@ -102,14 +102,10 @@ UserService.delete = async(userId) => {
     return null;
   }
   // TODO DESTROY all tokens before delete user
-  var updated = await User.update({
+  return await UserService.update(userId, {
     status: 'INACTIVE',
     email: EmailUtils.createPrefix(10) + user.email,
-  }, {
-    returning: true,
-    where: {id: userId },
   });
-  return updated[1][0] && updated[1][0].toJSON();
 };
 
 UserService.getNewUserStats = async(fromDate, toDate) => {
