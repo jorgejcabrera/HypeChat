@@ -35,7 +35,7 @@ MessageController.send = async(req, res, next) => {
 
 MessageController.sendMessage = async(req, res, next) => {
   try {
-    await FirebaseService.sendMessage(req.body);
+    await FirebaseService.sendMessage(req.user, req.body);
     res.json();
   } catch (err) {
     next(err);

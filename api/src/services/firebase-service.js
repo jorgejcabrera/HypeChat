@@ -16,7 +16,7 @@ FirebaseService.sendNofication = async(firebaseToken, payload, options) => {
     });
 };
 
-FirebaseService.sendMessage = async(messageData) => {
+FirebaseService.sendMessage = async(sender, messageData) => {
   var refRoute;
   if (messageData.groupId) {
     // TODO validar que sea un group valido.
@@ -24,14 +24,21 @@ FirebaseService.sendMessage = async(messageData) => {
     refRoute = 'messages/groups/group' + messageData.groupId;
   } else {
     // TODO ver que hacer acá.
-    refRoute = 'messages/users';
+    var smaller = Math.min(sender.id, messageData.receiverId);
+    var larger = Math.max(sender.id, messageData.receiverId);
+    refRoute = `messages/users/${messageData.workspaceId}-${smaller}-${larger}`;
   }
 
   var ref = firebaseAdmin.database().ref(refRoute);
   ref.push({
-    from: messageData.username,
+    from: { 
+      id: sender.id,
+      firstName: sender.firstName,
+      lastName: sender.lastName
+    },
     message: messageData.message,
     timestamp: moment().format(),
   });
 };
+
 module.exports = FirebaseService;
