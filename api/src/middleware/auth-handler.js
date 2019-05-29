@@ -23,10 +23,9 @@ AuthHandler.authenticate = async(req, res, next) => {
   next();
 };
 
-// For now, we just check if the user is logged in.
-AuthHandler.authorize = () => {
+AuthHandler.authorize = (options = {}) => {
   return (req, res, next) => {
-    if (!req.user) {
+    if (!req.user || (options.requireAdmin && !req.user.isAdmin)) {
       return res.status(401).json({
         status: 'error',
         type: 'unauthorized',
