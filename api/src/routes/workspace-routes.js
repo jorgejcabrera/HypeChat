@@ -1,6 +1,9 @@
 'use strict';
 
-var { WorkspaceController, GroupController } = require('../controllers');
+var {
+  WorkspaceController,
+  GroupController,
+} = require('../controllers');
 var { AuthHandler } = require('../middleware');
 
 module.exports = (app) => {
@@ -39,6 +42,12 @@ module.exports = (app) => {
     .post(
       AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR']),
       WorkspaceController.inviteUser
+    );
+
+  app.route('/workspaces/:workspaceId/messages')
+    .post(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
+      WorkspaceController.sendMessage
     );
 
   app.route('/workspaces/:workspaceId')

@@ -50,4 +50,14 @@ GroupService.list = async(user, workspaceId) => {
   return list.map((group) => group.toJSON());
 };
 
+GroupService.getById = async(groupId) => {
+  var group = await Group.findOne({
+    where: { id: groupId },
+    include: [
+      { association: 'users' },
+    ],
+  });
+  return group && group.toJSON();
+};
+
 module.exports = GroupService;

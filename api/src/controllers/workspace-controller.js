@@ -1,6 +1,12 @@
 'use strict';
 
-var { WorkspaceService, UserService } = require('../services');
+var {
+  FirebaseService,
+  WorkspaceService,
+  UserService,
+} = require('../services');
+
+var { MessageValidator } = require('../validators');
 
 var { jwt } = require('../config/dependencies');
 
@@ -161,6 +167,28 @@ WorkspaceController.delete = async(req, res, next) => {
     await WorkspaceService.delete(req.params.workspaceId);
     res.send();
   } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.sendMessage = async(req, res, next) => {
+  try {
+    var isValid = await MessageValidator.isValid(
+      req.params.workspaceId,
+      req.user.id,
+      req.body
+    );
+
+    if (!isValid) return res.status(404).send();
+
+    await FirebaseService.send(
+      req.params.workspaceId,
+      req.user,
+      req.body
+    );
+    res.json();
+  } catch (err) {
+    // TODO LOGS with warn level
     next(err);
   }
 };

@@ -67,6 +67,12 @@ module.exports = (sequelize, type) => {
       as: 'workspaces',
       foreignKey: 'userId',
     });
+
+    User.belongsToMany(models.Group, {
+      through: 'UserGroup',
+      as: 'groups',
+      foreignKey: 'userId',
+    });
   };
 
   return User;
