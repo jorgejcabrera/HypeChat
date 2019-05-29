@@ -12,7 +12,7 @@ var UserService = {};
 UserService.name = 'UserService';
 
 UserService.create = async(userData) => {
-  if (!PwdValidator.isValid(userData.password)){
+  if (userData.password && !PwdValidator.isValid(userData.password)){
     var pe = new Error();
     pe.name = 'InvalidUserPwd';
     throw pe;
@@ -26,7 +26,9 @@ UserService.create = async(userData) => {
     throw e;
   }
 
-  userData.password = await bcrypt.hash(userData.password, saltRounds);
+  if (userData.password) {
+    userData.password = await bcrypt.hash(userData.password, saltRounds);
+  }
   userData.status = 'ACTIVE';
   user = await User.create(userData);
   return user && user.toJSON();
@@ -47,6 +49,17 @@ UserService.getByEmail = async(email) => {
   var user = await User.findOne({
     where: {
       email: EmailUtils.normalize(email),
+      status: 'ACTIVE',
+    },
+  });
+
+  return user && user.toJSON();
+};
+
+UserService.getByFacebookId = async(facebookId) => {
+  var user = await User.findOne({
+    where: {
+      facebookId: facebookId,
       status: 'ACTIVE',
     },
   });

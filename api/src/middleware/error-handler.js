@@ -28,6 +28,14 @@ var handleSequelizeErrors = (err, response) => {
           path: error.path,
         });
         break;
+      case 'atLeastOneLogin':
+        response.json.validationErrors.push({
+          error: 'noLoginSpecified',
+        });
+        break;
+      default:
+        console.error('Don\'t know how to handle: ', error);
+        break;
     }
   });
 };
@@ -51,9 +59,13 @@ ErrorHandler.default = (err, req, res, next) => {
       response.json.type = 'invalidUserPwd';
       break;
     default:
-      console.error(err);
+      console.error('Don\'t know how to handle: ', err);
+      break;
   }
 
+  if (response.status === 500) {
+    console.log(err);
+  }
   res.status(response.status).json(response.json);
 };
 

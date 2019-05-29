@@ -12,18 +12,19 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
-    // TODO this attribute must not be updateable
-    isAdmin: {
-      type: type.BOOLEAN,
-      allowNull: false,
-    },
     lastName: {
       allowNull: false,
       type: type.STRING,
     },
     firebaseToken: {
       allowNull: true,
+      unique: true,
       type: type.STRING,
+    },
+    facebookId: {
+      type: type.STRING,
+      allowNull: true,
+      unique: true,
     },
     email: {
       type: type.STRING,
@@ -31,17 +32,33 @@ module.exports = (sequelize, type) => {
       validate: {
         isEmail: true,
       },
+      unique: true,
     },
     password: {
       type: type.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      allowNull: true,
     },
     status: {
       type: type.ENUM('ACTIVE', 'INACTIVE'),
       allowNull: false,
+      defaultValue: 'ACTIVE',
+    },
+    // TODO this attribute must not be updateable
+    isAdmin: {
+      type: type.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+  }, {
+    validate: {
+      atLeastOneLogin() {
+        if (!this.getDataValue('facebookId')
+          && !this.getDataValue('password')) {
+          var e = new Error();
+          e.name = 'NoLoginSpecified';
+          throw e;
+        }
+      },
     },
   });
 

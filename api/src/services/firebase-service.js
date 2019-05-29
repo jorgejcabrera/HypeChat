@@ -31,10 +31,10 @@ FirebaseService.sendMessage = async(sender, messageData) => {
 
   var ref = firebaseAdmin.database().ref(refRoute);
   ref.push({
-    from: { 
+    from: {
       id: sender.id,
       firstName: sender.firstName,
-      lastName: sender.lastName
+      lastName: sender.lastName,
     },
     message: messageData.message,
     timestamp: moment().format(),

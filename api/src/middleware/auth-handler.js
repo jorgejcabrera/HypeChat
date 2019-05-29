@@ -1,6 +1,6 @@
 'use strict';
 
-var { Auth, User } = require('../models');
+var { Auth, User, WorkspaceUsers } = require('../models');
 
 var AuthHandler = {};
 
@@ -23,15 +23,46 @@ AuthHandler.authenticate = async(req, res, next) => {
   next();
 };
 
-// For now, we just check if the user is logged in.
-AuthHandler.authorize = () => {
+AuthHandler.authorize = (options = {}) => {
   return (req, res, next) => {
-    if (!req.user) {
+    if (!req.user || (options.requireAdmin && !req.user.isAdmin)) {
       return res.status(401).json({
         status: 'error',
         type: 'unauthorized',
       });
     }
+
+    // authorization successful
+    next();
+  };
+};
+
+AuthHandler.authorizeWorkspace = (roles) => {
+  return async(req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        type: 'unauthorized',
+      });
+    } else if (req.user.isAdmin) {
+      return next();
+    }
+
+    var workspaceUser = await WorkspaceUsers.findOne({
+      where: {
+        userId: req.user.id,
+        workspaceId: req.params.workspaceId,
+      },
+    });
+
+    if (!workspaceUser || !roles.includes(workspaceUser.role)) {
+      return res.status(401).json({
+        status: 'error',
+        type: 'unauthorized',
+      });
+    }
+
+    req.user.workspaceRole = workspaceUser.role;
 
     // authorization successful
     next();

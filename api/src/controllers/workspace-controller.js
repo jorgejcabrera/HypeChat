@@ -2,6 +2,8 @@
 
 var { WorkspaceService, UserService } = require('../services');
 
+var { jwt } = require('../config/dependencies');
+
 var WorkspaceController = {};
 WorkspaceController.name = 'WorkspaceController';
 
@@ -15,15 +17,77 @@ WorkspaceController.create = async(req, res, next) => {
   }
 };
 
+WorkspaceController.inviteUser = async(req, res, next) => {
+  try {
+    var workspace = await WorkspaceService.getById(req.params.workspaceId);
+    var user = await UserService.getByEmail(req.body.email);
+    if (!user || !workspace)
+      return res.status(404).send();
+    var token = jwt.sign(
+      {
+        workspaceId: workspace.id,
+        userId: user.id,
+        role: 'MEMBER',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    res.json({ inviteToken: token });
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.addUserWithInvite = async(req, res, next) => {
+  try {
+    var decoded = jwt.verify(req.body.inviteToken, process.env.JWT_SECRET);
+    if (decoded.userId !== req.user.id) {
+      return res.status(401).send('Unauthorized');
+    }
+    var userWorkspace = await WorkspaceService.addUser(
+      decoded.workspaceId,
+      decoded.userId,
+      decoded.role
+    );
+    res.json(userWorkspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
 WorkspaceController.addUser = async(req, res, next) => {
   try {
-    var workspace = await WorkspaceService
-      .getById(req.params.workspaceId);
+    var workspace = await WorkspaceService.getById(req.params.workspaceId);
     var user = await UserService.getById(req.body.userId);
     if (!user || !workspace)
       return res.status(404).send();
     var userWorkspace = await WorkspaceService.addUser(workspace.id, user.id);
-    res.status(201).send(userWorkspace);
+    res.json(userWorkspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.updateUserRole = async(req, res, next) => {
+  try {
+    var userWorkspace = await WorkspaceService.updateUserRole(
+      req.params.workspaceId,
+      req.params.userId,
+      req.body.role,
+    );
+    res.json(userWorkspace);
+  } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.removeUser = async(req, res, next) => {
+  try {
+    await WorkspaceService.removeUser(
+      req.params.workspaceId,
+      req.params.userId,
+    );
+    res.send();
   } catch (err) {
     next(err);
   }
@@ -37,6 +101,18 @@ WorkspaceController.retrieve = async(req, res, next) => {
       return res.status(404).send();
     res.json(workspace);
   } catch (err) {
+    next(err);
+  }
+};
+
+WorkspaceController.listAll = async(req, res, next) => {
+  try {
+    var page = await WorkspaceService.list(req.query.page);
+    res.json(page);
+  } catch (err) {
+    if (err.name === 'OutOfBounds') {
+      return res.status(404).send();
+    }
     next(err);
   }
 };
