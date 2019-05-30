@@ -26,7 +26,7 @@ AuthService.login = async(user, credentials) => {
     }
   }
 
-  UserService.updateFirebaseToken(user.id, credentials.firebaseToken);
+  await UserService.updateFirebaseToken(user.id, credentials.firebaseToken);
   await AuthService.destroyByUser(user.id);
   return await AuthService.create(user.id);
 };
