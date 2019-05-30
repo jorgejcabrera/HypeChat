@@ -1,6 +1,7 @@
 'use strict';
 
 var { Workspace, WorkspaceUsers, User } = require('../models');
+var GroupService = require('./group-service');
 
 var WorkspaceService = {};
 WorkspaceService.name = 'WorkspaceService';
@@ -14,6 +15,15 @@ WorkspaceService.create = async(workspaceData) => {
       workspace.creatorId,
       'CREATOR'
     );
+
+    await GroupService.create({
+      workspaceId: workspace.id,
+      creatorId: workspace.creatorId,
+      name: 'general',
+      description: 'Bienvenido a #general!',
+      visibility: 'PUBLIC',
+      isActive: true,
+    });
   }
 
   return workspace && workspace.toJSON();
@@ -108,12 +118,12 @@ WorkspaceService.removeUser = async(workspaceId, userId) => {
 WorkspaceService.update = async(workspaceId, workspaceData) => {
   delete workspaceData.id;
   delete workspaceData.creatorId;
-  var updated = await Workspace.update(workspaceData, {
+  await Workspace.update(workspaceData, {
     returning: true,
     where: { id: workspaceId },
   });
 
-  return updated[1][0] && updated[1][0].toJSON();
+  return await Workspace.findOne({ where: { id: workspaceId } });
 };
 
 WorkspaceService.delete = async(workspaceId) => {

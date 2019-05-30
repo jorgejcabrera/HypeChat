@@ -16,6 +16,11 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
+    firebaseToken: {
+      allowNull: true,
+      unique: true,
+      type: type.STRING,
+    },
     facebookId: {
       type: type.STRING,
       allowNull: true,
@@ -60,6 +65,12 @@ module.exports = (sequelize, type) => {
     User.belongsToMany(models.Workspace, {
       through: 'WorkspaceUsers',
       as: 'workspaces',
+      foreignKey: 'userId',
+    });
+
+    User.belongsToMany(models.Group, {
+      through: 'UserGroup',
+      as: 'groups',
       foreignKey: 'userId',
     });
   };

@@ -3,6 +3,7 @@ version: '3'
 services:
   app:
     build: .
+    tty: false
     environment:
       - PORT=3000
       - NODE_ENV=development
@@ -16,6 +17,10 @@ services:
       - /usr/src/app/node_modules
     links:
       - "postgres:database"
+    networks:
+      default:
+        aliases:
+        - api.hypechat
       
   postgres:
     image: debezium/postgres:9.6

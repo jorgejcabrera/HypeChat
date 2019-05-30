@@ -23,6 +23,7 @@ module.exports = {
   normalizeemail: require('normalize-email'),
   swaggerUi: swaggerUi,
   swaggerDocument: swaggerDocument,
+  firebaseAdmin: require('firebase-admin'),
   passport: require('passport'),
   FacebookStrategy: require('passport-facebook-token'),
   jwt: require('jsonwebtoken'),

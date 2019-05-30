@@ -17,7 +17,6 @@ UserService.create = async(userData) => {
     pe.name = 'InvalidUserPwd';
     throw pe;
   }
-
   userData.email = EmailUtils.normalize(userData.email);
   var user = await User.findOne({ where: {email: userData.email} });
 
@@ -68,7 +67,7 @@ UserService.getByFacebookId = async(facebookId) => {
   return user && user.toJSON();
 };
 
-UserService.udpate = async(id, newUserData) => {
+UserService.update = async(id, newUserData) => {
   // TODO: validar password, hashearla, remover campos que no
   // son updateables.
   var user = await UserService.getById(id);
@@ -76,12 +75,25 @@ UserService.udpate = async(id, newUserData) => {
     return null;
   }
 
-  var updated = await User.update(newUserData, {
+  newUserData = Object.assign({}, user, newUserData);
+
+  await User.update(newUserData, {
     returning: true,
     where: { id: id },
   });
 
-  return updated[1][0] && updated[1][0].toJSON();
+  return newUserData;
+};
+
+UserService.updateFirebaseToken = async(id, token) => {
+  if (!token) return;
+
+  await User.update({ firebaseToken: null }, {
+    where: { firebaseToken: token },
+    validate: false,
+  });
+
+  await UserService.update(id, { firebaseToken: token });
 };
 
 UserService.delete = async(userId) => {
@@ -90,14 +102,10 @@ UserService.delete = async(userId) => {
     return null;
   }
   // TODO DESTROY all tokens before delete user
-  var updated = await User.update({
+  return await UserService.update(userId, {
     status: 'INACTIVE',
     email: EmailUtils.createPrefix(10) + user.email,
-  }, {
-    returning: true,
-    where: {id: userId },
   });
-  return updated[1][0] && updated[1][0].toJSON();
 };
 
 UserService.getNewUserStats = async(fromDate, toDate) => {

@@ -115,6 +115,41 @@ describe('Workspace Routes Test', () => {
     });
   });
 
+  describe('Update', () => {
+    it('should return unauthorized when user doesn\' belong', async() => {
+      var res = await chai.request(app)
+        .put('/workspaces/1')
+        .set('X-Auth', user.auth.accessToken)
+        .send({name: 'changed name'});
+
+      chai.assert.strictEqual(
+        res.status,
+        401,
+        'Status was not 401'
+      );
+    });
+
+    it('should return ok when all info is valid', async() => {
+      var workspace = await TestUtils.workspaceFactory({ creatorId: user.id });
+
+      var res = await chai.request(app)
+        .put('/workspaces/' + workspace.id)
+        .set('X-Auth', user.auth.accessToken)
+        .send({name: 'changed name'});
+
+      chai.assert.strictEqual(
+        res.status,
+        200,
+        'Status was not 200'
+      );
+
+      chai.assert.isObject(
+        res.body,
+        'Response was not what was expected'
+      );
+    });
+  });
+
   describe('List', () => {
     var adminUser;
 
@@ -781,6 +816,8 @@ describe('Workspace Routes Test', () => {
         await addGroup(
           {
             creatorId: otherUser.id,
+            visibility: 'PUBLIC',
+            description: 'Una descripcion',
             name: 'A test group',
             isActive: true,
           },
@@ -795,6 +832,8 @@ describe('Workspace Routes Test', () => {
         await addGroup(
           {
             creatorId: otherUser.id,
+            visibility: 'PUBLIC',
+            description: 'Una descripcion',
             name: 'A test group',
             isActive: true,
           },
@@ -809,6 +848,8 @@ describe('Workspace Routes Test', () => {
         await addGroup(
           {
             creatorId: user.id,
+            visibility: 'PUBLIC',
+            description: 'Una descripcion',
             name: 'A test group',
             isActive: true,
           },
@@ -839,6 +880,7 @@ describe('Workspace Routes Test', () => {
   describe('List Groups', () => {
 
     var groups;
+    var publicGroups;
     var expected;
 
     beforeEach(async() => {
@@ -846,11 +888,32 @@ describe('Workspace Routes Test', () => {
         {
           creatorId: user.id,
           name: 'A test group',
+          description: 'A description',
+          visibility: 'PRIVATE',
           isActive: true,
         },
         {
           creatorId: otherUser.id,
           name: 'Another test group',
+          description: 'A description',
+          visibility: 'PRIVATE',
+          isActive: true,
+        },
+      ];
+
+      publicGroups = [
+        {
+          creatorId: user.id,
+          name: 'A test public group',
+          description: 'A public description',
+          visibility: 'PUBLIC',
+          isActive: true,
+        },
+        {
+          creatorId: user.id,
+          name: 'Another test public group',
+          description: 'A public description',
+          visibility: 'PUBLIC',
           isActive: true,
         },
       ];
@@ -858,7 +921,7 @@ describe('Workspace Routes Test', () => {
       expected = groups;
     });
 
-    var addGroup = async(members, groups, token, expect, expectResponse) => {
+    var listGroups = async(members, groups, token, expect, expectResponse) => {
       var workspace = await TestUtils.workspaceFactory(
         { creatorId: user.id },
         members,
@@ -887,24 +950,34 @@ describe('Workspace Routes Test', () => {
             delete group.id;
             delete group.createdAt;
             delete group.updatedAt;
+            return group;
           });
 
           expectResponse = expectResponse.map((group) => {
             group.workspaceId = workspace.id;
+            return group;
           });
 
           chai.assert.deepEqual(
-            res.body,
-            expectResponse,
+            res.body.length,
+            expectResponse.length + 1, // to account for default group.
             'Response was not what was expected'
           );
+
+          // expectResponse.forEach((expected) => {
+          //   chai.assert.include(
+          //     res.body,
+          //     expected,
+          //     'Response was not what was expected'
+          //   );
+          // });
         }
       }
     };
 
     it('should return unauthorized when calling user doesn\'t belong',
       async() => {
-        await addGroup(
+        await listGroups(
           [],
           groups,
           otherUser.auth.accessToken,
@@ -914,7 +987,7 @@ describe('Workspace Routes Test', () => {
 
     it('should return ok when calling user is creator',
       async() => {
-        await addGroup(
+        await listGroups(
           [ { id: otherUser.id, role: 'MEMBER' } ],
           groups,
           user.auth.accessToken,
@@ -925,7 +998,7 @@ describe('Workspace Routes Test', () => {
 
     it('should return ok when calling user is moderator',
       async() => {
-        await addGroup(
+        await listGroups(
           [ { id: otherUser.id, role: 'MODERATOR' } ],
           groups,
           otherUser.auth.accessToken,
@@ -937,9 +1010,21 @@ describe('Workspace Routes Test', () => {
     it('should return ok when calling user is member',
       async() => {
         expected = [ groups[1] ];
-        await addGroup(
+        await listGroups(
           [ { id: otherUser.id, role: 'MEMBER' } ],
           groups,
+          otherUser.auth.accessToken,
+          'OK',
+          expected
+        );
+      });
+
+    it('should return public groups',
+      async() => {
+        expected = publicGroups.concat(groups[1]);
+        await listGroups(
+          [ { id: otherUser.id, role: 'MEMBER' } ],
+          publicGroups.concat(groups),
           otherUser.auth.accessToken,
           'OK',
           expected

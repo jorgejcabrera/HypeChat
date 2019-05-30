@@ -1,9 +1,36 @@
 'use strict';
 
-var { WorkspaceController, GroupController } = require('../controllers');
+var {
+  WorkspaceController,
+  GroupController,
+} = require('../controllers');
 var { AuthHandler } = require('../middleware');
 
 module.exports = (app) => {
+
+  app.route('/workspaces/:workspaceId/groups/:groupId/users')
+    .get(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
+      GroupController.retrieveUsers
+    )
+    .post(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
+      GroupController.addUser
+    );
+
+  app.route('/workspaces/:workspaceId/groups/:groupId')
+    .get(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
+      GroupController.retrieve
+    )
+    .put(
+      AuthHandler.authorizeWorkspace(['CREATOR']),
+      GroupController.update
+    )
+    .delete(
+      AuthHandler.authorizeWorkspace(['CREATOR']),
+      GroupController.delete
+    );
 
   app.route('/workspaces/:workspaceId/groups')
     .get(
@@ -41,6 +68,12 @@ module.exports = (app) => {
       WorkspaceController.inviteUser
     );
 
+  app.route('/workspaces/:workspaceId/messages')
+    .post(
+      AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
+      WorkspaceController.sendMessage
+    );
+
   app.route('/workspaces/:workspaceId')
     .get(
       AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
@@ -60,7 +93,10 @@ module.exports = (app) => {
       AuthHandler.authorize({ requireAdmin: true }),
       WorkspaceController.listAll
     )
-    .post(AuthHandler.authorize(), WorkspaceController.create);
+    .post(
+      AuthHandler.authorize(),
+      WorkspaceController.create
+    );
 
   app.route('/workspaces/accept-invite')
     .post(

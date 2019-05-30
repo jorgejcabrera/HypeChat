@@ -6,26 +6,15 @@ var { UserMapper } = require('../mappers');
 var UserController = {};
 UserController.name = 'UserController';
 
-UserController.create = (options) => {
-  return async(req, res, next) => {
-    try {
-      if (options.facebookUser) {
-        if (!req.user) {
-          return res.send(401, 'User Not Authenticated');
-        } else if (req.user.id) {
-          return res.send(403, 'User Already Registered');
-        }
-        req.body = req.user;
-      }
-
-      var user = await UserService.create(req.body);
-      var auth = await AuthService.create(user.id);
-      user = UserMapper.map(user, auth);
-      res.json(user);
-    } catch (err) {
-      next(err);
-    }
-  };
+UserController.create = async(req, res, next) => {
+  try {
+    var user = await UserService.create(req.body);
+    var auth = await AuthService.create(user.id);
+    user = UserMapper.map(user, auth);
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
 };
 
 UserController.retrieve = async(req, res, next) => {
@@ -47,7 +36,7 @@ UserController.update = async(req, res, next) => {
     if (!isAuthorized) {
       return res.status(403).send();
     }
-    var user = await UserService.udpate(req.params.userId, req.body);
+    var user = await UserService.update(req.params.userId, req.body);
     if (!user) {
       return res.status(404).send();
     }

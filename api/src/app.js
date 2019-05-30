@@ -7,10 +7,12 @@ var {
   FacebookStrategy,
   swaggerUi,
   swaggerDocument,
+  firebaseAdmin,
 } = require('./config/dependencies');
 
 var { CorsHandler, ErrorHandler, AuthHandler } = require('./middleware');
 
+var serviceAccount = require('./config/serviceAccountKey.json');
 var { UserService } = require('./services');
 
 var app = express();
@@ -30,8 +32,8 @@ if (process.env.NODE_ENV !== 'test') {
           lastName: profile.name.familyName,
           email: profile.emails[0].value,
         };
+        user = await UserService.create(user);
       }
-      console.log(user);
       done(null, user);
     } catch (err) {
       done(err);
@@ -46,6 +48,15 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Initialize firebase
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount),
+  databaseURL: 'https://hypechat-fda96.firebaseio.com',
+});
+
+// Enable CORS.
+app.use(CorsHandler.cors);
 
 // Fetch user and add it to request.
 app.use(AuthHandler.authenticate);

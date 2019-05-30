@@ -20,6 +20,16 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
+    visibility: {
+      type: type.ENUM('PUBLIC', 'PRIVATE'),
+      defaultValue: 'PUBLIC',
+      allowNull: false,
+    },
+    description: {
+      type: type.STRING,
+      defaultValue: 'Descripción del grupo',
+      allowNull: false,
+    },
     isActive: {
       type: type.BOOLEAN,
       allowNull: false,

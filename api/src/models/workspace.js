@@ -54,6 +54,11 @@ module.exports = (sequelize, type) => {
       foreignKey: 'workspaceId',
     });
 
+    Workspace.hasMany(models.Group, {
+      foreignKey: 'workspaceId',
+      as: 'groups',
+    });
+
   };
 
   return Workspace;

@@ -3,30 +3,39 @@
 var MessageValidator = {};
 MessageValidator.name = 'MessageValidator';
 
-var { WorkspaceUsers, User } = require('../models');
+var { Workspace } = require('../models');
 
-MessageValidator.areValidMembers = async(sender, recipientId, workspaceId) => {
-  var recipient = await User.findOne({
-    where: { id: recipientId, status: 'ACTIVE' },
-  });
-  if (!recipient || !sender)
+MessageValidator.isValid = async(workspaceId, senderId, data) => {
+  var toFind = [senderId];
+  if (data.recipientId) {
+    toFind.push(data.recipientId);
+  } else if (!data.groupId) {
     return false;
+  }
 
-  var isValidSender = await WorkspaceUsers.findOne({
-    where: {
-      userId: sender.id,
-      workspaceId: workspaceId,
-    },
+  var includes = [
+    { association: 'users', where: { id: toFind } },
+  ];
+
+  if (data.groupId) {
+    includes.push(
+      { association: 'groups', where: { id: data.groupId } },
+    );
+  }
+
+  var found = await Workspace.findOne({
+    where: { id: workspaceId },
+    include: includes,
   });
-  var isValidRecipient = await WorkspaceUsers.findOne({
-    where: {
-      userId: recipient.id,
-      workspaceId: workspaceId,
-    },
-  });
-  if (!isValidSender || !isValidRecipient)
+
+  if (data.recipientId) {
+    return found !== null && found.users.length === toFind.length;
+  } else if (data.groupId) {
+    return found !== null && found.groups.length === 1;
+  } else {
     return false;
-  return !(recipient.id === sender.id);
+  }
+
 };
 
 module.exports = MessageValidator;
