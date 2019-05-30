@@ -17,6 +17,10 @@ services:
       - /usr/src/app/node_modules
     links:
       - "postgres:database"
+    networks:
+      default:
+        aliases:
+        - api.hypechat
       
   postgres:
     image: debezium/postgres:9.6
