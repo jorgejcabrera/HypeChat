@@ -3,6 +3,7 @@
 var { firebaseAdmin, moment } = require('../config/dependencies');
 var GroupService = require('./group-service');
 var UserService = require('./user-service');
+var MessageService = require('./message-service');
 
 var FirebaseService = {};
 FirebaseService.name = 'FirebaseService';
@@ -63,6 +64,8 @@ FirebaseService.sendMessage = async(workspaceId, sender, messageData) => {
 };
 
 FirebaseService.send = async(workspaceId, sender, messageData) => {
+  messageData.message = await
+  MessageService.cleanMessage(workspaceId, messageData.message);
   await FirebaseService.sendNofication(sender, messageData);
   await FirebaseService.sendMessage(workspaceId, sender, messageData);
 };

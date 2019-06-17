@@ -5,8 +5,8 @@ ForbiddenWordService.name = 'ForbiddenWordService';
 
 var { ForbiddenWord } = require('../models');
 
-ForbiddenWordService.listAllByWorkspace = async(workspaceId) => {
 
+ForbiddenWordService.listAllByWorkspace = async(workspaceId) => {
   var forbiddenWords = await ForbiddenWord.findAll({
     where: { workspaceId },
   });
@@ -15,6 +15,9 @@ ForbiddenWordService.listAllByWorkspace = async(workspaceId) => {
 };
 
 ForbiddenWordService.create = async(workspaceId, forbiddenWordData) => {
+  forbiddenWordData.word = forbiddenWordData.word.trim().toLowerCase();
+  forbiddenWordData.workspaceId = workspaceId;
+
   var forbiddenWord = await ForbiddenWord.findOne({
     where: {
       workspaceId: workspaceId,
@@ -26,10 +29,9 @@ ForbiddenWordService.create = async(workspaceId, forbiddenWordData) => {
     e.name = 'ForbiddenWordAlreadyExists';
     throw e;
   }
-
-  forbiddenWordData.workspaceId = workspaceId;
   var forbiddenwWord = await
   ForbiddenWord.create(forbiddenWordData);
+
   return forbiddenwWord;
 };
 
@@ -44,9 +46,9 @@ ForbiddenWordService.delete = async(workspaceId, wordId) => {
     where: {id: wordId},
   });
   if (!forbiddenWord) {
-    var e = new Error();
-    e.name = 'ResourceNotFound';
-    throw e;
+    var ex = new Error();
+    ex.name = 'ResourceNotFound';
+    throw ex;
   }
   if (forbiddenWord.workspaceId != workspaceId) {
     var e = new Error();
@@ -58,4 +60,5 @@ ForbiddenWordService.delete = async(workspaceId, wordId) => {
     where: {id: wordId},
   });
 };
+
 module.exports = ForbiddenWordService;
