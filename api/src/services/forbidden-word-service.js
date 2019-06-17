@@ -50,7 +50,7 @@ ForbiddenWordService.delete = async(workspaceId, wordId) => {
     ex.name = 'ResourceNotFound';
     throw ex;
   }
-  if (forbiddenWord.workspaceId != workspaceId) {
+  if (parseInt(forbiddenWord.workspaceId, 10) !== parseInt(workspaceId, 10)) {
     var e = new Error();
     e.name = 'ForbiddenWordDoesNotBelongToWorkspace';
     throw e;
