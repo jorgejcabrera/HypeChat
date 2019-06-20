@@ -18,7 +18,7 @@ MessageService.cleanMessage = async(workspaceId, message) => {
 
     words.forEach(function(word) {
       for (var w in word) {
-        var regEx = new RegExp(w, "ig");
+        var regEx = new RegExp(w, 'ig');
         message = message.replace(regEx, word[w]);
       }
     });
