@@ -32,7 +32,7 @@ module.exports = (sequelize, type) => {
     ownerId: {
       type: type.INTEGER,
       allowNull: false,
-    }
+    },
   }, {});
 
   Bot.associate = (models) => {};

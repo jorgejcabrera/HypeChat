@@ -9,7 +9,7 @@ BotController.create = async(req, res, next) => {
   try {
     req.body.ownerId = req.user.id;
     if (req.params.workspaceId) {
-      req.body.workspaceId = parseInt(req.params.workspaceId, 10);  
+      req.body.workspaceId = parseInt(req.params.workspaceId, 10);
     }
     var bot = await BotService.create(req.body);
     res.json(bot);

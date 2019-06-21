@@ -11,12 +11,12 @@ MentionService._lookForUsers = async(match, user, messageData) => {
   // TODO: handle firstnames with spaces. Maybe user a username instead?
   var taggedUser = await User.findOne({
     where: {
-      firstName: match[1]
-    }
+      firstName: match[1],
+    },
   });
 
   if (taggedUser) {
-    // TODO handle when user doesnt belong to group (add it) 
+    // TODO handle when user doesnt belong to group (add it)
     // or workspace (ignore I guess?).
     FirebaseService.sendNofication(user, {
       groupId: null,
@@ -27,16 +27,16 @@ MentionService._lookForUsers = async(match, user, messageData) => {
     return true;
   }
   return false;
-}
+};
 
 MentionService._lookForBots = async(match, sender, messageData) => {
   var taggedBot = await Bot.findOne({
     where: {
       botName: match[1],
       callbackOnMention: {
-        [Sequelize.Op.ne]: null
-      }
-    }
+        [Sequelize.Op.ne]: null,
+      },
+    },
   });
 
   if (taggedBot) {
@@ -55,9 +55,9 @@ MentionService._lookForBots = async(match, sender, messageData) => {
         timestamp: moment().format(),
       },
       json: true,
-    })
+    });
   }
-}
+};
 
 MentionService.analyzeMessage = async(sender, messageData) => {
   // If message is not sent to a group, ignore it.
@@ -69,6 +69,6 @@ MentionService.analyzeMessage = async(sender, messageData) => {
 
   var found = await MentionService._lookForUsers(match, sender, messageData);
   if (!found) await MentionService._lookForBots(match, sender, messageData);
-}
+};
 
 module.exports = MentionService;
