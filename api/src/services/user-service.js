@@ -3,6 +3,8 @@
 var { User } = require('../models');
 var { EmailUtils } = require('../utils');
 var { PwdValidator } = require('../validators');
+var WorkspaceService = require('./workspace-service');
+var { UserMapper } = require('../mappers');
 
 var { bcrypt, Sequelize, moment } = require('../config/dependencies');
 
@@ -10,6 +12,22 @@ const saltRounds = 10;
 
 var UserService = {};
 UserService.name = 'UserService';
+
+UserService.getProfile = async(userId) => {
+  var user = await User.findOne({
+    where: {
+      id: userId,
+      status: 'ACTIVE',
+    },
+  });
+  if (!user) {
+    var e = new Error();
+    throw e;
+  }
+  var workspaces = await WorkspaceService
+    .retrieveWorkspacesByUser(userId);
+  return UserMapper.mapProfile(user.toJSON(), workspaces);
+};
 
 UserService.create = async(userData) => {
   if (userData.password && !PwdValidator.isValid(userData.password)){

@@ -12,4 +12,18 @@ UserMapper.map = function(user, auth) {
   return user;
 };
 
+UserMapper.mapProfile = function(user, workspaces) {
+  var profile = {};
+  profile['firstName'] = user.firstName;
+  profile['lastName'] = user.lastName;
+  profile['regristationDate'] = user.createdAt;
+  profile['workspaces'] = workspaces.map(function(workspace) {
+    return {
+      id: workspace['workspaceId'],
+      name: workspace['workspace.name'],
+    };
+  });
+  profile['totalMessages'] = 10;
+  return profile;
+};
 module.exports = UserMapper;
