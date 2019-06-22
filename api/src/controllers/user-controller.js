@@ -26,6 +26,15 @@ UserController.getProfile = async(req, res, next) => {
   }
 };
 
+UserController.updatePassword = async(req, res, next) => {
+  try {
+    await UserService.updatePassword(req.params.userId, req.body);
+    res.status(200).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
 UserController.retrieve = async(req, res, next) => {
   try {
     var user = await UserService.getById(req.params.userId);

@@ -6,21 +6,34 @@ var { PwdValidator } = require('../validators');
 var WorkspaceService = require('./workspace-service');
 var MessageService = require('./message-service');
 var { UserMapper } = require('../mappers');
-
 var { bcrypt, Sequelize, moment } = require('../config/dependencies');
-
 const saltRounds = 10;
 
 var UserService = {};
 UserService.name = 'UserService';
 
-UserService.getProfile = async(userId) => {
-  var user = await User.findOne({
-    where: {
-      id: userId,
-      status: 'ACTIVE',
-    },
+UserService.updatePassword = async(userId, payload) => {
+  var user = await UserService.getById(userId);
+  if (!user) {
+    var e = new Error();
+    e.name = 'ResourceNotFound';
+    throw e;
+  }
+  var valid = await bcrypt.compare(payload.currentPassword, user.password);
+  if (!valid) {
+    e = new Error();
+    e.name = 'InvalidCredentials';
+    throw e;
+  }
+  user.password = await bcrypt.hash(payload.newPassword, saltRounds);
+  return await User.update(user, {
+    returning: true,
+    where: { id: userId },
   });
+};
+
+UserService.getProfile = async(userId) => {
+  var user = await UserService.getById(userId);
   if (!user) {
     var e = new Error();
     e.name = 'ResourceNotFound';
@@ -30,7 +43,7 @@ UserService.getProfile = async(userId) => {
     .retrieveWorkspacesByUser(userId);
   var messages = await MessageService
     .getByUserId(userId);
-  return UserMapper.mapProfile(user.toJSON(), workspaces, messages);
+  return UserMapper.mapProfile(user, workspaces, messages);
 };
 
 UserService.create = async(userData) => {
@@ -41,13 +54,11 @@ UserService.create = async(userData) => {
   }
   userData.email = EmailUtils.normalize(userData.email);
   var user = await User.findOne({ where: {email: userData.email} });
-
   if (user) {
     var e = new Error();
     e.name = 'UserAlreadyExists';
     throw e;
   }
-
   if (userData.password) {
     userData.password = await bcrypt.hash(userData.password, saltRounds);
   }
