@@ -16,7 +16,8 @@ MessageService.replaceForbiddenWords = async(workspaceId, message) => {
     });
     return message;
   } catch (err) {
-    console.error('It was an error while trying to replace forbidden words:', err);
+    console
+      .error('It was an error while trying to replace forbidden words:', err);
   }
 };
 
@@ -33,14 +34,15 @@ MessageService.saveMessageRecord = async(workspaceId, sender) => {
       await Message.create(record);
     } else {
       record = messageRecord.toJSON();
-      record.total++;  
+      record.total++;
       await Message.update(record, {
         returning: true,
         where: { id: record.id },
       });
-    }  
+    }
   } catch (err) {
-    console.error('It was an error while trying to save message recod:', err);
+    console
+      .error('It was an error while trying to save message recod:', err);
   }
 };
 

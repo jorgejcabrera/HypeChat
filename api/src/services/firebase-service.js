@@ -65,7 +65,7 @@ FirebaseService.sendMessage = async(workspaceId, sender, messageData) => {
 
 FirebaseService.send = async(workspaceId, sender, messageData) => {
   messageData.message = await
-   MessageService.replaceForbiddenWords(workspaceId, messageData.message);
+  MessageService.replaceForbiddenWords(workspaceId, messageData.message);
   await FirebaseService.sendNofication(sender, messageData);
   await FirebaseService.sendMessage(workspaceId, sender, messageData);
   await MessageService.saveMessageRecord(workspaceId, sender.id);
