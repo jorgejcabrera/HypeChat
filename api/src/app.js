@@ -11,8 +11,6 @@ var {
 } = require('./config/dependencies');
 
 var { CorsHandler, ErrorHandler, AuthHandler } = require('./middleware');
-
-var serviceAccount = require('./config/serviceAccountKey.json');
 var { UserService } = require('./services');
 
 var app = express();
@@ -50,8 +48,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Initialize firebase
+var cert = JSON.parse(process.env.FIREBASE_CONFIG);
 firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
+  credential: firebaseAdmin.credential.cert(cert),
   databaseURL: 'https://hypechat-fda96.firebaseio.com',
 });
 

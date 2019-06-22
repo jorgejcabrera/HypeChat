@@ -3,6 +3,7 @@
 var {
   WorkspaceController,
   GroupController,
+  ForbiddenWordController,
 } = require('../controllers');
 var { AuthHandler } = require('../middleware');
 
@@ -41,6 +42,14 @@ module.exports = (app) => {
       AuthHandler.authorizeWorkspace(['CREATOR', 'MODERATOR', 'MEMBER']),
       GroupController.create
     );
+
+  app.route('/workspaces/:workspaceId/forbidden_word')
+    .post(ForbiddenWordController.create)
+    .get(ForbiddenWordController.listAllByWorkspace)
+    .delete(ForbiddenWordController.deleteAll);
+
+  app.route('/workspaces/:workspaceId/forbidden_word/:wordId')
+    .delete(ForbiddenWordController.delete);
 
   app.route('/workspaces/:workspaceId/users/:userId')
     .put(
