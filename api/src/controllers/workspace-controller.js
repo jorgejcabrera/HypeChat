@@ -64,9 +64,10 @@ WorkspaceController.addUserWithInvite = async(req, res, next) => {
 WorkspaceController.addUser = async(req, res, next) => {
   try {
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
-    var user = await UserService.getById(req.body.userId);
-    if (!user || !workspace)
+    var user = await UserService.getByEmail(req.body.userEmail);
+    if (!user || !workspace) {
       return res.status(404).send();
+    }
     var userWorkspace = await WorkspaceService.addUser(workspace.id, user.id);
     res.json(userWorkspace);
   } catch (err) {
