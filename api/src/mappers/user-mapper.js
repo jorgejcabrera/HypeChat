@@ -12,7 +12,7 @@ UserMapper.map = function(user, auth) {
   return user;
 };
 
-UserMapper.mapProfile = function(user, workspaces) {
+UserMapper.mapProfile = function(user, workspaces, messages) {
   var profile = {};
   profile['firstName'] = user.firstName;
   profile['lastName'] = user.lastName;
@@ -23,7 +23,12 @@ UserMapper.mapProfile = function(user, workspaces) {
       name: workspace['workspace.name'],
     };
   });
-  profile['totalMessages'] = 10;
+  profile['totalMessages'] = messages.map(function(message){
+    return {
+      workspaceId: message['workspaceId'],
+      total: message['total'],
+    };
+  });
   return profile;
 };
 module.exports = UserMapper;

@@ -4,6 +4,7 @@ var { User } = require('../models');
 var { EmailUtils } = require('../utils');
 var { PwdValidator } = require('../validators');
 var WorkspaceService = require('./workspace-service');
+var MessageService = require('./message-service');
 var { UserMapper } = require('../mappers');
 
 var { bcrypt, Sequelize, moment } = require('../config/dependencies');
@@ -26,7 +27,9 @@ UserService.getProfile = async(userId) => {
   }
   var workspaces = await WorkspaceService
     .retrieveWorkspacesByUser(userId);
-  return UserMapper.mapProfile(user.toJSON(), workspaces);
+  var messages = await MessageService
+    .getByUserId(userId);
+  return UserMapper.mapProfile(user.toJSON(), workspaces, messages);
 };
 
 UserService.create = async(userData) => {
