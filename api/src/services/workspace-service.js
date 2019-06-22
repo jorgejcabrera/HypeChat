@@ -84,6 +84,16 @@ WorkspaceService.retrieveWorkspacesByUser = async(userId) => {
   return workspaces;
 };
 
+WorkspaceService.userBelongs = async(userId, workspaceId) => {
+  var workspaceUser = await WorkspaceUsers.findOne({
+    where: {
+      userId: userId,
+      workspaceId: workspaceId,
+    },
+  });
+  return workspaceUser !== null;
+};
+
 WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
   var worspaceUser = await WorkspaceUsers.create({
     userId: userId,
