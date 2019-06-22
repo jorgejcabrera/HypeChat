@@ -23,6 +23,7 @@ UserService.getProfile = async(userId) => {
   });
   if (!user) {
     var e = new Error();
+    e.name = 'ResourceNotFound';
     throw e;
   }
   var workspaces = await WorkspaceService
