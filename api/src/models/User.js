@@ -16,6 +16,14 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
+    latitude: {
+      allowNull: true,
+      type: type.DOUBLE,
+    },
+    longitude: {
+      allowNull: true,
+      type: type.DOUBLE,
+    },
     firebaseToken: {
       allowNull: true,
       unique: true,

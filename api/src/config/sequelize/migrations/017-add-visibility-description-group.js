@@ -7,7 +7,7 @@ module.exports = {
         type: Sequelize.ENUM('PUBLIC', 'PRIVATE'),
         defaultValue: 'PUBLIC',
         allowNull: false,
-      },),
+      }),
       await queryInterface.addColumn('Group', 'description', {
         type: Sequelize.STRING,
         defaultValue: 'Descripción del grupo',

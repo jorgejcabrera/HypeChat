@@ -58,6 +58,18 @@ ErrorHandler.default = (err, req, res, next) => {
       response.status = 400;
       response.json.type = 'invalidUserPwd';
       break;
+    case 'ForbiddenWordAlreadyExists':
+      response.status = 400;
+      response.json.type = 'forbiddenWordAlreadyExists';
+      break;
+    case 'ForbiddenWordDoesNotBelongToWorkspace':
+      response.status = 403;
+      response.json.type = 'forbiddenWordDoesNotBelongToWorkspace';
+      break;
+    case 'ResourceNotFound':
+      response.status = 404;
+      response.json.type = 'resourceNotFound';
+      break;
     default:
       console.error('Don\'t know how to handle: ', err);
       break;
