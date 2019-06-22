@@ -651,7 +651,7 @@ describe('Workspace Routes Test', () => {
         var res = await chai.request(app)
           .post('/workspaces/' + workspace.id + '/users')
           .set('X-Auth', otherUser.auth.accessToken)
-          .send({ userId: thirdUser.id });
+          .send({ userEmail: thirdUser.email });
 
         chai.assert.strictEqual(
           res.status,
@@ -670,7 +670,7 @@ describe('Workspace Routes Test', () => {
         var res = await chai.request(app)
           .post('/workspaces/' + workspace.id + '/users')
           .set('X-Auth', otherUser.auth.accessToken)
-          .send({ userId: thirdUser.id });
+          .send({ userEmail: thirdUser.email });
 
         chai.assert.strictEqual(
           res.status,
@@ -689,7 +689,7 @@ describe('Workspace Routes Test', () => {
         var res = await chai.request(app)
           .post('/workspaces/' + workspace.id + '/users')
           .set('X-Auth', otherUser.auth.accessToken)
-          .send({ userId: thirdUser.id });
+          .send({ userEmail: thirdUser.email });
 
         chai.assert.strictEqual(
           res.status,
@@ -712,7 +712,7 @@ describe('Workspace Routes Test', () => {
         var res = await chai.request(app)
           .post('/workspaces/' + workspace.id + '/users')
           .set('X-Auth', user.auth.accessToken)
-          .send({ userId: thirdUser.id });
+          .send({ userEmail: thirdUser.email });
 
         chai.assert.strictEqual(
           res.status,
@@ -735,7 +735,7 @@ describe('Workspace Routes Test', () => {
         var res = await chai.request(app)
           .post('/workspaces/' + workspace.id + '/users')
           .set('X-Auth', user.auth.accessToken)
-          .send({ userId: thirdUser.id + 1 });
+          .send({ userEmail: 'invalid@email.com' });
 
         chai.assert.strictEqual(
           res.status,
@@ -1102,7 +1102,7 @@ describe('Workspace Routes Test', () => {
         var res = await chai.request(app)
           .post('/workspaces/' + workspace.id + '/users')
           .set('X-Auth', otherUser.auth.accessToken)
-          .send({ userId: thirdUser.id });
+          .send({ userEmail: thirdUser.email });
 
         chai.assert.strictEqual(
           res.status,

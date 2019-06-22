@@ -13,13 +13,27 @@ module.exports = {
         userId: {
           allowNull: false,
           type: Sequelize.INTEGER,
-        },
-        total: {
-          allowNull: true,
-          type: Sequelize.INTEGER,
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
+          references: {
+            model: 'User',
+            key: 'id',
+          },
+          unique: 'message_unique_constraint',
         },
         workspaceId: {
           allowNull: false,
+          type: Sequelize.INTEGER,
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
+          references: {
+            model: 'Workspace',
+            key: 'id',
+          },
+          unique: 'message_unique_constraint',
+        },
+        total: {
+          allowNull: true,
           type: Sequelize.INTEGER,
         },
         createdAt: {
@@ -31,32 +45,8 @@ module.exports = {
           type: Sequelize.DATE,
         },
       }),
-      await queryInterface.addConstraint('Message', ['userId', 'workspaceId'], {
-        type: 'unique',
-        name: 'message_unique_constraint',
-      }),
-      await queryInterface.addConstraint('Message', ['userId'], {
-        type: 'foreign key',
-        name: 'user_message_relation',
-        references: {
-          table: 'User',
-          field: 'id',
-        },
-        onDelete: 'cascade',
-        onUpdate: 'cascade',
-      }),
-      await queryInterface.addConstraint('Message', ['workspaceId'], {
-        type: 'foreign key',
-        name: 'workspace_message_relation',
-        references: {
-          table: 'Workspace',
-          field: 'id',
-        },
-        onDelete: 'cascade',
-        onUpdate: 'cascade',
-      }),
       await queryInterface.addIndex('Message', ['userId']),
-      await queryInterface.addIndex('Message', ['workspaceId'])
+      await queryInterface.addIndex('Message', ['workspaceId']),
     ];
   },
   down: async(queryInterface, Sequelize) => {
