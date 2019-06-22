@@ -71,9 +71,11 @@ TestUtils.workspaceFactory = async(props = {}, members = [], groups = []) => {
     );
   }
 
+  workspace.groups = [];
   for (idx in groups) {
     groups[idx].workspaceId = workspace.id;
-    await services.GroupService.create(groups[idx]);
+    var group = await services.GroupService.create(groups[idx]);
+    workspace.groups.push(group);
   }
 
   return workspace;
