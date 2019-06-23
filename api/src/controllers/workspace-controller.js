@@ -183,6 +183,7 @@ WorkspaceController.sendMessage = async(req, res, next) => {
 
     if (!isValid) return res.status(404).send();
 
+    req.body.workspaceId = req.params.workspaceId;
     await MentionService.analyzeMessage(
       req.user,
       req.body
