@@ -37,6 +37,13 @@ module.exports = (sequelize, type) => {
     image: {
       allowNull: true,
       type: type.STRING,
+      validate: {
+        isUrl: true,
+      },
+    },
+    base64Image: {
+      allowNull: true,
+      type: type.STRING,
     },
     email: {
       type: type.STRING,
