@@ -14,7 +14,7 @@ UserMapper.map = function(user, auth) {
 
 UserMapper.mapProfile = function(user, workspaces, messages) {
   var profile = {};
-  profile['image'] = user.image;
+  profile['base64Image'] = user.base64Image;
   profile['firstName'] = user.firstName;
   profile['lastName'] = user.lastName;
   profile['regristationDate'] = user.createdAt;
