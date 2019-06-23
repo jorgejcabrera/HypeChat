@@ -1,13 +1,13 @@
 'use strict';
 
-var { Sequelize, request, moment } = require('../config/dependencies');
-var { User, Bot } = require('../models');
+var { request, moment } = require('../config/dependencies');
+var { User } = require('../models');
 var FirebaseService = require('./firebase-service');
 
 var MentionService = {};
 MentionService.name = 'MentionService';
 
-MentionService._lookForUsers = async(match, user, messageData) => {
+MentionService._lookForUsers = async(match, sender, messageData) => {
   // TODO: handle firstnames with spaces. Maybe user a username instead?
   var taggedUser = await User.findOne({
     where: {
@@ -15,35 +15,21 @@ MentionService._lookForUsers = async(match, user, messageData) => {
     },
   });
 
-  if (taggedUser) {
-    // TODO handle when user doesnt belong to group (add it)
-    // or workspace (ignore I guess?).
-    FirebaseService.sendNofication(user, {
+  if (!taggedUser) return;
+  // TODO handle when user doesn't belong to group (add it)
+  // or workspace (ignore I guess?).
+
+
+  if (!taggedUser.isBot) {
+    FirebaseService.sendNofication(sender, {
       groupId: null,
       recipientId: taggedUser.id,
       message: messageData.message,
     });
-
-    return true;
-  }
-  return false;
-};
-
-MentionService._lookForBots = async(match, sender, messageData) => {
-  var taggedBot = await Bot.findOne({
-    where: {
-      botName: match[1],
-      callbackOnMention: {
-        [Sequelize.Op.ne]: null,
-      },
-    },
-  });
-
-  if (taggedBot) {
-    // TODO handle when bot doesnt belong to workspace (ignore I guess?).
+  } else if (taggedUser.callbackOnMention) {
     request({
       method: 'POST',
-      uri: taggedBot.callbackOnMention,
+      uri: taggedUser.callbackOnMention,
       body: {
         groupId: messageData.groupId,
         from: {
@@ -67,8 +53,7 @@ MentionService.analyzeMessage = async(sender, messageData) => {
   var match = messageData.message.match(regex);
   if (!match) return;
 
-  var found = await MentionService._lookForUsers(match, sender, messageData);
-  if (!found) await MentionService._lookForBots(match, sender, messageData);
+  await MentionService._lookForUsers(match, sender, messageData);
 };
 
 module.exports = MentionService;
