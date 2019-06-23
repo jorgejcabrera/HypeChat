@@ -3,29 +3,55 @@
 var MessageService = {};
 MessageService.name = 'MessageService';
 
-var { ForbiddenWord } = require('../models');
+var { ForbiddenWord, Message } = require('../models');
 
-MessageService.cleanMessage = async(workspaceId, message) => {
+MessageService.replaceForbiddenWords = async(workspaceId, message) => {
   try {
     var forbiddenWords = await ForbiddenWord.findAll({
       where: { workspaceId },
     });
-    var words = forbiddenWords.map(function(w){
-      var words = {};
-      words[w.word] = w.replaceBy;
-      return words;
-    });
-
-    words.forEach(function(word) {
-      for (var w in word) {
-        var regEx = new RegExp(w, 'ig');
-        message = message.replace(regEx, word[w]);
-      }
+    forbiddenWords.forEach(function(w) {
+      var regEx = new RegExp(w.word, 'ig');
+      message = message.replace(regEx, w.replaceBy);
     });
     return message;
   } catch (err) {
-    console.error('It was an error while trying to clean message:', err);
+    console
+      .error('It was an error while trying to replace forbidden words:', err);
   }
+};
+
+MessageService.saveMessageRecord = async(workspaceId, sender) => {
+  try {
+    var messageRecord = await Message.findOne({
+      where: { workspaceId: workspaceId, userId: sender},
+    });
+    var record = {};
+    if (!messageRecord) {
+      record.workspaceId = workspaceId;
+      record.userId = sender;
+      record.total = 1;
+      await Message.create(record);
+    } else {
+      record = messageRecord.toJSON();
+      record.total++;
+      await Message.update(record, {
+        returning: true,
+        where: { id: record.id },
+      });
+    }
+  } catch (err) {
+    console
+      .error('It was an error while trying to save message recod:', err);
+  }
+};
+
+MessageService.getByUserId = async(userId) => {
+  var messages = Message.findAll({
+    where: {userId},
+    raw: true,
+  });
+  return messages;
 };
 
 module.exports = MessageService;

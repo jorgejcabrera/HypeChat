@@ -17,6 +17,15 @@ UserController.create = async(req, res, next) => {
   }
 };
 
+UserController.getProfile = async(req, res, next) => {
+  try {
+    var profile = await UserService.getProfile(req.params.userId);
+    res.json(profile);
+  } catch (err) {
+    next(err);
+  }
+};
+
 UserController.retrieve = async(req, res, next) => {
   try {
     var user = await UserService.getById(req.params.userId);
