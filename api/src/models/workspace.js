@@ -17,9 +17,6 @@ module.exports = (sequelize, type) => {
     image: {
       allowNull: false,
       type: type.STRING,
-      validate: {
-        isUrl: true,
-      },
     },
     // TODO: check how to store the location.
     location: {

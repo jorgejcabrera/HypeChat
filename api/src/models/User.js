@@ -37,9 +37,6 @@ module.exports = (sequelize, type) => {
     image: {
       allowNull: true,
       type: type.STRING,
-      validate: {
-        isUrl: true,
-      },
     },
     email: {
       type: type.STRING,
