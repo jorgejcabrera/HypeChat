@@ -27,10 +27,11 @@ FirebaseService.sendNofication = async(sender, messageData) => {
 
     if (tokens.length === 0) return;
 
+    console.log(tokens);
     var payload = {
       notification: {
         title: sender.firstName,
-        body: messageData.message,
+        body: messageData.message || 'Multimedia',
       },
       tokens: tokens,
     };
@@ -39,6 +40,19 @@ FirebaseService.sendNofication = async(sender, messageData) => {
   } catch (error) {
     console.log('Firebase: Error sending message:', error);
   }
+};
+
+FirebaseService._detectMessageType = (messageData) => {
+  var messageType = 'message';
+  if (messageData.image) {
+    messageType = 'image';
+  } else if (messageData.file) {
+    messageType = 'file';
+  } else if (messageData.snippet) {
+    messageType = 'snippet';
+  }
+
+  return messageType;
 };
 
 FirebaseService.sendMessage = async(workspaceId, sender, messageData) => {
@@ -58,14 +72,22 @@ FirebaseService.sendMessage = async(workspaceId, sender, messageData) => {
       firstName: sender.firstName,
       lastName: sender.lastName,
     },
-    message: messageData.message,
+    messageType: FirebaseService._detectMessageType(messageData),
+    image: messageData.image || null,
+    file: messageData.file || null,
+    snippet: messageData.snippet || null,
+    message: messageData.message || null,
     timestamp: moment().format(),
   });
 };
 
 FirebaseService.send = async(workspaceId, sender, messageData) => {
-  messageData.message = await
-  MessageService.replaceForbiddenWords(workspaceId, messageData.message);
+  if (messageData.message) {
+    messageData.message = await MessageService.replaceForbiddenWords(
+      workspaceId,
+      messageData.message
+    );
+  }
   await FirebaseService.sendNofication(sender, messageData);
   await FirebaseService.sendMessage(workspaceId, sender, messageData);
   await MessageService.saveMessageRecord(workspaceId, sender.id);
