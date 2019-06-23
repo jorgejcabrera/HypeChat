@@ -27,7 +27,6 @@ FirebaseService.sendNofication = async(sender, messageData) => {
 
     if (tokens.length === 0) return;
 
-    console.log(tokens);
     var payload = {
       notification: {
         title: sender.firstName,
