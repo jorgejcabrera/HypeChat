@@ -1,6 +1,6 @@
 'use strict';
 
-var { GroupService } = require('../services');
+var { GroupService, WorkspaceService, UserService } = require('../services');
 
 var GroupController = {};
 GroupController.name = 'GroupController';
@@ -28,11 +28,23 @@ GroupController.list = async(req, res, next) => {
 
 GroupController.addUser = async(req, res, next) => {
   try {
-    var groupUser = await GroupService.addUser(
-      req.params.groupId,
-      req.body.userId
+    var group = await GroupService.getById(req.params.groupId);
+    var user = await UserService.getByEmail(req.body.userEmail);
+    if (!user || !group) {
+      return res.status(404).send();
+    }
+
+    var workspaceUser = await WorkspaceService.userBelongs(
+      user.id,
+      group.workspaceId
     );
-    res.send(groupUser);
+
+    if (!workspaceUser) {
+      return res.status(404).send();
+    }
+
+    var userGroup = await GroupService.addUser(group.id, user.id);
+    res.json(userGroup);
   } catch (err) {
     next(err);
   }

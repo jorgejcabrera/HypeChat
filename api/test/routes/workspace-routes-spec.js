@@ -1032,6 +1032,140 @@ describe('Workspace Routes Test', () => {
       });
   });
 
+  describe('Add User To Group', () => {
+
+    var groups;
+
+    beforeEach(async() => {
+      groups = [
+        {
+          creatorId: user.id,
+          name: 'A test group',
+          description: 'A description',
+          visibility: 'PRIVATE',
+          isActive: true,
+        },
+        {
+          creatorId: otherUser.id,
+          name: 'Another test group',
+          description: 'A description',
+          visibility: 'PRIVATE',
+          isActive: true,
+        },
+      ];
+    });
+
+    it('should return ok when user to add exists and belongs to workspace',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [
+            { id: otherUser.id, role: 'MEMBER' },
+            { id: thirdUser.id, role: 'MEMBER' },
+          ],
+          groups
+        );
+
+        var res = await chai.request(app)
+          .post(
+            `/workspaces/${workspace.id}/groups/${workspace.groups[0].id}/users`
+          )
+          .set('X-Auth', user.auth.accessToken)
+          .send({ userEmail: thirdUser.email });
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        res = await chai.request(app)
+          .get(
+            `/workspaces/${workspace.id}/groups/${workspace.groups[0].id}/users`
+          )
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.body.length,
+          2,
+          'User was not added'
+        );
+      });
+
+    it('should return invalid when user to add exists and doesn\'t ' +
+    'belong to workspace',
+    async() => {
+      var workspace = await TestUtils.workspaceFactory(
+        { creatorId: user.id },
+        [
+          { id: otherUser.id, role: 'MEMBER' },
+        ],
+        groups
+      );
+
+      var res = await chai.request(app)
+        .post(
+          `/workspaces/${workspace.id}/groups/${workspace.groups[0].id}/users`
+        )
+        .set('X-Auth', user.auth.accessToken)
+        .send({ userEmail: thirdUser.email });
+
+      chai.assert.strictEqual(
+        res.status,
+        404,
+        'Status was not 404'
+      );
+
+      res = await chai.request(app)
+        .get(
+          `/workspaces/${workspace.id}/groups/${workspace.groups[0].id}/users`
+        )
+        .set('X-Auth', user.auth.accessToken);
+
+      chai.assert.strictEqual(
+        res.body.length,
+        1,
+        'User was added incorrectly'
+      );
+    });
+
+    it('should return invalid when user to add doesn\'t exist',
+      async() => {
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [
+            { id: otherUser.id, role: 'MEMBER' },
+          ],
+          groups
+        );
+
+        var res = await chai.request(app)
+          .post(
+            `/workspaces/${workspace.id}/groups/${workspace.groups[0].id}/users`
+          )
+          .set('X-Auth', user.auth.accessToken)
+          .send({ userEmail: 'invalid@email.com' });
+
+        chai.assert.strictEqual(
+          res.status,
+          404,
+          'Status was not 404'
+        );
+
+        res = await chai.request(app)
+          .get(
+            `/workspaces/${workspace.id}/groups/${workspace.groups[0].id}/users`
+          )
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.body.length,
+          1,
+          'User was added incorrectly'
+        );
+      });
+  });
+
   describe('Update User Roles', () => {
     var updateUserRole = async(newData, members, token, expect) => {
       var workspace = await TestUtils.workspaceFactory(
