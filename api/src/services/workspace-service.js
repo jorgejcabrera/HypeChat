@@ -33,7 +33,7 @@ WorkspaceService.create = async(workspaceData) => {
     });
 
     bots.forEach(async(bot) => {
-      await WorkspaceService.addUser(workspace.id, bot.id)
+      await WorkspaceService.addUser(workspace.id, bot.id);
     });
   }
 

@@ -17,17 +17,17 @@ module.exports = {
       firebaseToken: null,
       isBot: true,
       isGlobalBot: true,
-      callbackOnMention: 
-        process.env.NODE_ENV === 'PRODUCTION' ? 
-        'prod.url' : 'http://botservice.hypechat:5000/tito'
+      callbackOnMention:
+        process.env.NODE_ENV === 'PRODUCTION' ?
+          'prod.url' : 'http://botservice.hypechat:5000/tito',
     }], {});
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete('User', null, {
       where: {
-        email: 'titobot@hypechat.com'
-      }
+        email: 'titobot@hypechat.com',
+      },
     });
   },
 };
