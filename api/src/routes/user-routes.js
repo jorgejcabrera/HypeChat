@@ -16,4 +16,7 @@ module.exports = (app) => {
     .get(UserController.retrieve)
     .put(UserController.update)
     .delete(UserController.delete);
+
+  app.route('/recoveryPassword')
+    .put(UserController.recoveryPassword);
 };

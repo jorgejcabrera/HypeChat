@@ -8,6 +8,8 @@ var swaggerDocument = require('./swagger/config.json');
 
 var env = process.env.NODE_ENV || 'development';
 Sequelize.config = require('./sequelize/config.json')[env];
+var gmailEmail = process.env.GMAIL_EMAIL;
+var gmailPwd = process.env.GMAIL_PASSWORD;
 
 module.exports = {
   debug: require('debug')('hypechat:server'),
@@ -27,4 +29,7 @@ module.exports = {
   passport: require('passport'),
   FacebookStrategy: require('passport-facebook-token'),
   jwt: require('jsonwebtoken'),
+  nodemailer: require('nodemailer'),
+  gmailEmail: gmailEmail,
+  gmailPwd: gmailPwd,
 };
