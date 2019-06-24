@@ -10,7 +10,6 @@ BotController.create = async(req, res, next) => {
     req.body.isBot = true;
     req.body.isGlobalBot = false;
     var bot = await UserService.create(req.body);
-    delete bot.isGlobalBot;
     res.json(bot);
   } catch (err) {
     next(err);

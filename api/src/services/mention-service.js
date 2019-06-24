@@ -42,7 +42,7 @@ MentionService._lookForUsers = async(match, sender, messageData) => {
           firstName: sender.firstName,
           lastName: sender.lastName,
         },
-        message: match[2].trim(),
+        message: match.input,
         timestamp: moment().format(),
       },
       json: true,
@@ -54,7 +54,7 @@ MentionService.analyzeMessage = async(sender, messageData) => {
   // If message is not sent to a group, ignore it.
   if (!messageData.groupId) return;
 
-  var regex = /^@([^ ]+)([\s\S]*)$/;
+  var regex = /@([^\s]+)/;
   var match = messageData.message.match(regex);
   if (!match) return;
 
