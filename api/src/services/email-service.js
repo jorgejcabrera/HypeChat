@@ -4,14 +4,13 @@ var EmailService = {};
 EmailService.name = 'EmailService';
 
 var { nodemailer } = require('../config/dependencies');
-var { gmailEmail, gmailPwd } = require('../config/dependencies');
 
 EmailService.sendEmail = async(userEmail, message, from, subject) => {
   let transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: gmailEmail,
-      pass: gmailPwd,
+      user: process.env.GMAIL_EMAIL,
+      pass: process.env.GMAIL_PASSWORD,
     },
   });
   await transporter.sendMail({
