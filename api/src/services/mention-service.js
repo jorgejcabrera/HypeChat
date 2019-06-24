@@ -36,6 +36,7 @@ MentionService._lookForUsers = async(match, sender, messageData) => {
       method: 'POST',
       uri: taggedUser.callbackOnMention,
       body: {
+        workspaceId: messageData.workspaceId,
         groupId: messageData.groupId,
         from: {
           id: sender.id,
