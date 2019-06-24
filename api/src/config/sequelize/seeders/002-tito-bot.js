@@ -19,7 +19,8 @@ module.exports = {
       isGlobalBot: true,
       callbackOnMention:
         process.env.NODE_ENV === 'PRODUCTION' ?
-          'prod.url' : 'http://botservice.hypechat:5000/tito',
+          'https://hypechat-tito-bot.herokuapp.com/' :
+          'http://botservice.hypechat:5000/tito',
     }], {});
   },
 
