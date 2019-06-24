@@ -6,7 +6,7 @@ EmailService.name = 'EmailService';
 var { nodemailer } = require('../config/dependencies');
 var { gmailEmail, gmailPwd } = require('../config/dependencies');
 
-EmailService.sendEmail = async(userEmail, message) => {
+EmailService.sendEmail = async(userEmail, message, from, subject) => {
   let transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -15,9 +15,9 @@ EmailService.sendEmail = async(userEmail, message) => {
     },
   });
   await transporter.sendMail({
-    from: '"Hypechat Recovery Password 👻" <hypechat2019@gmail.com>',
+    from: from,
     to: userEmail,
-    subject: 'Reestablece tu contrasena ✔',
+    subject: subject,
     text: message,
     html: message,
   });
