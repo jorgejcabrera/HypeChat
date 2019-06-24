@@ -19,7 +19,7 @@ module.exports = {
       isGlobalBot: true,
       callbackOnMention:
         process.env.NODE_ENV === 'production' ?
-          'https://hypechat-tito-bot.herokuapp.com/' :
+          'https://hypechat-tito-bot.herokuapp.com/tito' :
           'http://botservice.hypechat:5000/tito',
     }], {});
   },
