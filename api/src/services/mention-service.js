@@ -17,8 +17,8 @@ MentionService._lookForUsers = async(match, sender, messageData) => {
   });
 
   if (!taggedUser) return;
-  // TODO handle when user doesn't belong to group (add it).
 
+  // TODO handle when user doesn't belong to group (add it).
   var belongsToWorkspace = WorkspaceService.userBelongs(
     taggedUser.id, messageData.workspaceId
   );

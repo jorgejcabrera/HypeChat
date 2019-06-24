@@ -61,6 +61,10 @@ module.exports = (sequelize, type) => {
       type: type.BOOLEAN,
       defaultValue: false,
     },
+    isGlobalBot: {
+      type: type.BOOLEAN,
+      defaultValue: false,
+    },
     callbackOnMention: {
       type: type.STRING,
       allowNull: true,
