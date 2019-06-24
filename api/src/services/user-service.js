@@ -32,6 +32,22 @@ UserService.updatePassword = async(userId, payload) => {
   });
 };
 
+UserService.recoveryPassword = async(email) => {
+  var user = await UserService.getByEmail(email);
+  if (!user) {
+    var e = new Error();
+    e.name = 'ResourceNotFound';
+    throw e;
+  }
+  var newPassword = Math.random().toString(36).substring(7);
+  user.password = await bcrypt.hash(newPassword, saltRounds);
+  await User.update(user, {
+    returning: true,
+    where: { id: user.id },
+  });
+  return newPassword;
+};
+
 UserService.getProfile = async(userId) => {
   var user = await UserService.getById(userId);
   if (!user) {

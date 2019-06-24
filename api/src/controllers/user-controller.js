@@ -1,6 +1,6 @@
 'use strict';
 
-var { UserService, AuthService } = require('../services');
+var { UserService, AuthService, PasswordService } = require('../services');
 var { UserMapper } = require('../mappers');
 
 var UserController = {};
@@ -14,6 +14,15 @@ UserController.create = async(req, res, next) => {
     var auth = await AuthService.create(user.id);
     user = UserMapper.map(user, auth);
     res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+UserController.recoveryPassword = async(req, res, next) => {
+  try {
+    await PasswordService.recoveryPassword(req.body.email);
+    res.status(204).send();
   } catch (err) {
     next(err);
   }
