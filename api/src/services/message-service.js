@@ -4,6 +4,7 @@ var MessageService = {};
 MessageService.name = 'MessageService';
 
 var { ForbiddenWord, Message } = require('../models');
+var GroupService = require('./group-service');
 
 MessageService.replaceForbiddenWords = async(workspaceId, message) => {
   try {
@@ -21,7 +22,7 @@ MessageService.replaceForbiddenWords = async(workspaceId, message) => {
   }
 };
 
-MessageService.saveMessageRecord = async(workspaceId, sender) => {
+MessageService.saveMessageRecord = async(workspaceId, sender, groupId) => {
   try {
     var messageRecord = await Message.findOne({
       where: { workspaceId: workspaceId, userId: sender},
@@ -39,6 +40,10 @@ MessageService.saveMessageRecord = async(workspaceId, sender) => {
         returning: true,
         where: { id: record.id },
       });
+    }
+
+    if (groupId) {
+      await GroupService.saveMessageRecord(groupId);
     }
   } catch (err) {
     console

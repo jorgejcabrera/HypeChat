@@ -89,7 +89,8 @@ FirebaseService.send = async(workspaceId, sender, messageData) => {
   }
   await FirebaseService.sendNofication(sender, messageData);
   await FirebaseService.sendMessage(workspaceId, sender, messageData);
-  await MessageService.saveMessageRecord(workspaceId, sender.id);
+  await MessageService
+    .saveMessageRecord(workspaceId, sender.id, messageData.groupId);
 };
 
 module.exports = FirebaseService;

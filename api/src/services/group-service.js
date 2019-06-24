@@ -59,6 +59,18 @@ GroupService.list = async(user, workspaceId) => {
   return list.map((group) => group.toJSON());
 };
 
+GroupService.saveMessageRecord = async(groupId) => {
+  var group = await GroupService.getById(groupId);
+  if (group.totalMessages)
+    group.totalMessages = 1;
+  else
+    group.totalMessages++;
+  await Group.update(group, {
+    returning: true,
+    where: { id: groupId },
+  });
+};
+
 GroupService.getById = async(groupId) => {
   var group = await Group.findOne({
     where: { id: groupId },
