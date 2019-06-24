@@ -5,6 +5,7 @@
     "database": "hypechat",
     "host": "postgres",
     "dialect": "postgres",
+    "seederStorage": "sequelize",
     "define": {
       "freezeTableName": true
     }
@@ -21,6 +22,7 @@
     "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
     "protocol": "postgres",
+    "seederStorage": "sequelize",
     "define": {
       "freezeTableName": true
     }
