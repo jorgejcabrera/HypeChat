@@ -13,6 +13,15 @@ MessageValidator.isValid = async(workspaceId, senderId, data) => {
     return false;
   }
 
+  // Checks that at most 1 multimedia type is being used.
+  var multimediaTypes = (data.image ? 1 : 0) +
+                        (data.file ? 1 : 0) +
+                        (data.snippet ? 1 : 0) +
+                        (data.message ? 1 : 0);
+  if (multimediaTypes !== 1) {
+    return false;
+  }
+
   var includes = [
     { association: 'users', where: { id: toFind } },
   ];
