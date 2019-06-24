@@ -57,6 +57,22 @@ module.exports = (sequelize, type) => {
       type: type.STRING,
       allowNull: true,
     },
+    isBot: {
+      type: type.BOOLEAN,
+      defaultValue: false,
+    },
+    isGlobalBot: {
+      type: type.BOOLEAN,
+      defaultValue: false,
+    },
+    callbackOnMention: {
+      type: type.STRING,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        isUrl: true,
+      },
+    },
     status: {
       type: type.ENUM('ACTIVE', 'INACTIVE'),
       allowNull: false,

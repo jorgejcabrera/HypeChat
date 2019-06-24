@@ -28,4 +28,5 @@ module.exports = {
   FacebookStrategy: require('passport-facebook-token'),
   jwt: require('jsonwebtoken'),
   nodemailer: require('nodemailer'),
+  request: require('request-promise'),
 };
