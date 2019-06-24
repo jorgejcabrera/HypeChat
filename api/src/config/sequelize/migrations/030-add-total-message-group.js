@@ -13,7 +13,7 @@ module.exports = {
   down: async(queryInterface, Sequelize) => {
     return [
       await queryInterface.addColumn('Group', 'totalMessages', {
-        type: Sequelize.TEXT,
+        type: Sequelize.INTEGER,
         allowNull: true,
       }),
     ];
