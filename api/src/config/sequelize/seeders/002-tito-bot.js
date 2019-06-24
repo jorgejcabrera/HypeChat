@@ -4,7 +4,7 @@ var bcrypt = require('bcrypt');
 
 module.exports = {
   up: async(queryInterface, Sequelize) => {
-    if (process.env.NODE_ENV === 'TEST') return;
+    if (process.env.NODE_ENV === 'test') return;
     return queryInterface.bulkInsert('User', [{
       firstName: 'Tito',
       lastName: 'Bot',
@@ -18,7 +18,7 @@ module.exports = {
       isBot: true,
       isGlobalBot: true,
       callbackOnMention:
-        process.env.NODE_ENV === 'PRODUCTION' ?
+        process.env.NODE_ENV === 'production' ?
           'https://hypechat-tito-bot.herokuapp.com/' :
           'http://botservice.hypechat:5000/tito',
     }], {});
