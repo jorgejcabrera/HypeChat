@@ -27,4 +27,5 @@ module.exports = {
   passport: require('passport'),
   FacebookStrategy: require('passport-facebook-token'),
   jwt: require('jsonwebtoken'),
+  request: require('request-promise'),
 };

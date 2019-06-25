@@ -1,19 +1,19 @@
 'use strict';
 
-var { AuthController, UserController } = require('../controllers');
+var {
+  AuthController,
+  UserController,
+  BotController,
+} = require('../controllers');
 var { passport } = require('../config/dependencies');
 
 module.exports = (app) => {
 
-  app.route('/register')
-    .post(
-      UserController.create
-    );
+  app.route('/bot/register').post(BotController.create);
 
-  app.route('/login')
-    .post(
-      AuthController.login
-    );
+  app.route('/register').post(UserController.create);
+
+  app.route('/login').post(AuthController.login);
 
   app.route('/facebook/login')
     .post(
@@ -21,6 +21,5 @@ module.exports = (app) => {
       AuthController.login
     );
 
-  app.route('/logout')
-    .post(AuthController.logout);
+  app.route('/logout').post(AuthController.logout);
 };

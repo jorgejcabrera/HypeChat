@@ -24,6 +24,17 @@ WorkspaceService.create = async(workspaceData) => {
       visibility: 'PUBLIC',
       isActive: true,
     });
+
+    var bots = await User.findAll({
+      where: {
+        isGlobalBot: true,
+        status: 'ACTIVE',
+      },
+    });
+
+    bots.forEach(async(bot) => {
+      await WorkspaceService.addUser(workspace.id, bot.id);
+    });
   }
 
   return workspace && workspace.toJSON();

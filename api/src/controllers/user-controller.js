@@ -8,6 +8,8 @@ UserController.name = 'UserController';
 
 UserController.create = async(req, res, next) => {
   try {
+    req.body.isBot = false;
+    req.body.callbackOnMention = null;
     var user = await UserService.create(req.body);
     var auth = await AuthService.create(user.id);
     user = UserMapper.map(user, auth);

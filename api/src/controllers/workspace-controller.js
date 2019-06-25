@@ -4,6 +4,7 @@ var {
   FirebaseService,
   WorkspaceService,
   UserService,
+  MentionService,
 } = require('../services');
 
 var { MessageValidator } = require('../validators');
@@ -181,6 +182,12 @@ WorkspaceController.sendMessage = async(req, res, next) => {
     );
 
     if (!isValid) return res.status(404).send();
+
+    req.body.workspaceId = req.params.workspaceId;
+    await MentionService.analyzeMessage(
+      req.user,
+      req.body
+    );
 
     await FirebaseService.send(
       req.params.workspaceId,
