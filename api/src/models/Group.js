@@ -20,6 +20,11 @@ module.exports = (sequelize, type) => {
       allowNull: false,
       type: type.STRING,
     },
+    totalMessages: {
+      type: type.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     visibility: {
       type: type.ENUM('PUBLIC', 'PRIVATE'),
       defaultValue: 'PUBLIC',
