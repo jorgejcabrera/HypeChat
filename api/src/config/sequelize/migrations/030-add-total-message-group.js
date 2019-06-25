@@ -5,17 +5,15 @@ module.exports = {
     return [
       await queryInterface.addColumn('Group', 'totalMessages', {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: 0,
       }),
     ];
   },
 
   down: async(queryInterface, Sequelize) => {
     return [
-      await queryInterface.addColumn('Group', 'totalMessages', {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      }),
+      await queryInterface.removeColumn('Group', 'totalMessages'),
     ];
   },
 };

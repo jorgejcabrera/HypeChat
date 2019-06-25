@@ -787,6 +787,7 @@ describe('Workspace Routes Test', () => {
         );
 
         delete res.body.id;
+        delete res.body.totalMessages;
         delete res.body.createdAt;
         delete res.body.updatedAt;
         groupData.workspaceId = workspace.id;
