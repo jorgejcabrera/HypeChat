@@ -13,6 +13,7 @@
   "test": {
     "dialect": "sqlite",
     "storage": ":memory",
+    "seederStorage": "sequelize",
     "define": {
       "freezeTableName": true
     },

@@ -9,11 +9,25 @@ GroupService.create = async(groupData) => {
   delete groupData.id;
   var group = await Group.create(groupData);
 
+  var members = [group.creatorId];
+  if (group && group.visibility === 'PUBLIC') {
+    var workspace = await Workspace.findOne({
+      where: { id: group.workspaceId },
+      include: [
+        { association: 'users' },
+      ],
+    });
+
+    members = workspace.users.map((user) => user.id);
+  }
+
   if (group) {
-    await GroupService.addUser(
-      group.id,
-      group.creatorId
-    );
+    members.forEach(async(userId) => {
+      await GroupService.addUser(
+        group.id,
+        userId
+      );
+    });
   }
 
   return group && group.toJSON();
@@ -32,7 +46,6 @@ GroupService.list = async(user, workspaceId) => {
   var query = {
     where: {
       workspaceId: workspaceId,
-      visibility: 'PRIVATE',
     },
   };
 
@@ -47,24 +60,24 @@ GroupService.list = async(user, workspaceId) => {
       },
     ];
   }
-  var privateList = await Group.findAll(query);
-  var publicList = await Group.findAll({
+
+  var list = await Group.findAll(query);
+  return list.map((group) => group.toJSON());
+};
+
+GroupService.getPublicGroups = async(workspaceId) => {
+  var list = await Group.findAll({
     where: {
       workspaceId: workspaceId,
       visibility: 'PUBLIC',
     },
   });
-
-  var list = privateList.concat(publicList);
   return list.map((group) => group.toJSON());
 };
 
 GroupService.saveMessageRecord = async(groupId) => {
   var group = await GroupService.getById(groupId);
-  if (group.totalMessages)
-    group.totalMessages = 1;
-  else
-    group.totalMessages++;
+  group.totalMessages++;
   await Group.update(group, {
     returning: true,
     where: { id: groupId },
@@ -78,17 +91,6 @@ GroupService.getById = async(groupId) => {
       { association: 'users' },
     ],
   });
-
-  if (group && group.visibility === 'PUBLIC') {
-    var workspace = await Workspace.findOne({
-      where: { id: group.workspaceId },
-      include: [
-        { association: 'users' },
-      ],
-    });
-
-    group.users = workspace.users;
-  }
 
   return group && group.toJSON();
 };
