@@ -5,6 +5,7 @@ var {
   WorkspaceService,
   UserService,
   MentionService,
+  EmailService,
 } = require('../services');
 
 var { MessageValidator } = require('../validators');
@@ -39,6 +40,11 @@ WorkspaceController.inviteUser = async(req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+
+    var message = `Usa este token ${token} para unirte al workspace ${workspace.name}`;
+    var from = '"Hypechat Workspace Invitation 👻" <hypechat2019@gmail.com>';
+    var subject = 'Invitacion a workspace ✔';
+    await EmailService.sendEmail(user.email, message, from, subject);
     res.json({ inviteToken: token });
   } catch (err) {
     next(err);
