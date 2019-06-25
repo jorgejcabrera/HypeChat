@@ -61,10 +61,7 @@ GroupService.list = async(user, workspaceId) => {
 
 GroupService.saveMessageRecord = async(groupId) => {
   var group = await GroupService.getById(groupId);
-  if (group.totalMessages)
-    group.totalMessages = 1;
-  else
-    group.totalMessages++;
+  group.totalMessages++;
   await Group.update(group, {
     returning: true,
     where: { id: groupId },
