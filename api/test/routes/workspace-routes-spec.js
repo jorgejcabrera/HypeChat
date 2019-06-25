@@ -2,7 +2,6 @@
 
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var sinon = require('sinon');
 var extend = require('util')._extend;
 var TestUtils = require('../test-utils');
 var app = require('../../src/app');
@@ -33,10 +32,6 @@ describe('Workspace Routes Test', () => {
       image: 'http://test.workspace.com',
       location: 'Street 101, City, Country',
     };
-  });
-
-  afterEach(() => {
-    sinon.restore();
   });
 
   describe('Create', () => {
@@ -483,6 +478,14 @@ describe('Workspace Routes Test', () => {
   });
 
   describe('Invite User', () => {
+    before(async() => {
+      TestUtils.mockEmail();
+    });
+
+    after(() => {
+      TestUtils.restore();
+    });
+
     it('should return unauthorized when calling user doesn\'t belong',
       async() => {
         var workspace = await TestUtils.workspaceFactory(

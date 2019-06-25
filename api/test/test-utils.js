@@ -1,6 +1,7 @@
 'use strict';
 
 var faker = require('faker');
+var sinon = require('sinon');
 var models = require('../src/models');
 var services = require('../src/services');
 
@@ -11,6 +12,10 @@ TestUtils.clearDB = async() => {
     if (['Database'].includes(key)) continue;
     await models[key].destroy({ where: {}, force: true });
   };
+};
+
+TestUtils.restore = async() => {
+  sinon.restore();
 };
 
 TestUtils.userFactory = async(props = {}) => {
@@ -79,6 +84,10 @@ TestUtils.workspaceFactory = async(props = {}, members = [], groups = []) => {
   }
 
   return workspace;
+};
+
+TestUtils.mockEmail = async() => {
+  services.EmailService.sendEmail = sinon.stub();
 };
 
 module.exports = TestUtils;

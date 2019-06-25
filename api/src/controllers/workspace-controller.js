@@ -41,8 +41,10 @@ WorkspaceController.inviteUser = async(req, res, next) => {
       { expiresIn: '24h' }
     );
 
-    var message = `Usa este token ${token} para unirte al workspace ${workspace.name}`;
-    var from = '"Hypechat Workspace Invitation 👻" <hypechat2019@gmail.com>';
+    var message =
+      `Usa este token ${token} para unirte al workspace ${workspace.name}`;
+    var from =
+      '"Hypechat Workspace Invitation 👻" <hypechat2019@gmail.com>';
     var subject = 'Invitacion a workspace ✔';
     await EmailService.sendEmail(user.email, message, from, subject);
     res.json({ inviteToken: token });
