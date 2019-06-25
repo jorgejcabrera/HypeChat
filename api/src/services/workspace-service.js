@@ -1,5 +1,6 @@
 'use strict';
 
+var { Sequelize, request, moment } = require('../config/dependencies');
 var { Workspace, WorkspaceUsers, User } = require('../models');
 var GroupService = require('./group-service');
 
@@ -19,7 +20,7 @@ WorkspaceService.create = async(workspaceData) => {
     await GroupService.create({
       workspaceId: workspace.id,
       creatorId: workspace.creatorId,
-      name: 'general',
+      name: 'General',
       description: 'Bienvenido a #general!',
       visibility: 'PUBLIC',
       isActive: true,
@@ -112,10 +113,54 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
     role: role,
   });
 
-  var publicGroups = await GroupService.getPublicGroups(workspaceId);
+  var generalGroupId = null;
 
+  var publicGroups = await GroupService.getPublicGroups(workspaceId);
   publicGroups.forEach(async(group) => {
+    if (group.name === 'General') {
+      generalGroupId = group.id;
+    }
     await GroupService.addUser(group.id, userId);
+  });
+
+  var user = (await User.findOne({
+    where: {
+      id: userId,
+      status: 'ACTIVE',
+    },
+  })).toJSON();
+
+  var bots = await User.findAll({
+    where: {
+      callbackOnNewMember: {
+        [Sequelize.Op.ne]: null,
+      },
+      status: 'ACTIVE',
+    },
+    include: [
+      {
+        association: 'workspaces',
+        where: {
+          id: workspaceId,
+        },
+        attributes: [],
+      },
+    ],
+  });
+
+  bots.forEach(async(bot) => {
+    // Call callback.
+    request({
+      method: 'POST',
+      uri: bot.callbackOnNewMember,
+      body: {
+        workspaceId: workspaceId,
+        groupId: generalGroupId,
+        member: user,
+        timestamp: moment().format(),
+      },
+      json: true,
+    });
   });
 
   return worspaceUser && worspaceUser.toJSON();
