@@ -111,6 +111,13 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
     workspaceId: workspaceId,
     role: role,
   });
+
+  var publicGroups = await GroupService.getPublicGroups(workspaceId);
+
+  publicGroups.forEach(async(group) => {
+    await GroupService.addUser(group.id, userId);
+  });
+
   return worspaceUser && worspaceUser.toJSON();
 };
 

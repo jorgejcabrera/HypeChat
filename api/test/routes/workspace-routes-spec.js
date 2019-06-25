@@ -747,6 +747,122 @@ describe('Workspace Routes Test', () => {
           'Status was not 404'
         );
       });
+
+    it('should add user to public groups',
+      async() => {
+
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [],
+          [
+            {
+              creatorId: user.id,
+              name: 'A test public group',
+              description: 'A public description',
+              visibility: 'PUBLIC',
+              isActive: true,
+            },
+            {
+              creatorId: user.id,
+              name: 'Another test public group',
+              description: 'A public description',
+              visibility: 'PUBLIC',
+              isActive: true,
+            },
+          ]
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/users')
+          .set('X-Auth', user.auth.accessToken)
+          .send({ userEmail: thirdUser.email });
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.isObject(
+          res.body,
+          'Response was not what was expected'
+        );
+
+        res = await chai.request(app)
+          .get('/workspaces/' + workspace.id + '/groups')
+          .set('X-Auth', thirdUser.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.strictEqual(
+          res.body.length,
+          3,
+          'User doesn\'t belong to the right amount of groups'
+        );
+      });
+
+    it('should NOT add user to private groups',
+      async() => {
+
+        var workspace = await TestUtils.workspaceFactory(
+          { creatorId: user.id },
+          [],
+          [
+            {
+              creatorId: user.id,
+              name: 'A test private group',
+              description: 'A private description',
+              visibility: 'PRIVATE',
+              isActive: true,
+            },
+            {
+              creatorId: user.id,
+              name: 'Another test private group',
+              description: 'A private description',
+              visibility: 'PRIVATE',
+              isActive: true,
+            },
+          ]
+        );
+
+        var res = await chai.request(app)
+          .post('/workspaces/' + workspace.id + '/users')
+          .set('X-Auth', user.auth.accessToken)
+          .send({ userEmail: thirdUser.email });
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.isObject(
+          res.body,
+          'Response was not what was expected'
+        );
+
+        res = await chai.request(app)
+          .get('/workspaces/' + workspace.id + '/groups')
+          .set('X-Auth', thirdUser.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.strictEqual(
+          res.body.length,
+          1,
+          'User doesn\'t belong to the right amount of groups'
+        );
+      });
+
+
   });
 
   describe('Add Group', () => {
@@ -789,17 +905,20 @@ describe('Workspace Routes Test', () => {
           'Status was not 200'
         );
 
-        delete res.body.id;
-        delete res.body.totalMessages;
-        delete res.body.createdAt;
-        delete res.body.updatedAt;
+        var group = extend({}, res.body);
+        delete group.id;
+        delete group.totalMessages;
+        delete group.createdAt;
+        delete group.updatedAt;
         groupData.workspaceId = workspace.id;
         chai.assert.deepEqual(
-          res.body,
+          group,
           groupData,
           'Response was not what was expected'
         );
       }
+
+      return res.body;
     };
 
     it('should return unauthorized when calling user doesn\'t belong',
@@ -862,6 +981,78 @@ describe('Workspace Routes Test', () => {
           user.auth.accessToken,
           'OK'
         );
+      });
+
+    it('all workspace members should be members when group is public',
+      async() => {
+        var group = await addGroup(
+          {
+            creatorId: user.id,
+            visibility: 'PUBLIC',
+            description: 'Una descripcion',
+            name: 'A test group',
+            isActive: true,
+          },
+          [
+            { id: otherUser.id, role: 'MEMBER' },
+            { id: thirdUser.id, role: 'MEMBER' },
+          ],
+          user.auth.accessToken,
+          'OK'
+        );
+
+        var res = await chai.request(app)
+          .get('/workspaces/' + group.workspaceId + '/groups/' + group.id)
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.strictEqual(
+          res.body.users.length,
+          3,
+          'Status was not 200'
+        );
+
+      });
+
+    it('only creator should be member when group is private',
+      async() => {
+        var group = await addGroup(
+          {
+            creatorId: user.id,
+            visibility: 'PRIVATE',
+            description: 'Una descripcion',
+            name: 'A test group',
+            isActive: true,
+          },
+          [
+            { id: otherUser.id, role: 'MEMBER' },
+            { id: thirdUser.id, role: 'MEMBER' },
+          ],
+          user.auth.accessToken,
+          'OK'
+        );
+
+        var res = await chai.request(app)
+          .get('/workspaces/' + group.workspaceId + '/groups/' + group.id)
+          .set('X-Auth', user.auth.accessToken);
+
+        chai.assert.strictEqual(
+          res.status,
+          200,
+          'Status was not 200'
+        );
+
+        chai.assert.strictEqual(
+          res.body.users.length,
+          1,
+          'Status was not 200'
+        );
+
       });
 
     it('should return invalid when group name is missing',
