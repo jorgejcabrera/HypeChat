@@ -1,9 +1,10 @@
 'use strict';
 
-var { request, moment } = require('../config/dependencies');
+var { moment } = require('../config/dependencies');
 var { User } = require('../models');
 var FirebaseService = require('./firebase-service');
 var WorkspaceService = require('./workspace-service');
+var HttpService = require('./http-service');
 
 var MentionService = {};
 MentionService.name = 'MentionService';
@@ -19,23 +20,22 @@ MentionService._lookForUsers = async(match, sender, messageData) => {
   if (!taggedUser) return;
 
   // TODO handle when user doesn't belong to group (add it).
-  var belongsToWorkspace = WorkspaceService.userBelongs(
+  var belongsToWorkspace = await WorkspaceService.userBelongs(
     taggedUser.id, messageData.workspaceId
   );
 
   if (!belongsToWorkspace) return;
 
   if (!taggedUser.isBot) {
-    FirebaseService.sendNofication(sender, {
+    await FirebaseService.sendNofication(sender, {
       groupId: null,
       recipientId: taggedUser.id,
       message: messageData.message,
     });
   } else if (taggedUser.callbackOnMention) {
-    request({
-      method: 'POST',
-      uri: taggedUser.callbackOnMention,
-      body: {
+    await HttpService.post(
+      taggedUser.callbackOnMention,
+      {
         workspaceId: messageData.workspaceId,
         groupId: messageData.groupId,
         from: {
@@ -45,9 +45,8 @@ MentionService._lookForUsers = async(match, sender, messageData) => {
         },
         message: match.input,
         timestamp: moment().format(),
-      },
-      json: true,
-    });
+      }
+    );
   }
 };
 

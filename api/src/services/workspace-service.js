@@ -1,8 +1,9 @@
 'use strict';
 
-var { Sequelize, request, moment } = require('../config/dependencies');
+var { Sequelize, moment } = require('../config/dependencies');
 var { Workspace, WorkspaceUsers, User } = require('../models');
 var GroupService = require('./group-service');
+var HttpService = require('./http-service');
 
 var WorkspaceService = {};
 WorkspaceService.name = 'WorkspaceService';
@@ -150,17 +151,15 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
 
   bots.forEach(async(bot) => {
     // Call callback.
-    request({
-      method: 'POST',
-      uri: bot.callbackOnNewMember,
-      body: {
+    await HttpService(
+      bot.callbackOnNewMember,
+      {
         workspaceId: workspaceId,
         groupId: generalGroupId,
         member: user,
-        timestamp: moment().format(),
-      },
-      json: true,
-    });
+        timestamp: moment().format("YYYY-MM-DD'T'HH:mm:ssZZ"),
+      }
+    );
   });
 
   return worspaceUser && worspaceUser.toJSON();

@@ -76,7 +76,7 @@ FirebaseService.sendMessage = async(workspaceId, sender, messageData) => {
     file: messageData.file || null,
     snippet: messageData.snippet || null,
     message: messageData.message || null,
-    timestamp: moment().format(),
+    timestamp: moment().format("YYYY-MM-DD'T'HH:mm:ssZZ"),
   });
 };
 

@@ -202,6 +202,7 @@ WorkspaceController.sendMessage = async(req, res, next) => {
       req.user,
       req.body
     );
+    
     res.json();
   } catch (err) {
     // TODO LOGS with warn level

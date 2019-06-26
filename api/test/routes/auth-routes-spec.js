@@ -2,7 +2,6 @@
 
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var sinon = require('sinon');
 var TestUtils = require('../test-utils');
 var app = require('../../src/app');
 
@@ -11,10 +10,6 @@ chai.use(chaiHttp);
 describe('Auth Routes Test', () => {
   beforeEach(async() => {
     await TestUtils.clearDB();
-  });
-
-  after(() => {
-    sinon.restore();
   });
 
   describe('Register', () => {
