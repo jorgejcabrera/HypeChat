@@ -2,6 +2,7 @@
 
 var { Sequelize } = require('../config/dependencies');
 var { Workspace, Group, UserGroup } = require('../models');
+var FirebaseService = require('./firebase-service');
 
 var GroupService = {};
 GroupService.name = 'GroupService';
@@ -50,6 +51,11 @@ GroupService.addUser = async(groupId, userId) => {
     userId: userId,
     groupId: groupId,
     isActive: true,
+  });
+
+  FirebaseService.sendAddedToGroupNofication(userId, {
+    title: 'Te han agregado a un nuevo grupo!',
+    body: '',
   });
   return groupUser && groupUser.toJSON();
 };

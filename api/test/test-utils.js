@@ -92,6 +92,7 @@ TestUtils.mockEmail = async() => {
 
 TestUtils.mockFirebase = async() => {
   services.FirebaseService.send = sinon.stub();
+  services.FirebaseService.sendAddedToGroupNofication = sinon.stub();
 };
 
 module.exports = TestUtils;

@@ -15,6 +15,10 @@ describe('Workspace Routes Test', () => {
   var thirdUser;
   var workspaceData;
 
+  before(async() => {
+    TestUtils.mockFirebase();
+  });
+
   beforeEach(async() => {
     await TestUtils.clearDB();
     // We need to have a user so we can create workspaces.
@@ -32,6 +36,10 @@ describe('Workspace Routes Test', () => {
       image: 'http://test.workspace.com',
       location: 'Street 101, City, Country',
     };
+  });
+
+  after(() => {
+    TestUtils.restore();
   });
 
   describe('Create', () => {

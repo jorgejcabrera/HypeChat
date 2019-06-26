@@ -11,10 +11,13 @@ MentionService.name = 'MentionService';
 
 MentionService._lookForUsers = async(users, sender, messageData) => {
   // TODO: handle firstnames with spaces. Maybe user a username instead?
+
+  var where = { firstName: users };
+  if (users.includes('all')) {
+    where = {};
+  }
   var taggedUsers = await User.findAll({
-    where: {
-      firstName: users,
-    },
+    where: where,
     include: [
       {
         association: 'workspaces',
