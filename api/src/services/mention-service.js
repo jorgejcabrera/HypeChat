@@ -3,7 +3,7 @@
 var { moment } = require('../config/dependencies');
 var { User } = require('../models');
 var FirebaseService = require('./firebase-service');
-var WorkspaceService = require('./workspace-service');
+var GroupService = require('./group-service');
 var HttpService = require('./http-service');
 
 var MentionService = {};
@@ -15,27 +15,47 @@ MentionService._lookForUsers = async(users, sender, messageData) => {
     where: {
       firstName: users,
     },
+    include: [
+      {
+        association: 'workspaces',
+        where: {
+          id: messageData.workspaceId,
+        },
+        include: [
+          {
+            association: 'groups',
+            where: {
+              id: messageData.groupId,
+            },
+            required: false,
+          },
+        ],
+      },
+    ],
   });
 
   if (taggedUsers.length === 0) return;
 
   for (var idx in taggedUsers) {
     var taggedUser = taggedUsers[idx];
-    // TODO handle when user doesn't belong to group (add it).
-    var belongsToWorkspace = await WorkspaceService.userBelongs(
-      taggedUser.id, messageData.workspaceId
-    );
 
-    if (!belongsToWorkspace) return;
+    // Add user to group if he doesn't belong.
+    if (taggedUser.workspaces[0].groups.length === 0) {
+      await GroupService.addUser(messageData.groupId, taggedUser.id);
+    }
 
     if (!taggedUser.isBot) {
-      await FirebaseService.sendNofication(sender, {
+      // We specifically don't await here so the message goes out
+      // as fast as possible.
+      FirebaseService.sendNofication(sender, {
         groupId: null,
         recipientId: taggedUser.id,
         message: messageData.message,
       });
     } else if (taggedUser.callbackOnMention) {
-      await HttpService.post(
+      // We specifically don't await here since we're not waiting for
+      // an answer from the bots.
+      HttpService.post(
         taggedUser.callbackOnMention,
         {
           workspaceId: messageData.workspaceId,

@@ -1,5 +1,6 @@
 'use strict';
 
+var { Sequelize } = require('../config/dependencies');
 var { Workspace, Group, UserGroup } = require('../models');
 
 var GroupService = {};
@@ -9,19 +10,29 @@ GroupService.create = async(groupData) => {
   delete groupData.id;
   var group = await Group.create(groupData);
 
-  var members = [group.creatorId];
-  if (group && group.visibility === 'PUBLIC') {
-    var workspace = await Workspace.findOne({
-      where: { id: group.workspaceId },
-      include: [
-        { association: 'users' },
+  var where = {};
+  if (group && group.visibility === 'PRIVATE') {
+    where = {
+      [Sequelize.Op.or]: [
+        { isGlobalBot: true },
+        { id: group.creatorId },
       ],
-    });
-
-    members = workspace.users.map((user) => user.id);
+    };
   }
 
   if (group) {
+    var workspace = await Workspace.findOne({
+      where: { id: group.workspaceId },
+      include: [
+        {
+          association: 'users',
+          where: where,
+        },
+      ],
+    });
+
+    var members = workspace.users.map((user) => user.id);
+
     for (var idx in members) {
       var userId = members[idx];
       await GroupService.addUser(

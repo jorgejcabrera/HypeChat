@@ -153,8 +153,9 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
 
   for (idx in bots) {
     var bot = bots[idx];
-    // Call callback.
-    await HttpService.post(
+    // Call callback. We specifically don't await here since we're
+    // not waiting for an answer from the bots.
+    HttpService.post(
       bot.callbackOnNewMember,
       {
         workspaceId: workspaceId,

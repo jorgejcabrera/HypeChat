@@ -1175,9 +1175,9 @@ describe('Workspace Routes Test', () => {
     it('should return unauthorized when calling user doesn\'t belong',
       async() => {
         await listGroups(
-          [],
+          [ { id: otherUser.id, role: 'MEMBER' } ],
           groups,
-          otherUser.auth.accessToken,
+          thirdUser.auth.accessToken,
           'UNAUTHORIZED'
         );
       });
