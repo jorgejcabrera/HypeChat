@@ -14,7 +14,27 @@
     "tags": [
       {
         "name": "Users",
-        "description": "API for users in the system"
+        "description": "API for users in the system."
+      },
+      {
+        "name": "Auth",
+        "description": "API for user authentication."
+      },
+      {
+        "name": "Workspaces",
+        "description": "API to manage workspaces."
+      },
+      {
+        "name": "Workspace Users",
+        "description": "API to manage users inside workspaces."
+      },
+      {
+        "name": "Groups",
+        "description": "API to manage groups."
+      },
+      {
+        "name": "Group Users",
+        "description": "API to manage users inside groups."
       }
     ],
     "schemes": [
@@ -27,20 +47,21 @@
       "application/json"
     ],
     "paths": {
-      "/users": {
+      "/register": {
         "post": {
           "tags": [
-            "Users"
+            "Auth"
           ],
-          "description": "Create new user in system",
+          "description": "Register a new user",
           "parameters": [
             {
-              "name": "user",
+              "name": "UserData",
               "in": "body",
-              "description": "User that we want to create",
+              "description": "New user information. Must include either facebookId or email/password.",
               "schema": {
                 "$ref": "#/definitions/User"
-              }
+              },
+              "required": true
             }
           ],
           "produces": [
@@ -56,94 +77,771 @@
           }
         }
       },
-      "/users/{userId}": {
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "description": "ID of user that we want to find",
-            "type": "string"
-          }
-        ],
-        "get": {
+      "/bot/register": {
+        "post": {
           "tags": [
-            "Users"
+            "Auth"
           ],
-          "summary": "Get user with given ID",
+          "description": "Register a new bot",
+          "parameters": [
+            {
+              "name": "BotData",
+              "in": "body",
+              "description": "New bot information.",
+              "schema": {
+                "$ref": "#/definitions/Bot"
+              },
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
           "responses": {
             "200": {
-              "description": "User is found",
+              "description": "New bot is created",
               "schema": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/definitions/Bot"
+              }
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "tags": [
+            "Auth"
+          ],
+          "description": "Login using email and password",
+          "parameters": [
+            {
+              "name": "User Credentials",
+              "in": "body",
+              "description": "User credentials, plus device Firebase Token (if applicable).",
+              "schema": {
+                "$ref": "#/definitions/UserCredentials"
+              },
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Access token that should be used on any consecutive requests.",
+              "schema": {
+                "$ref": "#/definitions/UserLogin"
+              }
+            }
+          }
+        }
+      },
+      "/facebook/login": {
+        "post": {
+          "tags": [
+            "Auth"
+          ],
+          "description": "Login using Facebook account.",
+          "parameters": [
+            {
+              "name": "Firebase Token",
+              "in": "body",
+              "description": "Device Firebase Token (if applicable).",
+              "schema": {
+                "properties": {
+                  "firebaseToken": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "Authentication",
+              "description": "Facebook Authentication Token.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Access token that should be used on any consecutive requests.",
+              "schema": {
+                "$ref": "#/definitions/UserLogin"
+              }
+            }
+          }
+        }
+      },
+      "/workspaces": {
+        "get": {
+          "tags": [
+            "Workspaces"
+          ],
+          "description": "List all workspaces. You must have a valid administrator token to access this endpoint.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "query",
+              "name": "page",
+              "description": "Desired page number. Defaults to first page.",
+              "type": "integer"
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Paginated list of workspaces.",
+              "schema": {
+                "$ref": "#/definitions/WorkspaceList"
               }
             }
           }
         },
-        "delete": {
-          "summary": "Delete user with given ID",
+        "post": {
           "tags": [
-            "Users"
+            "Workspaces"
+          ],
+          "description": "Create new workspace. Anyone with a valid access token can create a workspace. The creatorId field will be auto filled with the user id of the user making the request",
+          "parameters": [
+            {
+              "name": "Workspace Data",
+              "in": "body",
+              "description": "Information on new workspace to create.",
+              "schema": {
+                "$ref": "#/definitions/Workspace"
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
           ],
           "responses": {
             "200": {
-              "description": "User is deleted",
+              "description": "Newly created workspace.",
               "schema": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/definitions/Workspace"
+              }
+            }
+          }
+        }
+      },
+      "/workspaces/{workspaceId}": {
+        "get": {
+          "tags": [
+            "Workspaces"
+          ],
+          "description": "Fetches the requested workspace data. You must be an admin or a member of the workspace to access.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Information on requested workspace.",
+              "schema": {
+                "$ref": "#/definitions/Workspace"
               }
             }
           }
         },
         "put": {
-          "summary": "Update user with give ID",
           "tags": [
-            "Users"
+            "Workspaces"
           ],
+          "description": "Modify existing workspace. Only the workspace creator can access this endpoint.",
           "parameters": [
             {
-              "name": "user",
+              "name": "New Workspace Data",
               "in": "body",
-              "description": "User with new values of properties",
+              "description": "Updated Information on workspace.",
               "schema": {
-                "$ref": "#/definitions/User"
-              }
+                "$ref": "#/definitions/Workspace"
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
             }
+          ],
+          "produces": [
+            "application/json"
           ],
           "responses": {
             "200": {
-              "description": "User is updated",
+              "description": "Updated workspace.",
               "schema": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/definitions/Workspace"
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Workspaces"
+          ],
+          "description": "Remove existing workspace. Only the workspace creator can access this endpoint.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {}
+          }
+        }
+      },
+      "/workspaces/{workspaceId}/users": {
+        "get": {
+          "tags": [
+            "Workspace Users"
+          ],
+          "description": "List all users for workspace. You must be an admin or a member to access this endpoint.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "List of users.",
+              "schema": {
+                "$ref": "#/definitions/UserList"
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Workspace Users"
+          ],
+          "description": "Add a user to a workspace. This doesn't use the invite service. You must be an admin to access this endpoint.",
+          "parameters": [
+            {
+              "name": "User Email",
+              "in": "body",
+              "description": "Email of user to add to workspace.",
+              "schema": {
+                "properties": {
+                  "userEmail": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {}
+          }
+        }
+      },
+      "/workspaces/{workspaceId}/users/{userId}": {
+        "put": {
+          "tags": [
+            "Workspace Users"
+          ],
+          "description": "Modify a user's role in the workspace. You must be the workspace creator to access this endpoint.",
+          "parameters": [
+            {
+              "name": "New Role",
+              "in": "body",
+              "description": "New role for the user in the workspace.",
+              "schema": {
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "enum": ["CREATOR", "MODERATOR", "MEMBER"]
+                  }
+                }
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {}
+          }
+        },
+        "delete": {
+          "tags": [
+            "Workspace Users"
+          ],
+          "description": "Remove user from workspace. Only the workspace creator and moderators can access this endpoint.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {}
+          }
+        }
+      },
+      "/workspaces/{workspaceId}/groups": {
+        "get": {
+          "tags": [
+            "Groups"
+          ],
+          "description": "List groups visible to you. You must be a member of the workspace to access this endpoint.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "List of groups.",
+              "schema": {
+                "$ref": "#/definitions/GroupList"
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Groups"
+          ],
+          "description": "Create new group in a workspace. You must be a member of the workspace to access this endpoint. The creatorId field will be auto filled with the user id of the user making the request, and the workspaceId from the URL params.",
+          "parameters": [
+            {
+              "name": "Group Data",
+              "in": "body",
+              "description": "Information on new group to create.",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Newly created group.",
+              "schema": {
+                "$ref": "#/definitions/Group"
               }
             }
           }
         }
+      },
+      "/workspaces/{workspaceId}/groups/{groupId}": {
+        "get": {
+          "tags": [
+            "Groups"
+          ],
+          "description": "Fetches the requested group data. You must be an admin or a member of the workspace to access.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Information on requested group.",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "Groups"
+          ],
+          "description": "Modify existing group inside a workspace. Only the workspace creator can access this endpoint.",
+          "parameters": [
+            {
+              "name": "New Group Data",
+              "in": "body",
+              "description": "Updated information on group.",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated group.",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Groups"
+          ],
+          "description": "Remove existing group. Only the workspace creator can access this endpoint.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {}
+          }
+        }
+      },
+      "/workspaces/{workspaceId}/groups/{groupId}/users": {
+        "get": {
+          "tags": [
+            "Group Users"
+          ],
+          "description": "List all users for group. You must be an admin or a member to access this endpoint.",
+          "parameters": [
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "List of users.",
+              "schema": {
+                "$ref": "#/definitions/UserList"
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Group Users"
+          ],
+          "description": "Add a user to a group. You must be a member of the group to access this endpoint.",
+          "parameters": [
+            {
+              "name": "User Email",
+              "in": "body",
+              "description": "Email of user to add to group.",
+              "schema": {
+                "properties": {
+                  "userEmail": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              },
+              "required": true
+            },
+            {
+              "in": "headers",
+              "name": "X-Auth",
+              "description": "Access Token obtained on login.",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {}
+          }
+        }
       }
+
     },
     "definitions": {
       "User": {
+        "required": [
+          "firstName",
+          "lastName",
+          "email"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "password": {
+            "type": "string"
+          },
+          "facebookId": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "firebaseToken": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "base64Image": {
+            "type": "string"
+          }
+        }
+      },
+      "Bot": {
+        "required": [
+          "firstName",
+          "lastName",
+          "email"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "password": {
+            "type": "string"
+          },
+          "callbackOnMention": {
+            "type": "string",
+            "format": "uri"
+          },
+          "callbackOnNewMember": {
+            "type": "string",
+            "format": "uri"
+          },
+          "base64Image": {
+            "type": "string"
+          }
+        }
+      },
+      "UserCredentials": {
         "required": [
           "email",
           "password"
         ],
         "properties": {
-
           "email": {
             "type": "string",
             "uniqueItems": true
           },
-          "lastName": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "isAdmin": {
-            "type": "boolean"
-          },
           "password": {
             "type": "string"
+          },
+          "firebaseToken": {
+            "type": "string",
+            "uniqueItems": true
           }
+        }
+      },
+      "UserLogin": {
+        "properties": {
+          "userId": {
+            "type": "integer"
+          },
+          "accessToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Workspace": {
+        "required": [
+          "name",
+          "location",
+          "welcomeMessage"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "base64Image": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "creatorId": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "welcomeMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "Group": {
+        "required": [
+          "name",
+          "visibility"
+        ],
+        "properties": {
+          "creatorId": {
+            "type": "integer"
+          },
+          "workspaceId": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "totalMessages": {
+            "type": "integer"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": ["PUBLIC", "PRIVATE"]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkspaceList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Workspace"
+        }
+      },
+      "GroupList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Group"
+        }
+      },
+      "UserList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/User"
         }
       }
     }
