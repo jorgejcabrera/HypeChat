@@ -158,7 +158,7 @@ describe('Workspace Routes Test', () => {
       adminUser = await TestUtils.authenticatedUserFactory(
         { password: 'validPassword.123', isAdmin: true }
       );
-    });
+    }).timeout(5000);
 
     it('should return unauthorized when user is not admin',
       async() => {
