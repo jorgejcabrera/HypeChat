@@ -17,7 +17,10 @@ AuthService.login = async(user, credentials) => {
       e.name = 'InvalidCredentials';
       throw e;
     }
-
+    await UserService.update(user.id, {
+      latitude: credentials.latitude,
+      longitude: credentials.longitude,
+    });
     var valid = await AuthService.authenticate(user, credentials.password);
     if (!valid) {
       e = new Error();
