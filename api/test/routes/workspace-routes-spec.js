@@ -148,7 +148,8 @@ describe('Workspace Routes Test', () => {
   describe('List', () => {
     var adminUser;
 
-    beforeEach(async() => {
+    beforeEach(async function() {
+      this.timeout(5000);
       // Create some workspaces to be able to list something.
       for (var i = 0; i < 25; i++) {
         await TestUtils.workspaceFactory({ creatorId: user.id });
