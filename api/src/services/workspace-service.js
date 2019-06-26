@@ -157,7 +157,7 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
         workspaceId: workspaceId,
         groupId: generalGroupId,
         member: user,
-        timestamp: moment().format("YYYY-MM-DD'T'HH:mm:ssZZ"),
+        timestamp: moment().format(),
       }
     );
   });
