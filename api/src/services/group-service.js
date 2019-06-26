@@ -22,12 +22,13 @@ GroupService.create = async(groupData) => {
   }
 
   if (group) {
-    members.forEach(async(userId) => {
+    for (var idx in members) {
+      var userId = members[idx];
       await GroupService.addUser(
         group.id,
         userId
       );
-    });
+    }
   }
 
   return group && group.toJSON();

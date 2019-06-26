@@ -34,9 +34,10 @@ WorkspaceService.create = async(workspaceData) => {
       },
     });
 
-    bots.forEach(async(bot) => {
+    for (var idx in bots) {
+      var bot = bots[idx];
       await WorkspaceService.addUser(workspace.id, bot.id);
-    });
+    }
   }
 
   return workspace && workspace.toJSON();
@@ -117,12 +118,13 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
   var generalGroupId = null;
 
   var publicGroups = await GroupService.getPublicGroups(workspaceId);
-  publicGroups.forEach(async(group) => {
+  for (var idx in publicGroups) {
+    var group = publicGroups[idx];
     if (group.name === 'General') {
       generalGroupId = group.id;
     }
     await GroupService.addUser(group.id, userId);
-  });
+  }
 
   var user = (await User.findOne({
     where: {
@@ -149,9 +151,10 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
     ],
   });
 
-  bots.forEach(async(bot) => {
+  for (idx in bots) {
+    var bot = bots[idx];
     // Call callback.
-    await HttpService(
+    await HttpService.post(
       bot.callbackOnNewMember,
       {
         workspaceId: workspaceId,
@@ -160,7 +163,7 @@ WorkspaceService.addUser = async(workspaceId, userId, role = 'MEMBER') => {
         timestamp: moment().format(),
       }
     );
-  });
+  }
 
   return worspaceUser && worspaceUser.toJSON();
 };
