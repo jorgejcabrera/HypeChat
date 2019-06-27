@@ -2,7 +2,8 @@
 
 var {
   express,
-  logger,
+  log,
+  morgan,
   passport,
   FacebookStrategy,
   swaggerUi,
@@ -24,6 +25,7 @@ if (process.env.NODE_ENV !== 'test') {
     try {
       var user = await UserService.getByFacebookId(profile.id);
       if (!user) {
+        log.info('Creating new user with facebookId ' + profile.id);
         user = {
           facebookId: profile.id,
           firstName: profile.name.givenName,
@@ -31,6 +33,8 @@ if (process.env.NODE_ENV !== 'test') {
           email: profile.emails[0].value,
         };
         user = await UserService.create(user);
+      } else {
+        log.info('New Facebook login for user with facebookId ' + profile.id);
       }
       done(null, user);
     } catch (err) {
@@ -42,10 +46,26 @@ if (process.env.NODE_ENV !== 'test') {
 // Enable CORS.
 app.use(CorsHandler.cors);
 
-app.use(logger('dev'));
 var bodyParser = require('body-parser');
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+app.use(morgan(
+  'Request: :method :url ',
+  { immediate: true, stream: log.stream }
+));
+app.use((req, res, next) => {
+  if (req.body) {
+    log.debug('Request body: ', JSON.stringify(req.body, null, 2));
+    log.debug('Headers: ', JSON.stringify(req.headers, null, 2));
+  }
+  next();
+});
+app.use(morgan(
+  'Response: :status - :response-time ms',
+  { stream: log.stream }
+));
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Initialize firebase

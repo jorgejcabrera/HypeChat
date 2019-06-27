@@ -1,8 +1,9 @@
 'use strict';
 
 var { FileUtils } = require('../utils');
-var { Sequelize } = require('../config/dependencies');
+var { Sequelize, log } = require('../config/dependencies');
 
+Sequelize.config.logging = (msg) => log.debug(msg);
 var sequelize;
 if (Sequelize.config.use_env_variable) {
   sequelize = new Sequelize(
@@ -17,6 +18,17 @@ if (Sequelize.config.use_env_variable) {
     Sequelize.config
   );
 }
+
+sequelize
+  .authenticate()
+  .then(() => {
+    log.info('Database connection successful!');
+  })
+  .catch((err) => {
+    if (err) {
+      log.error('Can\'t establish a connection to the database.');
+    }
+  });
 
 var models = {};
 models.Database = sequelize;

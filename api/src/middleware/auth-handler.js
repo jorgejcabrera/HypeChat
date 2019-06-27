@@ -1,5 +1,6 @@
 'use strict';
 
+var { log } = require('../config/dependencies');
 var { Auth, User, WorkspaceUsers } = require('../models');
 
 var AuthHandler = {};
@@ -17,7 +18,16 @@ AuthHandler.authenticate = async(req, res, next) => {
     });
     if (auth) {
       req.user = auth.user.toJSON();
+      log.info('Authentication successful!');
+      log.info('Request made by user: ' + req.user.email);
+      if (req.user.isAdmin) {
+        log.info('User has admin privileges.');
+      }
+    } else {
+      log.info('Request with invalid "X-Auth" header.');
     }
+  } else {
+    log.info('Unauthenticated request.');
   }
 
   next();
@@ -25,7 +35,18 @@ AuthHandler.authenticate = async(req, res, next) => {
 
 AuthHandler.authorize = (options = {}) => {
   return (req, res, next) => {
-    if (!req.user || (options.requireAdmin && !req.user.isAdmin)) {
+    var unauthorized = false;
+    if (!req.user) {
+      unauthorized = true;
+      log.info(
+        'Unauthorized: endpoint accessible only by authenticated users.'
+      );
+    } else if (options.requireAdmin && !req.user.isAdmin) {
+      unauthorized = true;
+      log.info('Unauthorized: endpoint accessible only by admins.');
+    }
+
+    if (unauthorized) {
       return res.status(401).json({
         status: 'error',
         type: 'unauthorized',
@@ -33,6 +54,7 @@ AuthHandler.authorize = (options = {}) => {
     }
 
     // authorization successful
+    log.info('Authorization successful!');
     next();
   };
 };
@@ -40,6 +62,9 @@ AuthHandler.authorize = (options = {}) => {
 AuthHandler.authorizeWorkspace = (roles) => {
   return async(req, res, next) => {
     if (!req.user) {
+      log.info(
+        'Unauthorized: endpoint accessible only by authenticated users.'
+      );
       return res.status(401).json({
         status: 'error',
         type: 'unauthorized',
@@ -55,7 +80,19 @@ AuthHandler.authorizeWorkspace = (roles) => {
       },
     });
 
-    if (!workspaceUser || !roles.includes(workspaceUser.role)) {
+    var unauthorized = false;
+    if (!workspaceUser) {
+      unauthorized = true;
+      log.info('Unauthorized: user doesn\'t belong to workspace.');
+    } else if (!roles.includes(workspaceUser.role)) {
+      unauthorized = true;
+      log.info(
+        'Unauthorized: user doesn\'t have the required privileges. ' +
+        'User role: ' + workspaceUser.role + '. Required roles: ' + roles
+      );
+    }
+
+    if (unauthorized) {
       return res.status(401).json({
         status: 'error',
         type: 'unauthorized',
@@ -64,7 +101,7 @@ AuthHandler.authorizeWorkspace = (roles) => {
 
     req.user.workspaceRole = workspaceUser.role;
 
-    // authorization successful
+    log.info('Workspace authorization successful!');
     next();
   };
 };

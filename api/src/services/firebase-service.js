@@ -1,6 +1,6 @@
 'use strict';
 
-var { firebaseAdmin, moment } = require('../config/dependencies');
+var { firebaseAdmin, moment, log } = require('../config/dependencies');
 var GroupService = require('./group-service');
 var UserService = require('./user-service');
 var MessageService = require('./message-service');
@@ -13,6 +13,8 @@ FirebaseService.sendAddedToGroupNofication = async(recipientId, contents) => {
   var recipient = await UserService.getById(recipientId);
   if (recipient && recipient.firebaseToken) {
     tokens.push(recipient.firebaseToken);
+  } else {
+    log.warn('Either user doesn\'t exist, or has no firebase token. Skipping.');
   }
 
   if (tokens.length === 0) return;
@@ -39,6 +41,9 @@ FirebaseService.sendMessageNofication = async(sender, messageData) => {
       var recipient = await UserService.getById(messageData.recipientId);
       if (recipient && recipient.firebaseToken) {
         tokens.push(recipient.firebaseToken);
+      } else {
+        log.warn('Either user doesn\'t exist, or has no firebase token.' +
+          ' Skipping.');
       }
     }
 
@@ -52,9 +57,9 @@ FirebaseService.sendMessageNofication = async(sender, messageData) => {
       tokens: tokens,
     };
     var response = await firebaseAdmin.messaging().sendMulticast(payload);
-    console.log('Firebase: Successfully sent message:', response.responses);
+    log.info('Firebase: Successfully sent message:', response.responses);
   } catch (error) {
-    console.log('Firebase: Error sending message:', error);
+    log.error('Firebase: Error sending message:', error);
   }
 };
 

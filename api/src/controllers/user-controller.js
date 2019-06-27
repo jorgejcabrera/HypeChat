@@ -1,5 +1,6 @@
 'use strict';
 
+var { log } = require('../config/dependencies');
 var { UserService, AuthService, PasswordService } = require('../services');
 var { UserMapper } = require('../mappers');
 
@@ -13,6 +14,7 @@ UserController.create = async(req, res, next) => {
     var user = await UserService.create(req.body);
     var auth = await AuthService.create(user.id);
     user = UserMapper.map(user, auth);
+    log.info('Successfully created user.');
     res.json(user);
   } catch (err) {
     next(err);
@@ -22,6 +24,7 @@ UserController.create = async(req, res, next) => {
 UserController.recoveryPassword = async(req, res, next) => {
   try {
     await PasswordService.recoveryPassword(req.body.email);
+    log.info('Successfully sent recovery email.');
     res.status(204).send();
   } catch (err) {
     next(err);
@@ -40,6 +43,7 @@ UserController.getProfile = async(req, res, next) => {
 UserController.updatePassword = async(req, res, next) => {
   try {
     await UserService.updatePassword(req.params.userId, req.body);
+    log.info('Successfully updated password.');
     res.status(200).send();
   } catch (err) {
     next(err);
@@ -67,9 +71,11 @@ UserController.update = async(req, res, next) => {
     }
     var user = await UserService.update(req.params.userId, req.body);
     if (!user) {
+      log.warn('The requested user doesn\'t exist.');
       return res.status(404).send();
     }
     user = UserMapper.map(user);
+    log.info('Successfully updated user data.');
     res.json(user);
   } catch (err) {
     next(err);
@@ -84,6 +90,7 @@ UserController.delete = async(req, res, next) => {
     }
     var user = await UserService.delete(req.params.userId);
     user = UserMapper.map(user);
+    log.info('Successfully deleted user.');
     res.json(user);
   } catch (err) {
     next(err);
