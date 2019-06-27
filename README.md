@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.com/jorgejcabrera/HypeChat.svg?branch=master)](https://travis-ci.com/jorgejcabrera/HypeChat)
 [![GitHub Issues](https://img.shields.io/github/issues/jorgejcabrera/HypeChat.svg)](https://github.com/jorgejcabrera/HypeChat/issues)
-[![codecov](https://codecov.io/gh/jorgejcabrera/HypeChat/branch/master/graphs/sunburst.svg)](https://codecov.io/gh/jorgejcabrera/HypeChat)
-https://img.shields.io/codecov/c/github/jorgejcabrera/HypeChat.svg
+[![codecov](https://codecov.io/gh/jorgejcabrera/HypeChat/branch/master/graphs/badge.svg)](https://codecov.io/gh/jorgejcabrera/HypeChat)
 
 <h3 align="left"> :star: Star us on GitHub! </h3>
 
