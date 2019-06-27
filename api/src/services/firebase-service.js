@@ -1,8 +1,7 @@
 'use strict';
 
 var { firebaseAdmin, moment, log } = require('../config/dependencies');
-var { Group } = require('../models');
-var UserService = require('./user-service');
+var { User, Group } = require('../models');
 var MessageService = require('./message-service');
 
 var FirebaseService = {};
@@ -10,7 +9,13 @@ FirebaseService.name = 'FirebaseService';
 
 FirebaseService.sendAddedToGroupNofication = async(recipientId, contents) => {
   var tokens = [];
-  var recipient = await UserService.getById(recipientId);
+  var recipient = await User.findOne({
+    where: {
+      id: recipientId,
+      status: 'ACTIVE',
+    },
+  });
+
   if (recipient && recipient.firebaseToken) {
     tokens.push(recipient.firebaseToken);
   } else {
@@ -44,7 +49,13 @@ FirebaseService.sendMessageNofication = async(sender, messageData) => {
           .map((user) => user.firebaseToken);
       }
     } else {
-      var recipient = await UserService.getById(messageData.recipientId);
+      var recipient = await User.findOne({
+        where: {
+          id: messageData.recipientId,
+          status: 'ACTIVE',
+        },
+      });
+
       if (recipient && recipient.firebaseToken) {
         tokens.push(recipient.firebaseToken);
       } else {
