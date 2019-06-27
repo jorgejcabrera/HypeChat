@@ -1,8 +1,10 @@
 # HypeChat API Rest
 
 [![Build Status](https://travis-ci.com/jorgejcabrera/HypeChat.svg?branch=master)](https://travis-ci.com/jorgejcabrera/HypeChat)
-:star: Star us on GitHub!
- 
+[![GitHub Issues](https://img.shields.io/github/issues/jorgejcabrera/HypeChat.svg)](https://github.com/jorgejcabrera/HypeChat/issues)
+
+<h3 align="left"> :star: Star us on GitHub! </h3>
+
 ## Requirements
 - Node
 - Docker
