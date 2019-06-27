@@ -1,5 +1,6 @@
 'use strict';
 
+var { log } = require('../config/dependencies');
 var { UserService, WorkspaceService } = require('../services');
 
 var BotController = {};
@@ -13,10 +14,13 @@ BotController.create = async(req, res, next) => {
     delete req.body.workspaceId;
     var workspace = await WorkspaceService.getById(workspaceId);
     if (!workspace) {
+      log.info('Requested workspace not found.');
       return res.status(404).json();
     }
     var bot = await UserService.create(req.body);
+    log.info('Bot successfully created.');
     await WorkspaceService.addUser(workspaceId, bot.id);
+    log.info('Bot successfully added to workspace.');
     res.json(bot);
   } catch (err) {
     next(err);
