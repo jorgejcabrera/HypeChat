@@ -1,10 +1,9 @@
 'use strict';
 
-var { User } = require('../models');
+var { User, Message } = require('../models');
 var { EmailUtils } = require('../utils');
 var { PwdValidator } = require('../validators');
 var WorkspaceService = require('./workspace-service');
-var MessageService = require('./message-service');
 var { UserMapper } = require('../mappers');
 var { bcrypt, Sequelize, moment } = require('../config/dependencies');
 const saltRounds = 10;
@@ -57,8 +56,10 @@ UserService.getProfile = async(userId) => {
   }
   var workspaces = await WorkspaceService
     .retrieveWorkspacesByUser(userId);
-  var messages = await MessageService
-    .getByUserId(userId);
+  var messages = Message.findAll({
+    where: {userId},
+    raw: true,
+  });
   return UserMapper.mapProfile(user, workspaces, messages);
 };
 
