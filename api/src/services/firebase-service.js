@@ -8,7 +8,24 @@ var MessageService = require('./message-service');
 var FirebaseService = {};
 FirebaseService.name = 'FirebaseService';
 
-FirebaseService.sendNofication = async(sender, messageData) => {
+FirebaseService.sendAddedToGroupNofication = async(recipientId, contents) => {
+  var tokens = [];
+  var recipient = await UserService.getById(recipientId);
+  if (recipient && recipient.firebaseToken) {
+    tokens.push(recipient.firebaseToken);
+  }
+
+  if (tokens.length === 0) return;
+
+  var payload = {
+    notification: contents,
+    tokens: tokens,
+  };
+
+  await firebaseAdmin.messaging().sendMulticast(payload);
+};
+
+FirebaseService.sendMessageNofication = async(sender, messageData) => {
   try {
     var tokens = [];
     if (messageData.groupId) {
@@ -87,7 +104,7 @@ FirebaseService.send = async(workspaceId, sender, messageData) => {
       messageData.message
     );
   }
-  await FirebaseService.sendNofication(sender, messageData);
+  await FirebaseService.sendMessageNofication(sender, messageData);
   await FirebaseService.sendMessage(workspaceId, sender, messageData);
   await MessageService
     .saveMessageRecord(workspaceId, sender.id, messageData.groupId);

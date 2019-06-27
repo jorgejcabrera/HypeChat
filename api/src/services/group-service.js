@@ -1,6 +1,8 @@
 'use strict';
 
+var { Sequelize } = require('../config/dependencies');
 var { Workspace, Group, UserGroup } = require('../models');
+var FirebaseService = require('./firebase-service');
 
 var GroupService = {};
 GroupService.name = 'GroupService';
@@ -9,25 +11,36 @@ GroupService.create = async(groupData) => {
   delete groupData.id;
   var group = await Group.create(groupData);
 
-  var members = [group.creatorId];
-  if (group && group.visibility === 'PUBLIC') {
-    var workspace = await Workspace.findOne({
-      where: { id: group.workspaceId },
-      include: [
-        { association: 'users' },
+  var where = {};
+  if (group && group.visibility === 'PRIVATE') {
+    where = {
+      [Sequelize.Op.or]: [
+        { isGlobalBot: true },
+        { id: group.creatorId },
       ],
-    });
-
-    members = workspace.users.map((user) => user.id);
+    };
   }
 
   if (group) {
-    members.forEach(async(userId) => {
+    var workspace = await Workspace.findOne({
+      where: { id: group.workspaceId },
+      include: [
+        {
+          association: 'users',
+          where: where,
+        },
+      ],
+    });
+
+    var members = workspace.users.map((user) => user.id);
+
+    for (var idx in members) {
+      var userId = members[idx];
       await GroupService.addUser(
         group.id,
         userId
       );
-    });
+    }
   }
 
   return group && group.toJSON();
@@ -38,6 +51,11 @@ GroupService.addUser = async(groupId, userId) => {
     userId: userId,
     groupId: groupId,
     isActive: true,
+  });
+
+  FirebaseService.sendAddedToGroupNofication(userId, {
+    title: 'Te han agregado a un nuevo grupo!',
+    body: '',
   });
   return groupUser && groupUser.toJSON();
 };

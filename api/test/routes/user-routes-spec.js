@@ -8,8 +8,17 @@ var app = require('../../src/app');
 chai.use(chaiHttp);
 
 describe('User Routes Test', () => {
+
+  before(async() => {
+    TestUtils.mockFirebase();
+  });
+
   beforeEach(async() => {
     await TestUtils.clearDB();
+  });
+
+  after(() => {
+    TestUtils.restore();
   });
 
   describe('Retrieve', () => {
