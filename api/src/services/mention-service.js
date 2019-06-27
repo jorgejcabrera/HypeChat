@@ -52,7 +52,7 @@ MentionService._lookForUsers = async(match, sender, messageData) => {
 
 MentionService.analyzeMessage = async(sender, messageData) => {
   // If message is not sent to a group, ignore it.
-  if (!messageData.groupId) return;
+  if (!messageData.groupId || !messageData.message) return;
 
   var regex = /@([^\s]+)/;
   var match = messageData.message.match(regex);
