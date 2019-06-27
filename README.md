@@ -39,7 +39,7 @@ docker-compose exec app npm install --save-dev PACKAGE_NAME
 Make sure that all tests pass and there are no code style errors by running `docker-compose exec app npm test` before pushing.
 
 ## Architecture
-![alt text](https://github.com/jorgejcabrera/HypeChat/blob/master/api/img/Arquitectura.png)
+![alt text](https://github.com/jorgejcabrera/HypeChat/blob/master/api/img/Arquitectura.jpg)
 
 ## Contributors
 - Jorge Cabrera
