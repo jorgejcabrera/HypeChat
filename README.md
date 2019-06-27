@@ -18,12 +18,12 @@ Hypechat-api is microservice in Node for a full-featured and high performance ch
 
 ## Features
 A few of the things you can do with HypeChat:
-- Create groups
-- Create workspaces
-- Share files 
-- Private messaging
-- User @mentioning
-- Works on Mac, Linux and (maybe) Windows
+- [X] Create groups
+- [X] Create workspaces
+- [X] Share files 
+- [X] Private messaging
+- [X] User @mentioning
+- [X] Works on Mac, Linux and (maybe) Windows
 
 ## Installation
 To clone and run this application, you'll need [Git](https://git-scm.com) and [Docker](https://www.docker.com/get-started) installed on your computer. From your command line:
