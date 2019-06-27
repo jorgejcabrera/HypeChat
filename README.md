@@ -20,7 +20,7 @@ The API uses Sequelize to connect to its PostgreSQL DB, and changes are handled 
 * Implement those changes in the Sequelize model.
 * Run migration 
 ```
-$ docker-compose exec app npm run db:migrate`
+$ docker-compose exec app npm run db:migrate
 ```
 
 ## Installing new packages
@@ -37,8 +37,7 @@ docker-compose exec app npm install --save-dev PACKAGE_NAME
 Make sure that all tests pass and there are no code style errors by running `docker-compose exec app npm test` before pushing.
 
 ## Architecture
-<img src="https://github.com/jorgejcabrera/HypeChat/blob/login/api/img/hypechat-arquitecture.png" align="right"
-     title="Size Limit logo by Anton Lovchikov" width="120" height="178">
+![alt text](https://github.com/jorgejcabrera/HypeChat/blob/master/api/img/hypechat-arquitecture.png)
 
 ## Contributors
 - Jorge Cabrera
