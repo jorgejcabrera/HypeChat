@@ -9,7 +9,7 @@
 <p align="center">
   <img src = "https://github.com/jorgejcabrera/HypeChat/blob/master/api/img/demo1.jpeg" width=350>
 </p>
-Hypechat-api is microservice in Node for a full-featured and high performance chat application
+Hypechat-api is microservice in Node for a full-featured and high performance chat application. This is a node.js chat application powered by Express that provides the main functions you'd expect from a chat, such as emojis, private messages, an admin system, etc.
 
 ## Requirements
 - Node
@@ -18,9 +18,12 @@ Hypechat-api is microservice in Node for a full-featured and high performance ch
 
 ## Features
 A few of the things you can do with HypeChat:
-- create groups
-- create workspaces
-- share files 
+- Create groups
+- Create workspaces
+- Share files 
+- Private messaging
+- User @mentioning
+- Works on Mac, Linux and (maybe) Windows
 
 ## Installation
 To clone and run this application, you'll need [Git](https://git-scm.com) and [Docker](https://www.docker.com/get-started) installed on your computer. From your command line:
