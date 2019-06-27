@@ -50,7 +50,7 @@ MentionService._lookForUsers = async(users, sender, messageData) => {
     if (!taggedUser.isBot) {
       // We specifically don't await here so the message goes out
       // as fast as possible.
-      FirebaseService.sendNofication(sender, {
+      FirebaseService.sendMessageNofication(sender, {
         groupId: null,
         recipientId: taggedUser.id,
         message: messageData.message,
