@@ -31,7 +31,7 @@ WorkspaceController.inviteUser = async(req, res, next) => {
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
     var user = await UserService.getByEmail(req.body.email);
     if (!user || !workspace) {
-      log.info('Either the requested user or workspace don\'t exist.');
+      log.warn('Either the requested user or workspace don\'t exist.');
       return res.status(404).send();
     }
     var token = jwt.sign(
@@ -81,7 +81,7 @@ WorkspaceController.addUser = async(req, res, next) => {
     var workspace = await WorkspaceService.getById(req.params.workspaceId);
     var user = await UserService.getByEmail(req.body.userEmail);
     if (!user || !workspace) {
-      log.info('Either the requested user or workspace don\'t exist.');
+      log.warn('Either the requested user or workspace don\'t exist.');
       return res.status(404).send();
     }
     var userWorkspace = await WorkspaceService.addUser(workspace.id, user.id);
@@ -205,7 +205,7 @@ WorkspaceController.sendMessage = async(req, res, next) => {
     );
 
     if (!isValid) {
-      log.info('Message not sent: not a valid message ' +
+      log.warn('Message not sent: not a valid message ' +
         '(either missing permissions or malformed body).');
       return res.status(404).send();
     }

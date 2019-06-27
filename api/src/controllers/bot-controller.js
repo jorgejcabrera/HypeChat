@@ -14,7 +14,7 @@ BotController.create = async(req, res, next) => {
     delete req.body.workspaceId;
     var workspace = await WorkspaceService.getById(workspaceId);
     if (!workspace) {
-      log.info('Requested workspace not found.');
+      log.warn('Requested workspace not found.');
       return res.status(404).json();
     }
     var bot = await UserService.create(req.body);

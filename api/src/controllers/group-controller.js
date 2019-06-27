@@ -33,7 +33,7 @@ GroupController.addUser = async(req, res, next) => {
     var group = await GroupService.getById(req.params.groupId);
     var user = await UserService.getByEmail(req.body.userEmail);
     if (!user || !group) {
-      log.info('Either the requested user or group don\'t exist.');
+      log.warn('Either the requested user or group don\'t exist.');
       return res.status(404).send();
     }
 
@@ -43,7 +43,7 @@ GroupController.addUser = async(req, res, next) => {
     );
 
     if (!workspaceUser) {
-      log.info('Can\'t add user to group: he doesn\'t belong ' +
+      log.warn('Can\'t add user to group: he doesn\'t belong ' +
         'to the group\'s workspace.');
       return res.status(404).send();
     }

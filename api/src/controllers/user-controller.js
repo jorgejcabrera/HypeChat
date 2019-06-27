@@ -71,7 +71,7 @@ UserController.update = async(req, res, next) => {
     }
     var user = await UserService.update(req.params.userId, req.body);
     if (!user) {
-      log.info('The requested user doesn\'t exist.');
+      log.warn('The requested user doesn\'t exist.');
       return res.status(404).send();
     }
     user = UserMapper.map(user);

@@ -18,27 +18,27 @@ var handleSequelizeErrors = (err, response) => {
 
     switch (error.type) {
       case 'notNull Violation':
-        log.info('Validation error: ', error.path, 'can\'t be null.');
+        log.warn('Validation error: ', error.path, 'can\'t be null.');
         response.json.validationErrors.push({
           error: 'isBlank',
           path: error.path,
         });
         break;
       case 'isEmail':
-        log.info('Validation error: ', error.path, 'is not a valid email.');
+        log.warn('Validation error: ', error.path, 'is not a valid email.');
         response.json.validationErrors.push({
           error: 'invalidEmail',
           path: error.path,
         });
         break;
       case 'atLeastOneLogin':
-        log.info('Validation error: No login information specified.');
+        log.warn('Validation error: No login information specified.');
         response.json.validationErrors.push({
           error: 'noLoginSpecified',
         });
         break;
       default:
-        log.warn('Don\'t know how to handle: ', error);
+        log.error('Don\'t know how to handle: ', error);
         break;
     }
   });
@@ -59,32 +59,32 @@ ErrorHandler.default = (err, req, res, next) => {
         'please check that the database is running.');
       break;
     case 'UserAlreadyExists':
-      log.info('User already exists.');
+      log.warn('User already exists.');
       response.status = 400;
       response.json.type = 'userAlreadyExists';
       break;
     case 'InvalidUserPwd':
-      log.info('Invalid password.');
+      log.warn('Invalid password.');
       response.status = 400;
       response.json.type = 'invalidUserPwd';
       break;
     case 'ForbiddenWordAlreadyExists':
-      log.info('Forbidden word already exists.');
+      log.warn('Forbidden word already exists.');
       response.status = 400;
       response.json.type = 'forbiddenWordAlreadyExists';
       break;
     case 'ForbiddenWordDoesNotBelongToWorkspace':
-      log.info('Forbidden word does not belong to workspace.');
+      log.warn('Forbidden word does not belong to workspace.');
       response.status = 403;
       response.json.type = 'forbiddenWordDoesNotBelongToWorkspace';
       break;
     case 'ResourceNotFound':
-      log.info('Requested resourse was not found.');
+      log.warn('Requested resourse was not found.');
       response.status = 404;
       response.json.type = 'resourceNotFound';
       break;
     default:
-      log.warn('Don\'t know how to handle: ', err);
+      log.error('Don\'t know how to handle: ', err);
       break;
   }
 
