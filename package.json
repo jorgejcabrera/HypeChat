@@ -21,7 +21,7 @@
     "db:migrate": "./node_modules/.bin/sequelize db:migrate --migrations-path api/src/config/sequelize/migrations --seeders-path api/src/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json && ./node_modules/.bin/sequelize db:seed:all --migrations-path api/src/config/sequelize/migrations --seeders-path api/src/config/sequelize/seeders --models-path api/src/models --config api/src/config/sequelize/config.json"
   },
   "dependencies": {
-    "bcrypt": "^3.0.5",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "debug": "~2.6.9",
