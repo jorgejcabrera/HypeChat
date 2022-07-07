@@ -33,7 +33,7 @@
     "lodash": "^4.17.11",
     "loglevel": "^1.6.3",
     "loglevel-plugin-prefix": "^0.8.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "morgan": "~1.9.0",
     "nodemailer": "^6.2.1",
     "normalize-email": "^1.1.1",
